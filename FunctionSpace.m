@@ -9,6 +9,11 @@ switch domain.type
                 function_space.evaluate_basis = @ (xi) Hexa8(xi);
                 function_space.non_zero_basis = @ (element_id) domain.connectivity(element_id, :);
                 function_space.type = ['Mesh ', 'isoparametric ', 'Hexa8'];
+            case 'Line2'
+                function_space.basis_number = domain.node_number;
+                function_space.evaluate_basis = @ (xi) Line2(xi);
+                function_space.non_zero_basis = @ (element_id) domain.connectivity(element_id, :);
+                function_space.type = ['Mesh ', 'isoparametric ', 'Line2'];
         end
     case 'ScatterPoint' % TODO
     case 'NURBS' % TODO
@@ -49,4 +54,15 @@ function [shape_func, d_shape_func] = Hexa8(xi)
     d_shape_func(I,3) = 0.125 * node(I, 3) * temp(1) * temp(2);
   end
       
+end
+
+function [shape_func, d_shape_func] = Line2(xi)
+%*************************************************************************
+% Compute shape function, derivatives, and determinant of line element
+%*************************************************************************
+% shape_func   : shape function value evaluated at xi
+% d_shape_func : gradient of shape function evaluated at xi. d N_j / d xi_i
+%%
+  shape_func = ([1-xi,1+xi]/2);
+  d_shape_func = [-1,1]/2;
 end

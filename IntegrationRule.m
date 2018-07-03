@@ -6,7 +6,7 @@ switch domain.type
     case 'Mesh'
         integration_rule.is_isoparametric = domain.is_isoparametric;
         integration_rule.unit_number = domain.element_number;
-        integration_rule.unit = cell(integration_rule.unit_number);
+        integration_rule.unit = cell(integration_rule.unit_number, 1);
         
         if integration_rule.is_isoparametric         
             if strcmp(domain.element_name, 'Hexa8')
@@ -23,6 +23,12 @@ switch domain.type
                         end
                     end
                 end
+            elseif (strcmp(domain.element_name, 'Line2'))
+                xg = [-0.57735026918963D0, 0.57735026918963D0];
+                w = [1.00000000000000D0, 1.00000000000000D0];
+                unit.position = xg';
+                unit.weighting = w';
+                unit.point_number = 2;
             end
 
             for i = 1:integration_rule.unit_number
