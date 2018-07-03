@@ -33,7 +33,7 @@ switch domain.type
 
             for i = 1:integration_rule.unit_number
                 elm_node = domain.node(domain.connectivity, :);
-                unit.Jacobian = @(d_shape_func) elm_node' * d_shape_func;
+                unit.Jacobian = @(d_shape_func) d_shape_func * elm_node;
                 
                 integration_rule.unit{i} = unit;
             end

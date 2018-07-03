@@ -3,8 +3,8 @@ function [ domain ] = DomainBuilder( type )
 %   Domain is used to describe the problem domain
 switch type
     case 'Mesh'
-%         domain = UnitCube;
-        domain = StraightLine;
+        domain = UnitCube;
+%         domain = StraightLine;
         domain.type = type;
         domain.status = 1;
     case 'ScatterPoint' % TODO
