@@ -18,24 +18,10 @@ material = MaterialBank('Mooney');
 delta_u = Variable('displacement_increment', 3);
 u = Variable('displacement', 3, function_space.basis_number);
 
-p = Variable('pressure', 1);
-t = Variable('test', 2);
 %% Dof manager
-% [dof_manager, delta_u] = DofManager(delta_u, function_space);
+[dof_manager, delta_u] = DofManager(delta_u, function_space);
 
-%% Test DOF manager
-[dof_manager, u, p, t] = DofManager(u, function_space, p, function_space, t, function_space);
-u_order = dof_manager.variable_sequence(u);
-p_order = dof_manager.variable_sequence(p);
-t_order = dof_manager.variable_sequence(t);
-
-u_global_id = dof_manager.global_id([1 3 6 8], u);
-p_global_id = dof_manager.global_id([6 2 7], p);
-t_global_id = dof_manager.global_id([5 1 4], t);
-
-u_data = dof_manager.get_variable_data(u);
-p_data = dof_manager.get_variable_data(p);
-t_data = dof_manager.get_variable_data(t);
+[dof_manager_, delta_u] = DofManager(delta_u, function_space);
 %% Boundary & Initial conditions
 displacement = zeros(domain.node_number, domain.dim);
 
