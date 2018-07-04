@@ -14,14 +14,15 @@ function_space = FunctionSpace(domain);
 material = MaterialBank('Diffusivity');
 
 %% Define variables
-delta_T = Variable('Temperature_increment', 1);
-% 
-% %% Dof manager
-% dof_manager = DofManager(delta_u, function_space);
-% %global_id = dof_manager.global_id(function_space.non_zero_basis(1));
-% 
+dof_number = 1;
+
+delta_T = Variable('temperature_increment', dof_number);
+T = Variable('temperature_total', dof_number, domain.node_number);
+
+%% Dof manager
+[dof_manager_T, delta_T] = DofManager(delta_T, function_space);
+
 %% Boundary & Initial conditions
-T = zeros(domain.node_number, domain.dim);
 
 % % u1 = 0 for Face 6
 % % u2 = 0 for Face 3
