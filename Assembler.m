@@ -22,6 +22,7 @@ for unit_id = 1:integration_rule.unit_number
         
         factor = integration_rule.unit{unit_id}.weighting(I) * det(Jacobian);
         
+        %pass d_shape_func & displacement into material.evaluate_tangent
         % evaluate deformation gradient
         F = d_shape_func * displacement + eye(3); % TODO consider use BN matrix to evlaluate F instead
         
