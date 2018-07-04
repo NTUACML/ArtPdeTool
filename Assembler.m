@@ -18,12 +18,12 @@ for unit_id = 1:integration_rule.unit_number
         Jacobian = integration_rule.unit{unit_id}.Jacobian(d_shape_func); 
         
         % transform to d N_i / d X_j
-        d_shape_func = d_shape_func/Jacobian; 
-        
-        % evaluate deformation gradient
-        F = displacement' * d_shape_func + eye(3);
+        d_shape_func = inv(Jacobian)' * d_shape_func; 
         
         factor = integration_rule.unit{unit_id}.weighting(I) * det(Jacobian);
+        
+        % evaluate deformation gradient
+        F = d_shape_func * displacement + eye(3); % TODO consider use BN matrix to evlaluate F instead
         
         % evaluate 2nd Piola-Kirchhoff stress & material stiffness 
         [PK2_stress, material_stiffness] = material.evaluate_stress(F);
