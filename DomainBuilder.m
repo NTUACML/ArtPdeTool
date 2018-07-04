@@ -1,10 +1,22 @@
-function [ domain ] = DomainBuilder( type )
+function [ domain ] = DomainBuilder( type, varargin )
 %DOMAINBUILDER Summary of this function goes here
 %   Domain is used to describe the problem domain
 switch type
     case 'Mesh'
-        domain = UnitCube;
-%         domain = StraightLine;
+        if(isempty(varargin))
+            domain = UnitCube; %Default case
+        else
+            switch varargin{1}
+                case 'UnitCube'
+                    domain = UnitCube;
+                case 'StraightLine'
+                    domain = StraightLine;
+                otherwise
+                    disp('Error! Check type argument.');
+                    domain.status = 0;
+                    return;
+            end
+        end
         domain.type = type;
         domain.status = 1;
     case 'ScatterPoint' % TODO

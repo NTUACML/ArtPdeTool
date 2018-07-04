@@ -1,11 +1,11 @@
-function [ dof_manager ] = DofManager( variable, function_space )
+function [ dof_manager, variable] = DofManager( variable, function_space )
 %DOFMANAGER Summary of this function goes here
 %   Detailed explanation goes here
 
 dof_manager.name = variable.name;
 dof_manager.total_dof_number = function_space.basis_number * variable.dim;
 dof_manager.global_id = @ (non_zero_basis_id) GlobalId(non_zero_basis_id, variable.dim); 
-
+variable.value = variable.resetValue(dof_manager.total_dof_number);
 
 end
 

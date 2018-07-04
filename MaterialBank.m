@@ -7,6 +7,9 @@ switch name
         material.Mooney_parameter = [80 20];
         material.bulk_modulus = 1E7;
         material.evaluate_stress = @ (F) Mooney(F, material.Mooney_parameter(1), material.Mooney_parameter(2), material.bulk_modulus);
+        
+    case 'Diffusivity'
+        material.Diffusivity = @ (D) D;
 
     otherwise
         disp('Check name!')
