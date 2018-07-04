@@ -3,14 +3,12 @@ function [ variable ] = Variable( name, dim, varargin )
 %   Detailed explanation goes here
 variable.name = name;
 variable.dim = dim;
-variable.reset_data = @(N) zeros(N, 1);
+reset_data = @(N) zeros(N, 1);
 
 if(isempty(varargin))
-    variable.data = [];
-    variable.data_number = 0;
+	variable.data = [];
 else
-    variable.data = variable.reset_data(variable.dim * varargin{1});
-    variable.data_number = size(variable.data, 1);
+    variable.data = reset_data(variable.dim * varargin{1});
 end
 
 end

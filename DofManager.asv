@@ -34,10 +34,9 @@ dof_manager.global_id = @ (non_zero_basis_id, variable) GlobalId(non_zero_basis_
                                             sum(variable_dof_number(1:dof_manager.variable_sequence(variable)-1));
 
 % Get variable data
-dof_manager.get_variable_data = @ (variable) varargin{2*dof_manager.variable_sequence(variable)-1}.data;
-                                    
-
-
+dof_manager.get_variable_data = @ (variable, dim) VariableData(variable.name, dim, dof_manager);
+                                        
+                                        
 % Output data
 varargout = cell(1, 1+dof_manager.variable_number);
 varargout{1} = dof_manager;
