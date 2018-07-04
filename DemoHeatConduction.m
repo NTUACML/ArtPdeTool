@@ -1,8 +1,8 @@
-function DemoHeat
+function DemoHeatConduction
 clc; clear; close all;
 
 %% Generate domain mesh
-domain = DomainBuilder('Mesh');
+domain = DomainBuilder('Mesh', 'StraightLine');
 
 %% Generate integration rule
 integration_rule = IntegrationRule(domain);
@@ -10,20 +10,20 @@ integration_rule = IntegrationRule(domain);
 %% Generate function space
 function_space = FunctionSpace(domain);
 
-% %% Define material property
-% material = MaterialBank('Mooney');
-% 
-% %% Define variables
-% %u = Variable('displacement', 3);
-% delta_u = Variable('displacement_increment', 3);
-% 
-% %% Dof manager
-% dof_manager = DofManager(delta_u, function_space);
-% %global_id = dof_manager.global_id(function_space.non_zero_basis(1));
-% 
-% %% Boundary & Initial conditions
-% displacement = zeros(domain.node_number, domain.dim);
-% 
+%% Define material property
+material = MaterialBank('Diffusivity');
+
+%% Define variables
+dof_number = 1;
+
+delta_T = Variable('temperature_increment', dof_number);
+T = Variable('temperature_total', dof_number, domain.node_number);
+
+%% Dof manager
+[dof_manager_T, delta_T] = DofManager(delta_T, function_space);
+
+%% Boundary & Initial conditions
+
 % % u1 = 0 for Face 6
 % % u2 = 0 for Face 3
 % % u3 = 0 for Face 1
