@@ -9,32 +9,32 @@ dof_manager.variable_number = nargin/2;
 % Total variable name table
 dof_manager.variable_table = cell(1, dof_manager.variable_number);
 for i = 1:dof_manager.variable_number
-    dof_manager.variable_table{i} = varargin{2*i-1}.name;
+    dof_manager.variable_table{i} = varargin{2*i-1}.name_;
 end
 
 % Initialize variable data if they are not initialized elsewhere
 variable_dof_number = zeros(1, dof_manager.variable_number);
 for i = 1:dof_manager.variable_number
-    if isempty(varargin{2*i-1}.data)
-        varargin{2*i-1}.data = varargin{2*i-1}.reset_data(varargin{2*i-1}.dim * varargin{2*i}.basis_number);
-        varargin{2*i-1}.data_number = size(varargin{2*i-1}.data, 1);
+    if isempty(varargin{2*i-1}.data_)
+        varargin{2*i-1}.data_ = zeros(varargin{2*i-1}.dim_ * varargin{2*i}.basis_number, 1);
+        varargin{2*i-1}.data_number_ = size(varargin{2*i-1}.data_, 1);
     end
     
-    variable_dof_number(i) = varargin{2*i-1}.data_number;
+    variable_dof_number(i) = varargin{2*i-1}.data_number_;
 end
 
 % Total dof number
 dof_manager.total_dof_number = sum(variable_dof_number);
 
 % Get variable sequence
-dof_manager.variable_sequence = @ (variable) VariableSequence(variable.name, dof_manager.variable_table);
+dof_manager.variable_sequence = @ (variable) VariableSequence(variable.name_, dof_manager.variable_table);
 
 % Map non_zero_basis_id of some variable to their global id in dof_manager
-dof_manager.global_id = @ (non_zero_basis_id, variable) GlobalId(non_zero_basis_id, variable.dim) + ... 
+dof_manager.global_id = @ (non_zero_basis_id, variable) GlobalId(non_zero_basis_id, variable.dim_) + ... 
                                             sum(variable_dof_number(1:dof_manager.variable_sequence(variable)-1));
 
 % Get variable data
-dof_manager.get_variable_data = @ (variable) varargin{2*dof_manager.variable_sequence(variable)-1}.data;
+dof_manager.get_variable_data = @ (variable) varargin{2*dof_manager.variable_sequence(variable)-1}.data_;
                                     
 
 
