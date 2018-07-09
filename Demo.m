@@ -20,14 +20,20 @@ u = Variable('displacement', 3, function_space.basis_number);
 
 p = Variable('pressure', 1);
 t = Variable('test', 2);
+
+u.data = (1:u.data_number)';
+
+u_1 = u.data_component(1);
+u_2 = u.data_component(2);
+u_3 = u.data_component(3);
 %% Dof manager
 % [dof_manager, delta_u] = DofManager(delta_u, function_space);
 
 %% Test DOF manager
 [dof_manager, u, p, t] = DofManager(u, function_space, p, function_space, t, function_space);
-u_order = dof_manager.variable_sequence(u);
-p_order = dof_manager.variable_sequence(p);
-t_order = dof_manager.variable_sequence(t);
+u_sequence = dof_manager.variable_sequence(u);
+p_sequence = dof_manager.variable_sequence(p);
+t_sequence = dof_manager.variable_sequence(t);
 
 u_global_id = dof_manager.global_id([1 3 6 8], u);
 p_global_id = dof_manager.global_id([6 2 7], p);
