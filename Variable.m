@@ -3,15 +3,22 @@ function [ variable ] = Variable( name, dim, varargin )
 %   Detailed explanation goes here
 variable.name = name;
 variable.dim = dim;
-variable.reset_data = @(N) zeros(N, 1);
 
 if(isempty(varargin))
-    variable.data = [];
+    data = [];
+    variable.data = data;
     variable.data_number = 0;
+    variable.data_component = @ (component_dim) data;
 else
-    variable.data = variable.reset_data(variable.dim * varargin{1});
+    data = zeros(variable.dim * varargin{1}, 1);
+    variable.data = data;
     variable.data_number = size(variable.data, 1);
+    variable.data_component= @ (component_dim) data_component(component_dim, variable.data, variable.dim); 
 end
 
 end
 
+function data_out = data_component(component_dim, data, dim)
+data_number = size(data,1);
+data_out = data(component_dim:dim:data_number);
+end
