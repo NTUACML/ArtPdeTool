@@ -4,6 +4,7 @@ classdef MeshDomainDataClass < handle
     
     properties
         % fundamental data
+        type_ = 'Mesh'
         name_                    % mesh name
         dim_                     % mesh dimension
         num_node_                % number of node data
@@ -32,12 +33,19 @@ classdef MeshDomainDataClass < handle
         
         % generate domain data by name
         function status = generate(this, name)
+            % return status
+            status = logical(true);
+            
             switch name
                 case 'UnitCube'
                     this.name_ = 'UnitCube';
                     UnitCube(this);
+                case 'StraightLine'
+                    this.name_ = 'StraightLine';
+                    StraightLine(this);
                 otherwise
-                    disp('Error! Check mesh name!');
+                    disp('Error! Check mesh input name!');
+                    status = logical(false);
             end
             
             % get generated data number
@@ -45,14 +53,12 @@ classdef MeshDomainDataClass < handle
             this.num_element_ = size(this.connectivities_, 1);
             this.num_boundary_element_ = size(this.boundary_connectivities_, 1);
             this.num_boundary_patch_ = size(this.boundary_patch_contents_, 1);
-            
-            % return status
-            status = logical(true);
         end
     end
     
     methods (Access = private)
         UnitCube(this);
+        StraightLine(this);
     end
 end
 
