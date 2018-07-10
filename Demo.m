@@ -2,7 +2,14 @@ function Demo
 clc; clear; close all;
 
 %% Generate domain mesh
-domain = DomainBuilder('Mesh');
+domain_old = DomainBuilder('Mesh');
+addpath domain
+
+domain_builder = DomainBuilderClass('Mesh');
+domain_builder.generateData('UnitCube');
+domain = domain_builder.getDomainData();
+
+clearvars domain_builder;
 
 %% Generate integration rule
 integration_rule = IntegrationRule(domain);
