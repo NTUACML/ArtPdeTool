@@ -2,14 +2,14 @@ function DemoHeatConduction
 clc; clear; close all;
 
 %% Generate domain mesh
-addpath domain
+addpath Domain
 
 domain_builder = DomainBuilderClass('Mesh');
 domain_builder.generateData('UnitCube');
 domain = domain_builder.getDomainData();
 
-domain_builder.generateData('StraightLine');
-domain_1 = domain_builder.getDomainData();
+% domain_builder.generateData('StraightLine');
+% domain_1 = domain_builder.getDomainData();
 
 if(domain_builder.status_)
     clearvars domain_builder;
