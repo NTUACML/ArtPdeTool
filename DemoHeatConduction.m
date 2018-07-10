@@ -2,25 +2,32 @@ function DemoHeatConduction
 clc; clear; close all;
 
 %% Generate domain mesh
-domain = DomainBuilder('Mesh', 'StraightLine');
+% domain = DomainBuilder('Mesh', 'StraightLine');
+addpath domain
 
-%% Generate integration rule
-integration_rule = IntegrationRule(domain);
+domain_builder = DomainBuilderClass('Mesh');
+domain_builder.generateData('UnitCube');
+domain = domain_builder.getDomainData();
 
-%% Generate function space
-function_space = FunctionSpace(domain);
+clearvars domain_builder;
 
-%% Define material property
-material = MaterialBank('Diffusivity');
-
-%% Define variables
-dof_number = 1;
-
-delta_T = Variable('temperature_increment', dof_number);
-T = Variable('temperature_total', dof_number, domain.node_number);
-
-%% Dof manager
-[dof_manager_T, delta_T] = DofManager(delta_T, function_space);
+% %% Generate integration rule
+% integration_rule = IntegrationRule(domain);
+% 
+% %% Generate function space
+% function_space = FunctionSpace(domain);
+% 
+% %% Define material property
+% material = MaterialBank('Diffusivity');
+% 
+% %% Define variables
+% dof_number = 1;
+% 
+% delta_T = Variable('temperature_increment', dof_number);
+% T = Variable('temperature_total', dof_number, domain.node_number);
+% 
+% %% Dof manager
+% [dof_manager_T, delta_T] = DofManager(delta_T, function_space);
 
 %% Boundary & Initial conditions
 
