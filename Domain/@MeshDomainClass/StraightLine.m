@@ -6,7 +6,10 @@ function StraightLine( this )
     
     this.dim_ = 1;
     this.node_data_ = linspace(0, 1, num_element + 1)';
-    this.connectivities_ = [(1:num_element)', (2:num_element+1)'];
+    this.connectivities_ = cell(num_element,1);
+    for i = 1:num_element
+        this.connectivities_{i,1} = [i, i+1];
+    end
     temp_element_type(1:num_element,1) = ElementType.Line2;
     this.element_types_ = temp_element_type;
     this.boundary_connectivities_ = {1;num_element+1};

@@ -3,9 +3,9 @@ classdef DomainBuilderClass < handle
     %   Detailed explanation goes here
     
     properties
-        type_              % domain type
-        data_              % domain real data
-        status_  % domain status
+        type_	% domain type
+        data_	% domain real data
+        status_	% domain status
     end
     
     methods
@@ -35,7 +35,7 @@ classdef DomainBuilderClass < handle
             % switching domain type and constructing each domain data class
             switch this.type_
                 case 'Mesh'
-                    this.data_ = MeshDomainDataClass();
+                    this.data_ = MeshDomainClass();
                     this.status_ = logical(true);
                 case 'ScatterPoint' % TODO
                     this.status_ = logical(false);
