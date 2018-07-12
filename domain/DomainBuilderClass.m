@@ -3,31 +3,24 @@ classdef DomainBuilderClass < handle
     %   Detailed explanation goes here
     
     properties
-        type_      % domain type
-        name_      % domain name
-        data_      % domain real data
-        status_    % domain status (1: domain data generated; 0: none)
+        type_	% domain type
+        data_	% domain real data
+        status_	% domain status
     end
     
     methods
         % constructor
         function this = DomainBuilderClass(type)
             this.type_ = type;
-            this.status_ = logical(false);
-            % switching domain type and constructing each domain data class
-            switch type
-                case 'Mesh'
-                    this.data_ = MeshDomainDataClass();
-                case 'ScatterPoint' % TODO
-                case 'NURBS' % TODO KAVY
-                otherwise
-                    disp('Error! Check type!');
-            end
+            this.status_ = logical(true);
         end
         
         % generate data
         function generateData(this, name)
-            this.status_ = this.data_.generate(name);
+               generateDomainDataByType(this);
+               if(this.status_ == logical(true) )
+                    this.status_ = this.data_.generate(name);
+               end
         end
         
         % get domain data
@@ -35,6 +28,24 @@ classdef DomainBuilderClass < handle
             domain_data = this.data_;
         end
         
+    end
+    
+    methods (Access = private)
+        function generateDomainDataByType(this)
+            % switching domain type and constructing each domain data class
+            switch this.type_
+                case 'Mesh'
+                    this.data_ = MeshDomainClass();
+                    this.status_ = logical(true);
+                case 'ScatterPoint' % TODO
+                    this.status_ = logical(false);
+                case 'NURBS' % TODO KAVY
+                    this.status_ = logical(false);
+                otherwise
+                    disp('Error! check domain input type!');
+                    this.status_ = logical(false);
+            end
+        end 
     end
     
 end
