@@ -10,7 +10,7 @@ domain_builder.generateData('UnitCube');
 domain = domain_builder.getDomainData();
 
 if(domain_builder.status_)
-    clearvars domain_builder;
+    clear domain_builder;
 end
 
 % %% Generate integration rule
@@ -24,7 +24,7 @@ function_space_builder.generateData();
 function_space = function_space_builder.getFunctionSpaceData();
 
 if(function_space_builder.status_)
-    clearvars function_space_builder;
+    clear function_space_builder;
 end
 
 %% Demo for function space in mesh type method
