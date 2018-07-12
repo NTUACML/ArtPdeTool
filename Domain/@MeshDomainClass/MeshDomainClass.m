@@ -1,10 +1,9 @@
-classdef MeshDomainDataClass < handle
+classdef MeshDomainClass < handle
     %MESHDOMAINDATA Summary of this class goes here
     %   Detailed explanation goes here
     
     properties
         % fundamental data
-        type_ = 'Mesh'
         name_                    % mesh name
         dim_                     % mesh dimension
         num_node_                % number of node data
@@ -23,7 +22,7 @@ classdef MeshDomainDataClass < handle
     
     methods
         % constructor
-        function this = MeshDomainDataClass()
+        function this = MeshDomainClass()
             disp('Mesh data constructed!')
             this.num_node_ = 0;
             this.num_element_ = 0;
