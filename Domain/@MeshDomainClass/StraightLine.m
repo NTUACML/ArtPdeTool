@@ -7,15 +7,18 @@ function StraightLine( this )
     this.dim_ = 1;
     this.node_data_ = linspace(0, 1, num_element + 1)';
     this.connectivities_ = cell(num_element,1);
+    this.element_types_ = cell(size(this.connectivities_, 1), 1);
     for i = 1:num_element
         this.connectivities_{i,1} = [i, i+1];
+        this.element_types_{i} = ElementType.Line2;
     end
-    temp_element_type(1:num_element,1) = ElementType.Line2;
-    this.element_types_ = temp_element_type;
     this.boundary_connectivities_ = {1;num_element+1};
-    temp_element_type(1:2,1) = ElementType.Point1;
-    this.boundary_element_types_ = temp_element_type;
+    this.boundary_element_types_ = cell(size(this.boundary_connectivities_, 1), 1);
+    for i = 1 : size(this.boundary_connectivities_, 1)
+        this.boundary_element_types_{i} = ElementType.Point1;
+    end
 
-    disp('Generated mesh data : StraightLine!');
+    disp('Domain <Mesh type> : ');
+    disp('>> generated mesh data : StraightLine!')
 end
 

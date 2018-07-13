@@ -8,13 +8,14 @@ function status = generateMeshFunctionSpace( this, varargin )
     % define basis function in the problem.
     temp_basis(1:this.num_basis_, 1) = BasisClass();
     this.basis_ = temp_basis;
-    
+    this.basis_ = cell(this.num_basis_, 1);
     for i = 1 : this.num_basis_
+        this.basis_{i} = BasisClass();
         % basis id.
-        this.basis_(i).id_ = i;
+        this.basis_{i}.id_ = i;
         % feature point in basis function.
         % isoparametric element case is node position.
-        this.basis_(i).data_ = @() this.domain_data_.node_data_(i,:);
+        this.basis_{i}.data_ = @() this.domain_data_.node_data_(i,:);
     end
     
     % pre-calculate mesh type non_zero_basis and evaluate_basis methods
@@ -26,8 +27,11 @@ function status = generateMeshFunctionSpace( this, varargin )
         this.mesh_non_zero_basis_{i} = @() this.domain_data_.connectivities_{i};
         % mapping element type to shape function handle function.
         this.mesh_evaluate_basis_{i} ...
-            = this.MappingMeshType2ShapeFunction(this.domain_data_.element_types_(i));
+            = this.MappingMeshType2ShapeFunction(this.domain_data_.element_types_{i});
     end
+    
+    disp('FunctionSpace <Mesh type> :');
+    disp('>> generated function space data !')
 
     status = logical(true);
 end

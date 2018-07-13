@@ -16,8 +16,8 @@ classdef DomainBuilderClass < handle
         end
         
         % generate data
-        function generateData(this, name)
-               generateDomainDataByType(this);
+        function generateData(this, name, varargin)
+               this.status_ = generateDomainDataByType(this);
                if(this.status_ == logical(true) )
                     this.status_ = this.data_.generate(name);
                end
@@ -31,19 +31,19 @@ classdef DomainBuilderClass < handle
     end
     
     methods (Access = private)
-        function generateDomainDataByType(this)
+        function status = generateDomainDataByType(this)
             % switching domain type and constructing each domain data class
             switch this.type_
                 case 'Mesh'
                     this.data_ = MeshDomainClass();
-                    this.status_ = logical(true);
+                    status = logical(true);
                 case 'ScatterPoint' % TODO
-                    this.status_ = logical(false);
+                    status = logical(false);
                 case 'NURBS' % TODO KAVY
-                    this.status_ = logical(false);
+                    status = logical(false);
                 otherwise
-                    disp('Error! check domain input type!');
-                    this.status_ = logical(false);
+                    disp('Error (DomainBuilder)! check domain input type!');
+                    status = logical(false);
             end
         end 
     end

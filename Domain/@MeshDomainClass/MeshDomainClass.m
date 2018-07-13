@@ -23,7 +23,7 @@ classdef MeshDomainClass < handle
     methods
         % constructor
         function this = MeshDomainClass()
-            disp('Mesh data constructed!')
+            disp('Domain <Mesh type> : created!')
             this.num_node_ = 0;
             this.num_element_ = 0;
             this.num_boundary_element_ = 0;

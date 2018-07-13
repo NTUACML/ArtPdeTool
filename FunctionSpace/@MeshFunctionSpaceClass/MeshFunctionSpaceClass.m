@@ -12,7 +12,7 @@ classdef MeshFunctionSpaceClass < FunctionSpaceClass
         function this = MeshFunctionSpaceClass(domain)
             % Call base class constructor
             this = this@FunctionSpaceClass(domain);
-            disp('FunctionSpace<Mesh type> : created!');
+            disp('FunctionSpace <Mesh type> : created!');
         end
         
         % !!!(overried function)!!!
