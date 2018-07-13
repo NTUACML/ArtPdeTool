@@ -36,7 +36,7 @@ classdef FunctionSpaceBuilderClass  < handle
                 this.data_ = MeshFunctionSpaceClass(this.domain_);
                 this.status_ = logical(true);
             else
-                disp('Error! FunctionSpace input doamin type error!');
+                disp('Error (FunctionSpaceBuilder)! FunctionSpace input doamin type error!');
                 this.status_ = logical(false);
             end
         end  
