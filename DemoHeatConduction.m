@@ -5,6 +5,7 @@ clc; clear; close all;
 addpath Domain
 addpath FunctionSpace
 addpath IntegrationRule
+addpath Variable
 
 %% Generate domain mesh
 domain_builder = DomainBuilderClass('Mesh');
@@ -37,89 +38,56 @@ if(function_space_builder.status_)
     clear function_space_builder;
 end
 
-%% Demo for FEM integration %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% loop for all the integrational unit (element)
-for ele_id = 1 : integration_rule.num_int_unit_
-    % quarry the integrational unit (gauss quadrature data) and the jacobian 
-    % calculating information (Jacobian matrix (F) and which determinant) 
-    % in each element. 
-    [int_unit, evaluate_jacobian] = integration_rule.quarry(ele_id);
-    
-    % quarry the non_zero_basis (for matrix assembler) and the calculating 
-    % method for basis function (shape function and which derivatives)
-    % in each element. 
-    [non_zero_basis, evaluate_basis] = function_space.quarry(ele_id);
-    
-    % get gauss quadrature rule for each isoparametric element.
-    [num_gauss, gauss_pt, gauss_w] = int_unit();
-    
-    % get global assembler id and local stifness matrix size
-    non_zero_basis_id = non_zero_basis();
-    
-    % mass matrix 
-    mass_mat = zeros(length(non_zero_basis_id));
-    
-    % loop gauss point (calculating data in gauss position)
-    for gauss_id = 1 : num_gauss
-        xq = gauss_pt(gauss_id,:);
-        w = gauss_w(gauss_id);
-        
-        %%%%%%%%% Assember Part (Start) %%%%%%%%%
-        % get basis function and which derivatives at gauss point.
-        [N, dN_dxi] = evaluate_basis(xq);
-        % get mapping matrix (F) and jacobian.
-        [dx_dxi, J] = evaluate_jacobian(dN_dxi);
-        % local mass assembing.
-        mass_mat = mass_mat + (N'*N) .* (w * J);
-        %%%%%%%%% Assember Part (End) %%%%%%%%%
-    end
-    
-end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% % Quarry unit(Integral unit in mesh type method)
-% function_space_quarry_unit = 1; 
-% 
-% % Evaluated position in parameter coordinates (parent coordiantes)
-% evaluate_xi_position = [0, 0, 0]; % For 'UnitCube' domain
-% % evaluate_xi_position = [0]; % For 'StraightLine' domain
-% 
-% % Quarry function space for the infomation of non_zero_basis within quarry  
-% % unit and which evaluational methods.
-% [non_zero_basis, evaluate_basis] = function_space.quarry...
-%                                         (function_space_quarry_unit);
-% 
-% % Get non-zero basis id in the quarry unit.
-% non_zero_basis_id = non_zero_basis();
-% 
-% % Calculated shape function and derivatives on the position.
-% % (parameter coordinates or parent coordiantes)
-% [N, dN_dxi] = evaluate_basis(evaluate_xi_position);
-% 
-% % show results
-% disp(non_zero_basis_id);
-% disp(N);
-% disp(dN_dxi);
-% 
-% % P.S.: Basis function information and feature point.
-% disp(['Total basis number in domain: ', int2str(function_space.num_basis_)])
-% disp(['The first basis info: Basis Id ->', int2str(function_space.basis_{1}.id_)...
-%       ' , Feature point ->']);
-% disp(function_space.basis_{1}.data_())
-% % %%%%%%%%%%%%%%%%
-
+% %% Demo for FEM integration %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % loop for all the integrational unit (element)
+% for ele_id = 1 : integration_rule.num_int_unit_
+%     % quarry the integrational unit (gauss quadrature data) and the jacobian 
+%     % calculating information (Jacobian matrix (F) and which determinant) 
+%     % in each element. 
+%     [int_unit, evaluate_jacobian] = integration_rule.quarry(ele_id);
+%     
+%     % quarry the non_zero_basis (for matrix assembler) and the calculating 
+%     % method for basis function (shape function and which derivatives)
+%     % in each element. 
+%     [non_zero_basis, evaluate_basis] = function_space.quarry(ele_id);
+%     
+%     % get gauss quadrature rule for each isoparametric element.
+%     [num_gauss, gauss_pt, gauss_w] = int_unit();
+%     
+%     % get global assembler id and local stifness matrix size
+%     non_zero_basis_id = non_zero_basis();
+%     
+%     % mass matrix 
+%     mass_mat = zeros(length(non_zero_basis_id));
+%     
+%     % loop gauss point (calculating data in gauss position)
+%     for gauss_id = 1 : num_gauss
+%         xq = gauss_pt(gauss_id,:);
+%         w = gauss_w(gauss_id);
+%         
+%         %%%%%%%%% Assember Part (Start) %%%%%%%%%
+%         % get basis function and which derivatives at gauss point.
+%         [N, dN_dxi] = evaluate_basis(xq);
+%         % get mapping matrix (F) and jacobian.
+%         [dx_dxi, J] = evaluate_jacobian(dN_dxi);
+%         % local mass assembing.
+%         mass_mat = mass_mat + (N'*N) .* (w * J);
+%         %%%%%%%%% Assember Part (End) %%%%%%%%%
+%     end
+%     
+% end
 
 
 % 
 % %% Define material property
 % material = MaterialBank('Diffusivity');
 % 
-% %% Define variables
-% dof_number = 1;
-% 
-% delta_T = Variable('temperature_increment', dof_number);
-% T = Variable('temperature_total', dof_number, domain.node_number);
+%% Define variables
+dof_number = 1;
+
+delta_T = VariableClass('temperature_increment', dof_number);
+T = VariableClass('temperature_total', dof_number, function_space);
+
 % 
 % %% Dof manager
 % [dof_manager_T, delta_T] = DofManager(delta_T, function_space);
