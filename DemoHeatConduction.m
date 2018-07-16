@@ -68,7 +68,7 @@ for ele_id = 1 : integration_rule.num_int_unit_
         % get basis function and which derivatives at gauss point.
         [N, dN_dxi] = evaluate_basis(xq);
         % get mapping matrix (F) and jacobian.
-        [F, J] = evaluate_jacobian(dN_dxi);
+        [dx_dxi, J] = evaluate_jacobian(dN_dxi);
         % local mass assembing.
         mass_mat = mass_mat + (N'*N) .* (w * J);
         %%%%%%%%% Assember Part (End) %%%%%%%%%
