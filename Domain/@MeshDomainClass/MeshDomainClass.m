@@ -17,7 +17,7 @@ classdef MeshDomainClass < handle
           
         % specific data
         num_boundary_patch_      % number of boundary patch
-        boundary_patch_contents_  % boundary patch contents
+        boundary_patch_  % boundary patch contents
     end
     
     methods
@@ -51,7 +51,7 @@ classdef MeshDomainClass < handle
             this.num_node_ = size(this.node_data_, 1);
             this.num_element_ = size(this.connectivities_, 1);
             this.num_boundary_element_ = size(this.boundary_connectivities_, 1);
-            this.num_boundary_patch_ = size(this.boundary_patch_contents_, 1);
+            this.num_boundary_patch_ = size(this.boundary_patch_, 1);
         end
     end
     
