@@ -21,7 +21,7 @@ classdef DofManagerClass
             this.variable_data_number_ = zeros(1, this.variable_number_);
             for i = 1:this.variable_number_
                 if isempty(varargin{2*i-1}.data_)
-                    this.variable_data_number_(i) = varargin{2*i-1}.dim_ * varargin{2*i}.basis_number;
+                    this.variable_data_number_(i) = varargin{2*i-1}.dim_ * varargin{2*i}.num_basis_;
                 else
                     this.variable_data_number_(i) = varargin{2*i-1}.data_number_; 
                 end
