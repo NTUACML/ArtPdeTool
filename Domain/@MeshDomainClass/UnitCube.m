@@ -9,39 +9,49 @@ function UnitCube(this)
     this.element_types_{1} = ElementType.Hexa8;
     this.boundary_connectivities_ = {[1 2 3 4];[5 6 7 8];[1 2 6 5];[2 3 7 6];[3 4 8 7];[1 4 8 5]};
     this.boundary_element_types_ = cell(size(this.boundary_connectivities_, 1), 1);
-    this.boundary_patch_ = cell(size(this.boundary_connectivities_, 1), 2);
+%     this.boundary_patch_ = cell(size(this.boundary_connectivities_, 1), 2);
     for i = 1 : size(this.boundary_connectivities_, 1)
         this.boundary_element_types_{i} = ElementType.Quad4;
     end
     % Patch definition
-    this.boundary_patch_{1,1} = 'Down_Side'; % Patch name
-    this.boundary_patch_{1,2} = 'boundary_element'; % Patch type
-    this.boundary_patch_{1,3} = [1]; % Patch unit id
-   
-    this.boundary_patch_{2,1} = 'Up_Side';
-    this.boundary_patch_{2,2} = 'boundary_element';
-    this.boundary_patch_{2,3} = [2];
+    % TODO consider move boundary_patch data to BoundaryConditionClass
+    % 2018/7/16 Jeting
+    this.boundary_patch_ = cell(7,1);
     
-    this.boundary_patch_{3,1} = 'Rear_Side';
-    this.boundary_patch_{3,2} = 'boundary_element';
-    this.boundary_patch_{3,3} = [3];
+    patch_unit.name = 'Down_Side';
+    patch_unit.type = 'boundary_element';
+    patch_unit.id = [1];
+    this.boundary_patch_{1} = patch_unit;
     
-    this.boundary_patch_{4,1} = 'Right_Side';
-    this.boundary_patch_{4,2} = 'boundary_element';
-    this.boundary_patch_{4,3} = [4];
+    patch_unit.name = 'Up_Side';
+    patch_unit.type = 'boundary_element';
+    patch_unit.id = [2];
+    this.boundary_patch_{2} = patch_unit;
     
-    this.boundary_patch_{5,1} = 'Front_Side';
-    this.boundary_patch_{5,2} = 'boundary_element';
-    this.boundary_patch_{5,3} = [5];
+    patch_unit.name = 'Rare_Side';
+    patch_unit.type = 'boundary_element';
+    patch_unit.id = [3];
+    this.boundary_patch_{3} = patch_unit;
     
-    this.boundary_patch_{6,1} = 'Left_Side';
-    this.boundary_patch_{6,2} = 'boundary_element';
-    this.boundary_patch_{6,3} = [6];
+    patch_unit.name = 'Right_Side';
+    patch_unit.type = 'boundary_element';
+    patch_unit.id = [4];
+    this.boundary_patch_{4} = patch_unit;
     
-    this.boundary_patch_{7,1} = 'Origin';
-    this.boundary_patch_{7,2} = 'point';
-    this.boundary_patch_{7,3} = [1];
+    patch_unit.name = 'Front_Side';
+    patch_unit.type = 'boundary_element';
+    patch_unit.id = [5];
+    this.boundary_patch_{5} = patch_unit;
     
+    patch_unit.name = 'Left_Side';
+    patch_unit.type = 'boundary_element';
+    patch_unit.id = [6];
+    this.boundary_patch_{6} = patch_unit;
+    
+    patch_unit.name = 'G_Point';
+    patch_unit.type = 'point';
+    patch_unit.id = [1];
+    this.boundary_patch_{7} = patch_unit; 
     
     disp('Domain <Mesh type> : ');
     disp('>> generated mesh data : UnitCube!')

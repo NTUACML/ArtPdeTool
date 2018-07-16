@@ -1,21 +1,37 @@
 function Demo
 clc; clear; close all;
 
-%% Generate domain mesh
-domain_old = DomainBuilder('Mesh');
-addpath domain
+%% Include package
+addpath Domain
+addpath FunctionSpace
+addpath IntegrationRule
 
+%% Generate domain mesh
 domain_builder = DomainBuilderClass('Mesh');
 domain_builder.generateData('UnitCube');
 domain = domain_builder.getDomainData();
 
-clearvars domain_builder;
+if(domain_builder.status_)
+    clear domain_builder;
+end
 
 %% Generate integration rule
-integration_rule = IntegrationRule(domain);
+integration_rule_builder = IntegrationRuleBuilderClass('Mesh');
+integration_rule_builder.generateData(domain); % isoparametric 
+integration_rule = integration_rule_builder.getIntegrationRuleData();
+
+if(integration_rule_builder.status_)
+    clear integration_rule_builder;
+end
 
 %% Generate function space
-function_space = FunctionSpace(domain);
+function_space_builder = FunctionSpaceBuilderClass(domain);
+function_space_builder.generateData();
+function_space = function_space_builder.getFunctionSpaceData();
+
+if(function_space_builder.status_)
+    clear function_space_builder;
+end
 
 %% Define material property
 material = MaterialBank('Mooney');
@@ -23,7 +39,7 @@ material = MaterialBank('Mooney');
 %% Define variables
 % One can initialize data directly or theough dof_manager
 % delta_u = VariableClass('displacement_increment', 3);
-u = VariableClass('displacement', 3, function_space.basis_number);
+u = VariableClass('displacement', 3, function_space.num_basis_);
 
 p = VariableClass('pressure', 1);
 t = VariableClass('test', 2);
@@ -56,8 +72,52 @@ u3_data = dof_manager.get_variable_data(u,3);
 p_data = dof_manager.get_variable_data(p,1);
 t1_data = dof_manager.get_variable_data(t,1);
 t2_data = dof_manager.get_variable_data(t,2);
-%% Boundary & Initial conditions
-displacement = zeros(domain.node_number, domain.dim);
+%% Boundary conditions
+
+% Declare bc container
+bc_test = BoundaryConditionClass;
+
+% Describe boundary condition 'Dirichlet'
+% coefficient u = value
+type = 'Dirichlet';
+bc_unit = BoundaryConditionUnitClass(domain.boundary_patch_{1}, type, u);
+bc_unit.set_prescribed_condition_dimention('1'); % means u_1 = value
+bc_unit.set_coefficient(coefficient);
+bc_unit.set_value(value);
+
+% Push back boundary condition
+bc_test.add_boundary_condition(bc_unit);
+
+type = 'Dirichlet';
+bc_unit = BoundaryConditionUnitClass(domain.boundary_patch_{4}, type, u);
+bc_unit.set_prescribed_condition_dimention('all'); % means u = value, here dim(value) = dim(variable)
+bc_unit.set_coefficient(coefficient);
+bc_unit.set_value(value);
+
+% Push back boundary condition
+bc_test.add_boundary_condition(bc_unit);
+
+% Describe boundary condition 'Neumann'
+% coefficient du/dn = value
+type = 'Neumann';
+bc_unit = BoundaryConditionUnitClass(domain.boundary_patch_{2}, type, u);
+bc_unit.set_coefficient(coefficient);
+bc_unit.set_value(value);
+
+% Push back boundary condition
+bc_test.add_boundary_condition(bc_unit);
+
+% Describe boundary condition 'Robin'
+% coefficient(1) u + coefficient(2) du/dn = value
+type = 'Robin';
+bc_unit = BoundaryConditionUnitClass(domain.boundary_patch_{3}, type, u);
+bc_unit.set_coefficient(coefficient);
+bc_unit.set_value(value);
+
+% Push back boundary condition
+bc_test.add_boundary_condition(bc_unit);
+
+
 
 % u1 = 0 for Face 6
 % u2 = 0 for Face 3
