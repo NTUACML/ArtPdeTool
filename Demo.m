@@ -8,8 +8,16 @@ addpath IntegrationRule
 
 %% Generate domain mesh
 domain_builder = DomainBuilderClass('Mesh');
-domain_builder.generateData('UnitCube');
-domain = domain_builder.getDomainData();
+domain_builder.generateData('StraightLine');
+domain_mesh_type = domain_builder.getDomainData();
+
+if(domain_builder.status_)
+    clear domain_builder;
+end
+
+domain_builder = DomainBuilderClass('ScatterPoint');
+domain_builder.generateData('StraightLine');
+domain_point_type = domain_builder.getDomainData();
 
 if(domain_builder.status_)
     clear domain_builder;

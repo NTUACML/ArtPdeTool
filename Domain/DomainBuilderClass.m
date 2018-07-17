@@ -37,8 +37,9 @@ classdef DomainBuilderClass < handle
                 case 'Mesh'
                     this.data_ = MeshDomainClass();
                     status = logical(true);
-                case 'ScatterPoint' % TODO
-                    status = logical(false);
+                case 'ScatterPoint' 
+                    this.data_ = PointDomainClass();
+                    status = logical(true);
                 case 'NURBS' % TODO KAVY
                     status = logical(false);
                 otherwise
