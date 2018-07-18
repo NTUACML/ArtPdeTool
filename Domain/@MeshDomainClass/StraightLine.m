@@ -19,12 +19,16 @@ function StraightLine( this )
         this.boundary_element_types_{i} = ElementType.Point1;
     end
     
-    this.boundary_patch_{1,1} = 'Front_Side'; % Name for patch
-    this.boundary_patch_{1,2} = [1]; % Boundary element  id
+    patch_unit.name = 'Left_Point';
+    patch_unit.type = 'point';
+    patch_unit.id = [1];
+    this.boundary_patch_{1} = patch_unit;
     
-    this.boundary_patch_{2,1} = 'Rear_Side'; % Name for patch
-    this.boundary_patch_{2,2} = [2]; % Boundary element  id
-
+    patch_unit.name = 'Right_Point';
+    patch_unit.type = 'point';
+    patch_unit.id = [this.num_node_];
+    this.boundary_patch_{2} = patch_unit;
+    
     disp('Domain <Mesh type> : ');
     disp('>> generated mesh data : StraightLine!')
 end
