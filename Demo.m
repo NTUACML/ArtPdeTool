@@ -5,6 +5,7 @@ clc; clear; close all;
 addpath Domain
 addpath FunctionSpace
 addpath IntegrationRule
+addpath Variable
 
 %% Generate domain mesh
 domain_builder = DomainBuilderClass('Mesh');
@@ -47,12 +48,12 @@ material = MaterialBank('Mooney');
 %% Define variables
 % One can initialize data directly or theough dof_manager
 % delta_u = VariableClass('displacement_increment', 3);
-u = VariableClass('displacement', 3, function_space.num_basis_);
+u = VariableClass('displacement', 3, function_space);
 
 p = VariableClass('pressure', 1);
 t = VariableClass('test', 2);
 
-u.data_ = (1:u.data_number_)';
+u.data_ = (1:u.num_data_)';
 
 u_1 = u.data_component(1);
 u_2 = u.data_component(2);
