@@ -5,15 +5,15 @@ classdef VariableClass < handle
         name_           % variable name
         num_data_       % total variable data number
         data_           % variable data
-        dof_            % variable degree of freedom
+        variable_dof_   % variable degree of freedom
     end
     
     methods
         % constructor
-        function this = VariableClass(name, dof, varargin)
+        function this = VariableClass(name, variable_dof, varargin)
             % fundamental variable data
             this.name_ = name;
-            this.dof_ = dof;
+            this.variable_dof_ = variable_dof;
             this.data_ = [];
             this.num_data_ = 0;
             
@@ -38,27 +38,27 @@ classdef VariableClass < handle
         
         % function to obtaine data component
         function data_out = data_component(this, component_dof)
-            data_out = this.data_(component_dof:this.dof_:this.num_data_);
+            data_out = this.data_(component_dof:this.variable_dof_:this.num_data_);
         end
     end
     
     methods (Access = private)
         function initByFunctionSpace(this, function_space)
-            this.num_data_ = this.dof_ * function_space.num_basis_;
+            this.num_data_ = this.variable_dof_ * function_space.num_basis_;
             this.data_ = zeros(this.num_data_, 1);
         end
         
         function initByInteger(this, int_number)
-            this.num_data_ = this.dof_ * int_number;
+            this.num_data_ = this.variable_dof_ * int_number;
             this.data_ = zeros(this.num_data_, 1);
         end
         
         function initShowDetail(this)
             disp(['Variable <', this.name_, '> : created!']);
-            if(this.dof_ == 1)
+            if(this.variable_dof_ == 1)
                 disp('>> Scalar variable initialized')
             else
-                disp(['>> Vector variable initialized with DOF = ', num2str(this.dof_)])
+                disp(['>> Vector variable initialized with DOF = ', num2str(this.variable_dof_)])
             end
         end
     end
