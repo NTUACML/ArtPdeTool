@@ -21,9 +21,9 @@ classdef DofManagerClass
             this.variable_data_number_ = zeros(1, this.variable_number_);
             for i = 1:this.variable_number_
                 if isempty(varargin{2*i-1}.data_)
-                    this.variable_data_number_(i) = varargin{2*i-1}.dim_ * varargin{2*i}.num_basis_;
+                    this.variable_data_number_(i) = varargin{2*i-1}.variable_dof_ * varargin{2*i}.num_basis_;
                 else
-                    this.variable_data_number_(i) = varargin{2*i-1}.data_number_; 
+                    this.variable_data_number_(i) = varargin{2*i-1}.num_data_; 
                 end
             end
             
@@ -38,7 +38,7 @@ classdef DofManagerClass
             for i = 1:this.variable_number_
                 if isempty(varargin{i}.data_)
                     varargin{i}.data_ = zeros(this.variable_data_number_(i), 1);
-                    varargin{i}.data_number_ = size(varargin{i}.data_, 1);
+                    varargin{i}.num_data_ = size(varargin{i}.data_, 1);
                 end
             end
             
@@ -57,7 +57,7 @@ classdef DofManagerClass
         
         % Map non_zero_basis_id of some variable to their global id in dof_manager
         function value = global_id(this, non_zero_basis_id, variable)
-            value = GlobalId(non_zero_basis_id, variable.dim_) + ...
+            value = GlobalId(non_zero_basis_id, variable.variable_dof_) + ...
                 sum(this.variable_data_number_(1:this.variable_sequence(variable)-1));
             
         end

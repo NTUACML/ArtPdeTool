@@ -6,6 +6,7 @@ addpath Domain
 addpath FunctionSpace
 addpath IntegrationRule
 addpath Variable
+addpath BoundaryCondition
 
 %% Generate domain mesh
 domain_builder = DomainBuilderClass('Mesh');
@@ -16,17 +17,17 @@ if(domain_builder.status_)
     clear domain_builder;
 end
 
-domain_builder = DomainBuilderClass('ScatterPoint');
-domain_builder.generateData('StraightLine');
-domain_point_type = domain_builder.getDomainData();
-
-if(domain_builder.status_)
-    clear domain_builder;
-end
+% domain_builder = DomainBuilderClass('ScatterPoint');
+% domain_builder.generateData('StraightLine');
+% domain_point_type = domain_builder.getDomainData();
+% 
+% if(domain_builder.status_)
+%     clear domain_builder;
+% end
 
 %% Generate integration rule
 integration_rule_builder = IntegrationRuleBuilderClass('Mesh');
-integration_rule_builder.generateData(domain); % isoparametric 
+integration_rule_builder.generateData(domain_mesh_type); % isoparametric 
 integration_rule = integration_rule_builder.getIntegrationRuleData();
 
 if(integration_rule_builder.status_)
@@ -34,7 +35,7 @@ if(integration_rule_builder.status_)
 end
 
 %% Generate function space
-function_space_builder = FunctionSpaceBuilderClass(domain);
+function_space_builder = FunctionSpaceBuilderClass(domain_mesh_type);
 function_space_builder.generateData();
 function_space = function_space_builder.getFunctionSpaceData();
 
@@ -89,16 +90,16 @@ bc_test = BoundaryConditionClass;
 % Describe boundary condition 'Dirichlet'
 % coefficient u = value
 type = 'Dirichlet';
-bc_unit = BoundaryConditionUnitClass(domain.boundary_patch_{1}, type, u);
+bc_unit = BoundaryConditionUnitClass(domain_mesh_type.boundary_patch_{1}, type, u);
 bc_unit.set_prescribed_condition_dimention('1'); % means u_1 = value
-bc_unit.set_coefficient(coefficient);
-bc_unit.set_value(value);
+bc_unit.set_coefficient(1);
+bc_unit.set_value([]);
 
 % Push back boundary condition
 bc_test.add_boundary_condition(bc_unit);
 
 type = 'Dirichlet';
-bc_unit = BoundaryConditionUnitClass(domain.boundary_patch_{4}, type, u);
+bc_unit = BoundaryConditionUnitClass(domain_mesh_type.boundary_patch_{4}, type, u);
 bc_unit.set_prescribed_condition_dimention('all'); % means u = value, here dim(value) = dim(variable)
 bc_unit.set_coefficient(coefficient);
 bc_unit.set_value(value);
@@ -109,7 +110,7 @@ bc_test.add_boundary_condition(bc_unit);
 % Describe boundary condition 'Neumann'
 % coefficient du/dn = value
 type = 'Neumann';
-bc_unit = BoundaryConditionUnitClass(domain.boundary_patch_{2}, type, u);
+bc_unit = BoundaryConditionUnitClass(domain_mesh_type.boundary_patch_{2}, type, u);
 bc_unit.set_coefficient(coefficient);
 bc_unit.set_value(value);
 
@@ -119,7 +120,7 @@ bc_test.add_boundary_condition(bc_unit);
 % Describe boundary condition 'Robin'
 % coefficient(1) u + coefficient(2) du/dn = value
 type = 'Robin';
-bc_unit = BoundaryConditionUnitClass(domain.boundary_patch_{3}, type, u);
+bc_unit = BoundaryConditionUnitClass(domain_mesh_type.boundary_patch_{3}, type, u);
 bc_unit.set_coefficient(coefficient);
 bc_unit.set_value(value);
 
@@ -133,16 +134,16 @@ bc_test.add_boundary_condition(bc_unit);
 % u3 = 0 for Face 1
 % u1 = lambda for Face 4
 
-lambda = 0.1;
-prescribed_bc = PrescribedDisplacement([], domain.boundary_connectivity(6,:), [1 1 1 1], [0 0 0 0]);
-prescribed_bc = PrescribedDisplacement(prescribed_bc, domain.boundary_connectivity(3,:), [2 2 2 2], [0 0 0 0]);
-prescribed_bc = PrescribedDisplacement(prescribed_bc, domain.boundary_connectivity(1,:), [3 3 3 3], [0 0 0 0]);
-prescribed_bc = PrescribedDisplacement(prescribed_bc, domain.boundary_connectivity(4,:), [1 1 1 1], lambda*[1 1 1 1]);
+% lambda = 0.1;
+% prescribed_bc = PrescribedDisplacement([], domain.boundary_connectivity(6,:), [1 1 1 1], [0 0 0 0]);
+% prescribed_bc = PrescribedDisplacement(prescribed_bc, domain.boundary_connectivity(3,:), [2 2 2 2], [0 0 0 0]);
+% prescribed_bc = PrescribedDisplacement(prescribed_bc, domain.boundary_connectivity(1,:), [3 3 3 3], [0 0 0 0]);
+% prescribed_bc = PrescribedDisplacement(prescribed_bc, domain.boundary_connectivity(4,:), [1 1 1 1], lambda*[1 1 1 1]);
 
 
 
 %% Assembling
-[ residual, tangent_matrix ] = Assembler( integration_rule, function_space, material, dof_manager, displacement );
+% [ residual, tangent_matrix ] = Assembler( integration_rule, function_space, material, dof_manager, displacement );
 
 
 
