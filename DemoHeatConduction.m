@@ -38,44 +38,80 @@ if(function_space_builder.status_)
     clear function_space_builder;
 end
 
-% %% Demo for FEM integration %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% % loop for all the integrational unit (element)
-% for ele_id = 1 : integration_rule.num_int_unit_
-%     % quarry the integrational unit (gauss quadrature data) and the jacobian 
-%     % calculating information (Jacobian matrix (F) and which determinant) 
-%     % in each element. 
-%     [int_unit, evaluate_jacobian] = integration_rule.quarry(ele_id);
-%     
-%     % quarry the non_zero_basis (for matrix assembler) and the calculating 
-%     % method for basis function (shape function and which derivatives)
-%     % in each element. 
-%     [non_zero_basis, evaluate_basis] = function_space.quarry(ele_id);
-%     
-%     % get gauss quadrature rule for each isoparametric element.
-%     [num_gauss, gauss_pt, gauss_w] = int_unit();
-%     
-%     % get global assembler id and local stifness matrix size
-%     non_zero_basis_id = non_zero_basis();
-%     
-%     % mass matrix 
-%     mass_mat = zeros(length(non_zero_basis_id));
-%     
-%     % loop gauss point (calculating data in gauss position)
-%     for gauss_id = 1 : num_gauss
-%         xq = gauss_pt(gauss_id,:);
-%         w = gauss_w(gauss_id);
-%         
-%         %%%%%%%%% Assember Part (Start) %%%%%%%%%
-%         % get basis function and which derivatives at gauss point.
-%         [N, dN_dxi] = evaluate_basis(xq);
-%         % get mapping matrix (F) and jacobian.
-%         [dx_dxi, J] = evaluate_jacobian(dN_dxi);
-%         % local mass assembing.
-%         mass_mat = mass_mat + (N'*N) .* (w * J);
-%         %%%%%%%%% Assember Part (End) %%%%%%%%%
-%     end
-%     
-% end
+%% Demo for FEM integration %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% loop for all the integrational unit (element)
+for ele_id = 1 : integration_rule.num_int_unit_
+    % quarry the integrational unit (gauss quadrature data) and the jacobian 
+    % calculating information (Jacobian matrix (F) and which determinant) 
+    % in each element. 
+    [int_unit, evaluate_jacobian] = integration_rule.quarry(ele_id);
+    
+    % quarry the non_zero_basis (for matrix assembler) and the calculating 
+    % method for basis function (shape function and which derivatives)
+    % in each element. 
+    
+    % Jeting 0724. Here, we can use test and trial space to call function
+    % space, in test space, those basis with zero value at prescribed
+    % Dirichlet boundary will be ignored. 
+    %
+    % Example:
+    % [non_zero_trial, evaluate_trial] = trial_space.quarry(ele_id);
+    % [non_zero_test, evaluate_test] = test_space.quarry(ele_id);
+    %
+    % 'non_zero_test' is a subset of 'non_zero_trial'
+    % However, we do not want to compute those repeated basis function
+    % value. So in practice, we should call 'evaluate_trial' first. 
+    % When we call 'evaluate_test', it does not really compute the basis value. 
+    % It will directly output part of the values we just obtained in
+    % 'evaluate_trial'.
+    % similar idea for 'non_zero_basis'
+    % To do this, one way is that consider test & trial spaces as the
+    % calling interface of the same function space. In other word,
+    % test_space & trial_space will have the same function_space pointer as their member
+    % Hence, if something is modified in trial space, test space can just
+    % simply output the results without re-compute again.
+    [non_zero_basis, evaluate_basis] = function_space.quarry(ele_id);
+    
+    % get gauss quadrature rule for each isoparametric element.
+    [num_gauss, gauss_pt, gauss_w] = int_unit();
+    
+    % get global assembler id and local stifness matrix size
+    non_zero_basis_id = non_zero_basis();
+    
+    % mass matrix 
+    mass_mat = zeros(length(non_zero_basis_id));
+    
+    % loop gauss point (calculating data in gauss position)
+    for gauss_id = 1 : num_gauss
+        xq = gauss_pt(gauss_id,:);
+        w = gauss_w(gauss_id);
+        
+        %%%%%%%%% Assember Part (Start) %%%%%%%%%
+        % get basis function and which derivatives at gauss point.
+        [N, dN_dxi] = evaluate_basis(xq);
+        % get mapping matrix (F) and jacobian.
+        [dx_dxi, J] = evaluate_jacobian(dN_dxi);
+        % local mass assembing.
+        mass_mat = mass_mat + (N'*N) .* (w * J);
+        %%%%%%%%% Assember Part (End) %%%%%%%%%
+        
+        % Jeting 0724
+        % [N_trial, dN_dxi_trial] = evaluate_trial(xq);
+        % [N_test, dN_dxi_test] = evaluate_test(); 
+        % Since this function only ouputs the results computed from 'evaluate_trial'. 
+        % No input argument is necessary.
+        
+        % get mapping matrix (F) and jacobian.
+        % [dx_dxi, J] = evaluate_jacobian(dN_dxi_trial);
+            
+        % directly global mass assembing.
+        % mass_mat(non_zero_test, non_zero_trial) = mass_mat(non_zero_test,
+        % non_zero_trial) + (N_test'*N_trial) .* (w * J);
+        
+        
+    end
+    
+end
 
 
 % 
