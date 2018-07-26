@@ -104,11 +104,20 @@ for ele_id = 1 : integration_rule.num_int_unit_
         % get mapping matrix (F) and jacobian.
         % [dx_dxi, J] = evaluate_jacobian(dN_dxi_trial);
             
-        % directly global mass assembing.
+        % directly global assembing.
         % mass_mat(non_zero_test, non_zero_trial) = mass_mat(non_zero_test,
         % non_zero_trial) + (N_test'*N_trial) .* (w * J);
         
+        % rhs(non_zero_test) += N_test*h; for natural bc
+
+        % Nitsche' method for imposing essential bc
+        % essential_mat(non_zero_test, non_zero_trial) = essential_mat(non_zero_test,
+        % non_zero_trial) + (N_test'*dN_dxi_trial + dN_dxi_test'*N_trial) .* (w * J);
         
+        % strongly imposing essential bc
+        % essential_mat(~non_zero_test, :) = 0;
+        % essential_mat(~non_zero_test, ~non_zero_test) = 1;
+        % rhs(~non_zero_test) = g;
     end
     
 end

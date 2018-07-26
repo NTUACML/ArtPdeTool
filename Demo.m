@@ -17,31 +17,57 @@ if(domain_builder.status_)
     clear domain_builder;
 end
 
-% domain_builder = DomainBuilderClass('ScatterPoint');
-% domain_builder.generateData('StraightLine');
-% domain_point_type = domain_builder.getDomainData();
-% 
-% if(domain_builder.status_)
-%     clear domain_builder;
-% end
+domain_builder = DomainBuilderClass('ScatterPoint');
+domain_builder.generateData('StraightLine');
+domain_point_type = domain_builder.getDomainData();
 
-%% Generate integration rule
-integration_rule_builder = IntegrationRuleBuilderClass('Mesh');
-integration_rule_builder.generateData(domain_mesh_type); % isoparametric 
-integration_rule = integration_rule_builder.getIntegrationRuleData();
-
-if(integration_rule_builder.status_)
-    clear integration_rule_builder;
+if(domain_builder.status_)
+    clear domain_builder;
 end
 
+% hold all; axis equal;
+% plot(domain_point_type.node_data_(:,1), domain_point_type.node_data_(:,2), 'k.');
+% for i = 1:domain_point_type.num_boundary_patch_
+%     id = domain_point_type.boundary_patch_{i}.id;
+%     plot(domain_point_type.node_data_(id,1), domain_point_type.node_data_(id,2), 'o')
+% end
+
+% %% Generate integration rule
+% integration_rule_builder = IntegrationRuleBuilderClass('Mesh');
+% integration_rule_builder.generateData(domain_mesh_type); % isoparametric 
+% integration_rule = integration_rule_builder.getIntegrationRuleData();
+% 
+% if(integration_rule_builder.status_)
+%     clear integration_rule_builder;
+% end
+
 %% Generate function space
-function_space_builder = FunctionSpaceBuilderClass(domain_mesh_type);
-function_space_builder.generateData();
+% function_space_builder = FunctionSpaceBuilderClass(domain_mesh_type);
+% function_space_builder.generateData();
+% function_space = function_space_builder.getFunctionSpaceData();
+% 
+% if(function_space_builder.status_)
+%     clear function_space_builder;
+% end
+
+order = 2;
+support = 1.2*0.1;
+function_space_builder = FunctionSpaceBuilderClass(domain_point_type);
+function_space_builder.generateData(order, support);
 function_space = function_space_builder.getFunctionSpaceData();
 
 if(function_space_builder.status_)
     clear function_space_builder;
 end
+
+% for point type function space, the quarry unit is a point in physical
+% space
+x_quarry = 0.4;
+[non_zero_basis, evaluate_basis] = function_space.quarry(x_quarry);
+
+
+id = non_zero_basis();
+[N, dN] = evaluate_basis(id);
 
 %% Define material property
 material = MaterialBank('Mooney');
