@@ -2,91 +2,85 @@ function DemoHeatConduction
 clc; clear; close all;
 
 %% Include package
-addpath Domain
-addpath FunctionSpace
-addpath IntegrationRule
-addpath Variable
+import Domain.*
+% addpath FunctionSpace
+% addpath IntegrationRule
+% addpath Variable
 
 %% Generate domain mesh
-domain_builder = DomainBuilderClass('Mesh');
-domain_builder.generateData('UnitCube');
-% domain_builder.generateData('StraightLine');
-domain = domain_builder.getDomainData();
+domain = DomainBuilder.create('Mesh', 'UnitCube');
+disp(domain)
 
-if(domain_builder.status_)
-    clear domain_builder;
-end
-
-%% Generate integration rule
-integration_rule_builder = IntegrationRuleBuilderClass('Mesh');
-integration_rule_builder.generateData(domain); % isoparametric 
-% integration_rule_builder.generateData('Some Special Domain'); 
-integration_rule = integration_rule_builder.getIntegrationRuleData();
-
-if(integration_rule_builder.status_)
-    clear integration_rule_builder;
-end
-
-% [int_unit, evaluate_jacobian] = integration_rule.quarry(1);
-
-%% Generate function space
-function_space_builder = FunctionSpaceBuilderClass(domain);
-function_space_builder.generateData();
-function_space = function_space_builder.getFunctionSpaceData();
-
-if(function_space_builder.status_)
-    clear function_space_builder;
-end
-
-% %% Demo for FEM integration %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% % loop for all the integrational unit (element)
-% for ele_id = 1 : integration_rule.num_int_unit_
-%     % quarry the integrational unit (gauss quadrature data) and the jacobian 
-%     % calculating information (Jacobian matrix (F) and which determinant) 
-%     % in each element. 
-%     [int_unit, evaluate_jacobian] = integration_rule.quarry(ele_id);
-%     
-%     % quarry the non_zero_basis (for matrix assembler) and the calculating 
-%     % method for basis function (shape function and which derivatives)
-%     % in each element. 
-%     [non_zero_basis, evaluate_basis] = function_space.quarry(ele_id);
-%     
-%     % get gauss quadrature rule for each isoparametric element.
-%     [num_gauss, gauss_pt, gauss_w] = int_unit();
-%     
-%     % get global assembler id and local stifness matrix size
-%     non_zero_basis_id = non_zero_basis();
-%     
-%     % mass matrix 
-%     mass_mat = zeros(length(non_zero_basis_id));
-%     
-%     % loop gauss point (calculating data in gauss position)
-%     for gauss_id = 1 : num_gauss
-%         xq = gauss_pt(gauss_id,:);
-%         w = gauss_w(gauss_id);
-%         
-%         %%%%%%%%% Assember Part (Start) %%%%%%%%%
-%         % get basis function and which derivatives at gauss point.
-%         [N, dN_dxi] = evaluate_basis(xq);
-%         % get mapping matrix (F) and jacobian.
-%         [dx_dxi, J] = evaluate_jacobian(dN_dxi);
-%         % local mass assembing.
-%         mass_mat = mass_mat + (N'*N) .* (w * J);
-%         %%%%%%%%% Assember Part (End) %%%%%%%%%
-%     end
-%     
+% %% Generate integration rule
+% integration_rule_builder = IntegrationRuleBuilderClass('Mesh');
+% integration_rule_builder.generateData(domain); % isoparametric 
+% % integration_rule_builder.generateData('Some Special Domain'); 
+% integration_rule = integration_rule_builder.getIntegrationRuleData();
+% 
+% if(integration_rule_builder.status_)
+%     clear integration_rule_builder;
 % end
-
-
 % 
-% %% Define material property
-% material = MaterialBank('Diffusivity');
+% % [int_unit, evaluate_jacobian] = integration_rule.quarry(1);
 % 
-%% Define variables
-dof_number = 1;
-
-delta_T = VariableClass('temperature_increment', dof_number);
-T = VariableClass('temperature_total', dof_number, function_space);
+% %% Generate function space
+% function_space_builder = FunctionSpaceBuilderClass(domain);
+% function_space_builder.generateData();
+% function_space = function_space_builder.getFunctionSpaceData();
+% 
+% if(function_space_builder.status_)
+%     clear function_space_builder;
+% end
+% 
+% % %% Demo for FEM integration %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % % loop for all the integrational unit (element)
+% % for ele_id = 1 : integration_rule.num_int_unit_
+% %     % quarry the integrational unit (gauss quadrature data) and the jacobian 
+% %     % calculating information (Jacobian matrix (F) and which determinant) 
+% %     % in each element. 
+% %     [int_unit, evaluate_jacobian] = integration_rule.quarry(ele_id);
+% %     
+% %     % quarry the non_zero_basis (for matrix assembler) and the calculating 
+% %     % method for basis function (shape function and which derivatives)
+% %     % in each element. 
+% %     [non_zero_basis, evaluate_basis] = function_space.quarry(ele_id);
+% %     
+% %     % get gauss quadrature rule for each isoparametric element.
+% %     [num_gauss, gauss_pt, gauss_w] = int_unit();
+% %     
+% %     % get global assembler id and local stifness matrix size
+% %     non_zero_basis_id = non_zero_basis();
+% %     
+% %     % mass matrix 
+% %     mass_mat = zeros(length(non_zero_basis_id));
+% %     
+% %     % loop gauss point (calculating data in gauss position)
+% %     for gauss_id = 1 : num_gauss
+% %         xq = gauss_pt(gauss_id,:);
+% %         w = gauss_w(gauss_id);
+% %         
+% %         %%%%%%%%% Assember Part (Start) %%%%%%%%%
+% %         % get basis function and which derivatives at gauss point.
+% %         [N, dN_dxi] = evaluate_basis(xq);
+% %         % get mapping matrix (F) and jacobian.
+% %         [dx_dxi, J] = evaluate_jacobian(dN_dxi);
+% %         % local mass assembing.
+% %         mass_mat = mass_mat + (N'*N) .* (w * J);
+% %         %%%%%%%%% Assember Part (End) %%%%%%%%%
+% %     end
+% %     
+% % end
+% 
+% 
+% % 
+% % %% Define material property
+% % material = MaterialBank('Diffusivity');
+% % 
+% %% Define variables
+% dof_number = 1;
+% 
+% delta_T = VariableClass('temperature_increment', dof_number);
+% T = VariableClass('temperature_total', dof_number, function_space);
 
 % 
 % %% Dof manager

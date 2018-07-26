@@ -37,7 +37,7 @@ classdef MeshDomain < handle
         end
     end
     
-    methods
+    methods(Access = {?Domain.DomainBuilder})
         function generate(this, name)
             switch name
                 case 'UnitCube'
@@ -47,7 +47,7 @@ classdef MeshDomain < handle
                     this.name_ = 'StraightLine';
 %                     StraightLine(this);
                 otherwise
-                    disp('Error! Check mesh input name!');
+                    disp('Error<MeshDomain> ! Check mesh input name!');
             end
             this.interior_.NumberUpdate();
             this.boundary_.NumberUpdate();
