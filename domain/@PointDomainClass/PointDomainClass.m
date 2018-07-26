@@ -31,6 +31,9 @@ classdef PointDomainClass < handle
                 case 'StraightLine'
                     this.name_ = 'StraightLine';
                     StraightLine(this);
+                case 'UnitSquare'
+                    this.name_ = 'UnitSquare';
+                    UnitSquare(this);
                 otherwise
                     disp('Error! Check mesh input name!');
                     status = logical(false);
