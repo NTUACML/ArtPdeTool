@@ -33,9 +33,15 @@ classdef BoundaryConditionUnitClass < handle
         
         % set prescribed
         function set_prescribed_condition_dimention(this, dim)
-            if this.boundary_patch_
+            if strcmp(this.boundary_patch_.type_, 'point') 
                 this.is_described_bc_ = logical(true);
                 this.prescribed_dimension_ = dim;
+                if size(this.value_, 1) ~= 1 && size(this.value_, 1) ~= size(this.boundary_patch_.id)
+                    disp('Input value size not equal to ');
+                end
+            else
+                str = ['Prescribed bc does not support ', this.boundary_patch_.name_, ' type patch!'];
+                disp(str);
             end
         end
         

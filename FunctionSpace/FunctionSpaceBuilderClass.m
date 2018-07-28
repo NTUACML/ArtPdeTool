@@ -19,6 +19,8 @@ classdef FunctionSpaceBuilderClass  < handle
         function generateData(this, varargin) % here can add parametr e.g.: 'order'...
                generateFunctionSpaceDataByDomain(this);
                if(this.status_ == logical(true) )
+                    % this is the place where the basis functions are
+                    % generated
                     this.status_ = this.data_.generate(varargin);
                end
         end
@@ -35,11 +37,14 @@ classdef FunctionSpaceBuilderClass  < handle
             if(isa(this.domain_, 'MeshDomainClass')) % Mesh type domain
                 this.data_ = MeshFunctionSpaceClass(this.domain_);
                 this.status_ = logical(true);
+            elseif(isa(this.domain_, 'PointDomainClass')) % Point type domain
+                this.data_ = PointFunctionSpaceClass(this.domain_);
+                this.status_ = logical(true);
             else
                 disp('Error (FunctionSpaceBuilder)! FunctionSpace input doamin type error!');
                 this.status_ = logical(false);
             end
-        end  
+        end
     end
     
 end
