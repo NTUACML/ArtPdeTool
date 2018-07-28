@@ -42,33 +42,14 @@ function UnitCube(this)
     num_patch = 7;
     domain.patch_data_ = cell(num_patch,1);
     
-    domain.patch_data_{1}.name_ = 'Down_Side';
-    domain.patch_data_{1}.type_ = 'Element';
-    domain.patch_data_{1}.data_ = [1];
+    domain.patch_data_{1} = Patch('Down_Side', 'Element', [1]);
+    domain.patch_data_{2} = Patch('Up_Side', 'Element', [2]);
+    domain.patch_data_{3} = Patch('Rare_Side', 'Element', [3]);
+    domain.patch_data_{4} = Patch('Right_Side', 'Element', [4]);
+    domain.patch_data_{5} = Patch('Front_Side', 'Element', [5]);
+    domain.patch_data_{6} = Patch('Left_Side', 'Element', [6]);
     
-    domain.patch_data_{2}.name_ = 'Up_Side';
-    domain.patch_data_{2}.type_ = 'Element';
-    domain.patch_data_{2}.data_ = [2];
-    
-    domain.patch_data_{3}.name_ = 'Rare_Side';
-    domain.patch_data_{3}.type_ = 'Element';
-    domain.patch_data_{3}.data_ = [3];
-    
-    domain.patch_data_{4}.name_ = 'Right_Side';
-    domain.patch_data_{4}.type_ = 'Element';
-    domain.patch_data_{4}.data_ = [4];
-    
-    domain.patch_data_{5}.name_ = 'Front_Side';
-    domain.patch_data_{5}.type_ = 'Element';
-    domain.patch_data_{5}.data_ = [5];
-    
-    domain.patch_data_{6}.name_ = 'Left_Side';
-    domain.patch_data_{6}.type_ = 'Element';
-    domain.patch_data_{6}.data_ = [6];
-    
-    domain.patch_data_{7}.name_ = 'G_Point';
-    domain.patch_data_{7}.type_ = 'Point';
-    domain.patch_data_{7}.data_ = [7];
+    domain.patch_data_{7} = Patch('G_Point', 'Point', [7]);
     
     disp('Domain <Mesh> : ');
     disp('>> generated mesh data : UnitCube!')

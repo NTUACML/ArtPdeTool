@@ -11,6 +11,11 @@ classdef Patch
     end
     
     methods
+        function this = Patch(name, type, data)
+            this.name_ = name;
+            this.type_ = type;
+            this.data_ = data;
+        end
     end
     
 end
