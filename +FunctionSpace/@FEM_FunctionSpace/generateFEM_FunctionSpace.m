@@ -1,8 +1,9 @@
-function generateMeshFunctionSpace( this, order )
+function generateFEM_FunctionSpace( this, order )
 %GENERATEMESHFUNCTIONSPACE Summary of this function goes here
 %   Detailed explanation goes here
 
     import FunctionSpace.BasisUnit.FEM.BasisUnit
+    import Utility.MeshUtility.ShapeFunction
 
     interior = this.domain_data_.interior_;
     boundary = this.domain_data_.boundary_;
@@ -27,11 +28,27 @@ function generateMeshFunctionSpace( this, order )
         end
     end
     
-    % pre-calculate FEM type non_zero_basis and evaluate_basis methods
-    this.pre_def_interior = cell(this.domain_data_.num_element_, 2);
-    this.pre_def_boundary = cell(this.domain_data_.num_element_, 2);
+    % pre-calculate FEM (interior, boundary) 
+    % non_zero_basis and evaluate_basis methods
+    this.pre_def_interior = cell(interior.num_element_, 2);
+    this.pre_def_boundary = cell(boundary.num_element_, 2);
+    % > interior
+    for i = 1 : interior.num_element_
+        % interior - non_zero_basis
+        this.pre_def_interior{i, 1} = @() interior.connect_data_{i};
+        % interior - shape_function
+        this.pre_def_interior{i, 2} = ...
+            ShapeFunction.MappingElementType2ShapeFunction(interior.element_types_{i});
+    end
+    % > boundary
+    for i = 1 : boundary.num_element_
+        % boundary - non_zero_basis
+        this.pre_def_boundary{i, 1} = @() boundary.connect_data_{i};
+        % boundary - shape_function
+        this.pre_def_boundary{i, 2} =...
+            ShapeFunction.MappingElementType2ShapeFunction(boundary.element_types_{i});
+    end
     
-
     disp('FunctionSpace <FEM> :');
     disp('>> generated function space data !')
 end

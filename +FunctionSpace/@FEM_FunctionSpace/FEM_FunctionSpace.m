@@ -15,25 +15,44 @@ classdef FEM_FunctionSpace < FunctionSpace.FunctionSpaceBase
             disp('FunctionSpace <FEM> : created!');
         end
         
-        function quarry(this, quarry_unit, varargin)
-            
-        end
-        
+        function [non_zero_basis, basis_value] = query(this, query_unit, varargin)
+            if(isa(query_unit, 'FunctionSpace.QueryUnit.FEM.QueryUnit'))
+                import Utility.BasicUtility.Procedure
+                if(isempty(varargin))
+                    [non_zero_basis, basis_value] = ...
+                    this.queryFEM_FunctionSpace(query_unit, Procedure.Runtime);
+                else
+                    [non_zero_basis, basis_value] = ...
+                    this.queryFEM_FunctionSpace(query_unit, varargin{1});
+                end
+                
+            else
+                disp('Error<FEM_FunctionSpace> ! Check function space input query unit!');
+                non_zero_basis = [];
+                basis_value = [];
+            end
+        end 
     end
     
     methods (Access = {?FunctionSpace.FunctionSpaceBuilder})
         function generate(this, varargin)
             import Utility.BasicUtility.Order
             if(isempty(varargin))
-                generateMeshFunctionSpace(this, Order.Linear);
+                generateFEM_FunctionSpace(this, Order.Linear);
             else
-                generateMeshFunctionSpace(this, varargin{1});
+                generateFEM_FunctionSpace(this, varargin{1});
             end
         end
     end
     
     methods (Access = private)
-        generateMeshFunctionSpace(this, order);
+        generateFEM_FunctionSpace(this, order);
+        [non_zero_basis, basis_value] = ...
+            queryFEM_FunctionSpace(this, query_unit, procedure);
+        
+        % detial function
+        [non_zero_basis] = queryFEM_NonZeroBasis(this, q_region, q_id);
+        [basis_value] = queryFEM_BasisValue(this, q_region, q_id, q_xi);
     end
     
 end

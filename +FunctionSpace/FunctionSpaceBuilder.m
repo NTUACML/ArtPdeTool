@@ -18,13 +18,13 @@ classdef FunctionSpaceBuilder
                             function_space.generate(varargin{1});
                         end
                     else
-                        disp('Error <function_space>! check function space domain type!'); 
+                        disp('Error <FunctionSpaceBuilder>! check function space domain type!'); 
                         function_space = []; 
                     end
                 case 'RKPM' %TODO : Jeting
-                    disp('Error <function_space>! RKPM type not support yet!');
+                    disp('Error <FunctionSpaceBuilder>! RKPM type not support yet!');
                 otherwise  
-                    disp('Error <function_space>! check function space input type!'); 
+                    disp('Error <FunctionSpaceBuilder>! check function space input type!'); 
                     function_space = [];  
             end
         end

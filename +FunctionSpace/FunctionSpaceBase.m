@@ -17,7 +17,7 @@ classdef FunctionSpaceBase < handle
     end
     
     methods (Abstract)
-        quarry(this, quarry_unit, varargin) % quarry basis info interface
+        query(this, query_unit, varargin) % query basis info interface
     end
 end
 
