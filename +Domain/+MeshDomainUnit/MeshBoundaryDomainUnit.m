@@ -12,7 +12,7 @@ classdef MeshBoundaryDomainUnit < Domain.MeshDomainUnit.MeshDomainUnitBase & Dom
             this = this@Domain.DomainUnit.BoundaryDomainUnit('Mesh');
             this = this@Domain.MeshDomainUnit.MeshDomainUnitBase();
             this.num_patch_ = 0;
-            disp('Domain <Boundary Mesh type> : created!')
+            disp('Domain <Boundary> : created!')
         end
         
         function disp(this)
