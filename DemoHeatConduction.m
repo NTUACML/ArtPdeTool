@@ -2,136 +2,111 @@ function DemoHeatConduction
 clc; clear; close all;
 
 %% Include package
-addpath Domain
-addpath FunctionSpace
-addpath IntegrationRule
-addpath Variable
+import Domain.*
+import FunctionSpace.*
+% addpath IntegrationRule
+% addpath Variable
 
 %% Generate domain mesh
-domain_builder = DomainBuilderClass('Mesh');
-domain_builder.generateData('UnitCube');
-% domain_builder.generateData('StraightLine');
-domain = domain_builder.getDomainData();
-
-if(domain_builder.status_)
-    clear domain_builder;
-end
+domain = DomainBuilder.create('Mesh', 'UnitCube');
+% disp(domain)
 
 %% Generate integration rule
-integration_rule_builder = IntegrationRuleBuilderClass('Mesh');
-integration_rule_builder.generateData(domain); % isoparametric 
-% integration_rule_builder.generateData('Some Special Domain'); 
-integration_rule = integration_rule_builder.getIntegrationRuleData();
+% integration_rule_builder = IntegrationRuleBuilderClass('Mesh');
+% integration_rule_builder.generateData(domain); % isoparametric 
+% % integration_rule_builder.generateData('Some Special Domain'); 
+% integration_rule = integration_rule_builder.getIntegrationRuleData();
+% 
+% if(integration_rule_builder.status_)
+%     clear integration_rule_builder;
+% end
+% 
+% % [int_unit, evaluate_jacobian] = integration_rule.quarry(1);
+% 
+%% Function Space
+import Utility.BasicUtility.Order
 
-if(integration_rule_builder.status_)
-    clear integration_rule_builder;
-end
+% function_space = FunctionSpaceBuilder.create('FEM', domain); % default(Linear)
+function_space = FunctionSpaceBuilder.create('FEM', domain, {Order.Linear});
 
-% [int_unit, evaluate_jacobian] = integration_rule.quarry(1);
+%% Function Space (Query - Preprocess)
+import FunctionSpace.QueryUnit.FEM.QueryUnit
+import Utility.BasicUtility.Region
+import Utility.BasicUtility.Procedure
 
-%% Generate function space
-function_space_builder = FunctionSpaceBuilderClass(domain);
-function_space_builder.generateData();
-function_space = function_space_builder.getFunctionSpaceData();
+fs_query_unit = QueryUnit();
+disp( '>* querying : interior domain, element - 1, parametric position is [0, 0, 0]');
+fs_query_unit.setQuery(Region.Interior, 1, [0, 0, 0]);
+[non_zeros_id, ~] = function_space.query(fs_query_unit, Procedure.Preprocess);
+disp('Non_zeros_id : ');
+disp(non_zeros_id);
 
-if(function_space_builder.status_)
-    clear function_space_builder;
-end
+%% Function Space (Query - Runtime)
+import FunctionSpace.QueryUnit.FEM.QueryUnit
+import Utility.BasicUtility.Region
+import Utility.BasicUtility.Procedure
 
-%% Demo for FEM integration %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% loop for all the integrational unit (element)
-for ele_id = 1 : integration_rule.num_int_unit_
-    % quarry the integrational unit (gauss quadrature data) and the jacobian 
-    % calculating information (Jacobian matrix (F) and which determinant) 
-    % in each element. 
-    [int_unit, evaluate_jacobian] = integration_rule.quarry(ele_id);
-    
-    % quarry the non_zero_basis (for matrix assembler) and the calculating 
-    % method for basis function (shape function and which derivatives)
-    % in each element. 
-    
-    % Jeting 0724. Here, we can use test and trial space to call function
-    % space, in test space, those basis with zero value at prescribed
-    % Dirichlet boundary will be ignored. 
-    %
-    % Example:
-    % [non_zero_trial, evaluate_trial] = trial_space.quarry(ele_id);
-    % [non_zero_test, evaluate_test] = test_space.quarry(ele_id);
-    %
-    % 'non_zero_test' is a subset of 'non_zero_trial'
-    % However, we do not want to compute those repeated basis function
-    % value. So in practice, we should call 'evaluate_trial' first. 
-    % When we call 'evaluate_test', it does not really compute the basis value. 
-    % It will directly output part of the values we just obtained in
-    % 'evaluate_trial'.
-    % similar idea for 'non_zero_basis'
-    % To do this, one way is that consider test & trial spaces as the
-    % calling interface of the same function space. In other word,
-    % test_space & trial_space will have the same function_space pointer as their member
-    % Hence, if something is modified in trial space, test space can just
-    % simply output the results without re-compute again.
-    [non_zero_basis, evaluate_basis] = function_space.quarry(ele_id);
-    
-    % get gauss quadrature rule for each isoparametric element.
-    [num_gauss, gauss_pt, gauss_w] = int_unit();
-    
-    % get global assembler id and local stifness matrix size
-    non_zero_basis_id = non_zero_basis();
-    
-    % mass matrix 
-    mass_mat = zeros(length(non_zero_basis_id));
-    
-    % loop gauss point (calculating data in gauss position)
-    for gauss_id = 1 : num_gauss
-        xq = gauss_pt(gauss_id,:);
-        w = gauss_w(gauss_id);
-        
-        %%%%%%%%% Assember Part (Start) %%%%%%%%%
-        % get basis function and which derivatives at gauss point.
-        [N, dN_dxi] = evaluate_basis(xq);
-        % get mapping matrix (F) and jacobian.
-        [dx_dxi, J] = evaluate_jacobian(dN_dxi);
-        % local mass assembing.
-        mass_mat = mass_mat + (N'*N) .* (w * J);
-        %%%%%%%%% Assember Part (End) %%%%%%%%%
-        
-        % Jeting 0724
-        % [N_trial, dN_dxi_trial] = evaluate_trial(xq);
-        % [N_test, dN_dxi_test] = evaluate_test(); 
-        % Since this function only ouputs the results computed from 'evaluate_trial'. 
-        % No input argument is necessary.
-        
-        % get mapping matrix (F) and jacobian.
-        % [dx_dxi, J] = evaluate_jacobian(dN_dxi_trial);
-            
-        % directly global assembing.
-        % mass_mat(non_zero_test, non_zero_trial) = mass_mat(non_zero_test,
-        % non_zero_trial) + (N_test'*N_trial) .* (w * J);
-        
-        % rhs(non_zero_test) += N_test*h; for natural bc
-
-        % Nitsche' method for imposing essential bc
-        % essential_mat(non_zero_test, non_zero_trial) = essential_mat(non_zero_test,
-        % non_zero_trial) + (N_test'*dN_dxi_trial + dN_dxi_test'*N_trial) .* (w * J);
-        
-        % strongly imposing essential bc
-        % essential_mat(~non_zero_test, :) = 0;
-        % essential_mat(~non_zero_test, ~non_zero_test) = 1;
-        % rhs(~non_zero_test) = g;
-    end
-    
-end
-
+fs_query_unit = QueryUnit();
+disp( '>* querying : boundary domain, element - 2, parametric position is [-1, 1, 0]')
+fs_query_unit.setQuery(Region.Boundary, 2, [-1, 1, 0]);
+[~, basis_value] = function_space.query(fs_query_unit); %default(Runtime)
+N = basis_value{1};
+dN_dxi = basis_value{2};
+disp('N :');
+disp(N);
+disp('dN_dxi :');
+disp(dN_dxi);
 
 % 
-% %% Define material property
-% material = MaterialBank('Diffusivity');
+% % %% Demo for FEM integration %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % % loop for all the integrational unit (element)
+% % for ele_id = 1 : integration_rule.num_int_unit_
+% %     % quarry the integrational unit (gauss quadrature data) and the jacobian 
+% %     % calculating information (Jacobian matrix (F) and which determinant) 
+% %     % in each element. 
+% %     [int_unit, evaluate_jacobian] = integration_rule.quarry(ele_id);
+% %     
+% %     % quarry the non_zero_basis (for matrix assembler) and the calculating 
+% %     % method for basis function (shape function and which derivatives)
+% %     % in each element. 
+% %     [non_zero_basis, evaluate_basis] = function_space.quarry(ele_id);
+% %     
+% %     % get gauss quadrature rule for each isoparametric element.
+% %     [num_gauss, gauss_pt, gauss_w] = int_unit();
+% %     
+% %     % get global assembler id and local stifness matrix size
+% %     non_zero_basis_id = non_zero_basis();
+% %     
+% %     % mass matrix 
+% %     mass_mat = zeros(length(non_zero_basis_id));
+% %     
+% %     % loop gauss point (calculating data in gauss position)
+% %     for gauss_id = 1 : num_gauss
+% %         xq = gauss_pt(gauss_id,:);
+% %         w = gauss_w(gauss_id);
+% %         
+% %         %%%%%%%%% Assember Part (Start) %%%%%%%%%
+% %         % get basis function and which derivatives at gauss point.
+% %         [N, dN_dxi] = evaluate_basis(xq);
+% %         % get mapping matrix (F) and jacobian.
+% %         [dx_dxi, J] = evaluate_jacobian(dN_dxi);
+% %         % local mass assembing.
+% %         mass_mat = mass_mat + (N'*N) .* (w * J);
+% %         %%%%%%%%% Assember Part (End) %%%%%%%%%
+% %     end
+% %     
+% % end
 % 
-%% Define variables
-dof_number = 1;
-
-delta_T = VariableClass('temperature_increment', dof_number);
-T = VariableClass('temperature_total', dof_number, function_space);
+% 
+% % 
+% % %% Define material property
+% % material = MaterialBank('Diffusivity');
+% % 
+% %% Define variables
+% dof_number = 1;
+% 
+% delta_T = VariableClass('temperature_increment', dof_number);
+% T = VariableClass('temperature_total', dof_number, function_space);
 
 % 
 % %% Dof manager
