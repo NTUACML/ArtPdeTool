@@ -6,7 +6,8 @@ function UnitCube(this)
     import Utility.MeshUtility.Patch
 
     % create interior domain
-    domain = this.interior_;
+    % let domain be the reference of this.interior_
+    domain = this.interior_; 
     domain.dim_ = 3;
     % > node data define
     num_node = 8;
@@ -26,7 +27,8 @@ function UnitCube(this)
     domain.element_types_{1} = ElementType.Hexa8;
     domain.connect_data_{1} = [1 2 3 4 5 6 7 8];
     
-    % create boundary domain
+    % create boundary domainM
+    % let domain be the reference of this.boundary_
     domain = this.boundary_;
     domain.dim_ = 3;
     % > node data define (same as interior node)

@@ -17,8 +17,15 @@ classdef DomainBuilder
                         domain.generate(varargin{1}) % varargin{1} is mesh name.
                     end
                 case 'ScatterPoint' 
-                    disp('Error <DomainBuilder>! NURBS type not support yet!');
-                    domain = [];
+                    import Domain.PointDomain
+                    if(isempty(varargin))
+                        domain = PointDomain();
+                        disp('Warning <DomainBuilder>! empty scatter point domian builded!');
+                        disp('> empty scatter point domian builded!');
+                    else
+                        domain = PointDomain();
+                        domain.generate(varargin{1}) % varargin{1} is point domain name.
+                    end
                 case 'NURBS' % TODO KAVY
                     disp('Error <DomainBuilder>! NURBS type not support yet!');
                     domain = [];
