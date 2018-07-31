@@ -11,8 +11,8 @@ point_type_domain = DomainBuilder.create('ScatterPoint', 'UnitSquare');
 %% Function Space
 import Utility.BasicUtility.Order
 
-% function_space = FunctionSpaceBuilder.create('FEM', domain); % default(Linear)
-function_space = FunctionSpaceBuilder.create('FEM', domain, {Order.Linear});
+% function_space = FunctionSpaceBuilder.create('FEM', mesh_type_domain); % default(Linear)
+function_space = FunctionSpaceBuilder.create('FEM', mesh_type_domain, {Order.Linear});
 
 %% Function Space (Query - Preprocess)
 import FunctionSpace.QueryUnit.FEM.QueryUnit
@@ -34,9 +34,11 @@ import Utility.BasicUtility.Procedure
 fs_query_unit = QueryUnit();
 disp( '>* querying : boundary domain, element - 2, parametric position is [-1, 1, 0]')
 fs_query_unit.setQuery(Region.Boundary, 2, [-1, 1, 0]);
-[~, basis_value] = function_space.query(fs_query_unit); %default(Runtime)
+[non_zeros_id, basis_value] = function_space.query(fs_query_unit); %default(Runtime)
 N = basis_value{1};
 dN_dxi = basis_value{2};
+disp('non_zeros_id :');
+disp(non_zeros_id);
 disp('N :');
 disp(N);
 disp('dN_dxi :');
