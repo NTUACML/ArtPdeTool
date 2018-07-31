@@ -5,8 +5,9 @@ import Domain.*
 import FunctionSpace.*
 
 %% Domain
-domain = DomainBuilder.create('Mesh', 'UnitCube');
-
+mesh_type_domain = DomainBuilder.create('Mesh', 'UnitCube');
+% point_type_domaisn = DomainBuilder.create('ScatterPoint', 'StraightLine');
+point_type_domain = DomainBuilder.create('ScatterPoint', 'UnitSquare');
 %% Function Space
 import Utility.BasicUtility.Order
 
