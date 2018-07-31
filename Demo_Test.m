@@ -11,8 +11,8 @@ point_type_domain = DomainBuilder.create('ScatterPoint', 'UnitSquare');
 %% Function Space
 import Utility.BasicUtility.Order
 
-% function_space = FunctionSpaceBuilder.create('FEM', domain); % default(Linear)
-function_space = FunctionSpaceBuilder.create('FEM', domain, {Order.Linear});
+% function_space = FunctionSpaceBuilder.create('FEM', mesh_type_domain); % default(Linear)
+function_space = FunctionSpaceBuilder.create('FEM', mesh_type_domain, {Order.Linear});
 
 %% Function Space (Query - Preprocess)
 import FunctionSpace.QueryUnit.FEM.QueryUnit

@@ -4,6 +4,8 @@ classdef QueryUnit < FunctionSpace.QueryUnit.QueryUnitBase
     
     properties
         element_id_    % FEM quarry unit following by the element id.
+        region_        % quary region for the FEM function space.
+                       % (Region.Interior or Region.Boundary)
     end
     
     methods

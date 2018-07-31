@@ -3,7 +3,6 @@ classdef QueryUnitBase < handle
     %   Detailed explanation goes here
     
     properties
-        region_     % quary function space region
         position_   % quary position
     end
     
