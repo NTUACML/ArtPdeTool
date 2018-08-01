@@ -5,12 +5,14 @@ function generateRKPM_FunctionSpace( this, order, support_size_ratio )
     import FunctionSpace.BasisUnit.RKPM.BasisUnit
 %     import Utility.PointUtility.ShapeFunction
 
+    import Utility.BasicUtility.CellData2Matrix
+
     interior = this.domain_data_.interior_;
     boundary = this.domain_data_.boundary_;
     
     % build searching tree 
     % TODO KAVY use KD-tree or something instead
-    node_set = GetNodeSet(interior);
+    node_set = GetNodeSet(interior);    
     this.searching_tree = @ (position) NearestNodeDistance(node_set, position);
     
     % node number equal to the basis number in isoparametric element case.
@@ -34,9 +36,21 @@ function generateRKPM_FunctionSpace( this, order, support_size_ratio )
     end
     
     % non_zero_basis and evaluate_basis methods
-    this.interior_basis_ = @(quarry_point) find_non_zero_basis_1d(quarry_point, this.domain_data_.node_data_, support);
-    this.boundary_basis_ = @(quarry_point) RK_function_1d(quarry_point, this.domain_data_.node_data_, order, support, id);
-
+    total_support_size = GetTotalBasisSupportSize(this.basis_data_);
+    
+    % binding evaluating function
+    switch this.domain_data_.interior_.dim_
+        case 1
+            import Utility.PointUtility.BasisFunction.evaluate_RKPM_function_1d
+            this.evaluate_basis_functions_ = @(quarry_unit) evaluate_RKPM_function_1d(quarry_unit.position_, node_set, order, total_support_size);
+        case 2
+            disp('Currently not support 2d RKPM basis.');
+        case 3
+            disp('Currently not support 3d RKPM basis.');
+        otherwise
+            disp('Problem domension error.');
+    end
+    
     disp('FunctionSpace <RKPM> :');
     disp('>> generated function space data !')
 end
@@ -48,11 +62,20 @@ function node_set = GetNodeSet(domain)
     end
 end
 
+function total_support = GetTotalBasisSupportSize(basis_data)
+    num_basis = size(basis_data, 1);
+    total_support = zeros(num_basis, 1);
+    for i = 1:num_basis
+        total_support(i) = basis_data{i}.support_size_;
+    end
+end
+
+
 function [val, id] = NearestNodeDistance(node_set, position)
     dis = zeros(size(node_set, 1), 1);
 
     for i = 1:size(node_set, 1)
-        dis(i) = sumsqr(node_set(i, :) - position.data_);
+        dis(i) = norm(node_set(i, :) - position.data_);
     end
     
     % exclude self node
@@ -61,3 +84,9 @@ function [val, id] = NearestNodeDistance(node_set, position)
     
     [val, id] = min(dis);
 end
+
+
+
+
+
+
