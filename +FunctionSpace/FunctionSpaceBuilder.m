@@ -11,7 +11,7 @@ classdef FunctionSpaceBuilder
                         import FunctionSpace.FEM_FunctionSpace
                         % create FEM function space
                         function_space = FEM_FunctionSpace(domain);
-                        % generate function space data by input varargin{1}
+                        % generate function space data by inputting varargin{1}
                         if(isempty(varargin))
                             function_space.generate();
                         else
@@ -21,8 +21,22 @@ classdef FunctionSpaceBuilder
                         disp('Error <FunctionSpaceBuilder>! check function space domain type!'); 
                         function_space = []; 
                     end
-                case 'RKPM' %TODO : Jeting
-                    disp('Error <FunctionSpaceBuilder>! RKPM type not support yet!');
+                case 'RKPM' 
+                    if(isa(domain, 'Domain.PointDomain'))
+                        import FunctionSpace.RKPM_FunctionSpace
+                        % create RKPM function space
+                        function_space = RKPM_FunctionSpace(domain);
+                        % generate function space data by inputting
+                        % order: varargin{1} & support_size_ratio: varargin{2}
+                        if(isempty(varargin))
+                            function_space.generate();
+                        else
+                            function_space.generate(varargin{1}, varargin{2});
+                        end
+                    else
+                        disp('Error <FunctionSpaceBuilder>! check function space domain type!'); 
+                        function_space = []; 
+                    end
                 otherwise  
                     disp('Error <FunctionSpaceBuilder>! check function space input type!'); 
                     function_space = [];  
