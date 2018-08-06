@@ -52,7 +52,7 @@ point_type_domain = DomainBuilder.create('ScatterPoint', 'StraightLine');
 
 %% Function Space
 support_size_ratio = 2.5;
-function_space = FunctionSpaceBuilder.create('RKPM', point_type_domain, Order.Quadratic, support_size_ratio); % default(Linear, support_size_ratio = 1.5)
+function_space = FunctionSpaceBuilder.create('RKPM', point_type_domain, {Order.Quadratic, support_size_ratio}); % default(Linear, support_size_ratio = 1.5)
 
 %% Function Space (Query - Preprocess)
 import FunctionSpace.QueryUnit.RKPM.QueryUnitRKPM
