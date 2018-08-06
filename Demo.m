@@ -85,6 +85,7 @@ u.data_ = (1:u.num_data_)';
 u_1 = u.data_component(1);
 u_2 = u.data_component(2);
 u_3 = u.data_component(3);
+
 %% Dof manager
 % dof_manager = DofManager(delta_u, function_space);
 % delta_u = dof_manager.initialize_variables(delta_u);

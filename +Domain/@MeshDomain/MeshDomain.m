@@ -43,9 +43,12 @@ classdef MeshDomain < handle
                 case 'UnitCube'
                     this.name_ = 'UnitCube';
                     UnitCube(this);
+                case 'UnitSquare'
+                    this.name_ = 'UnitSquare';
+                    UnitSquare(this);
                 case 'StraightLine'
                     this.name_ = 'StraightLine';
-%                     StraightLine(this);
+                    StraightLine(this);
                 otherwise
                     disp('Error<MeshDomain> ! Check mesh input name!');
             end
