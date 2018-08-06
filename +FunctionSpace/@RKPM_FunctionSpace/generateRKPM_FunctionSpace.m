@@ -1,11 +1,10 @@
-function generateRKPM_FunctionSpace( this, order, support_size_ratio )
+function generateRKPM_FunctionSpace( this, varargin )
 %GENERATEMESHFUNCTIONSPACE Summary of this function goes here
 %   Detailed explanation goes here
-
+    order = varargin{1}{1};
+    support_size_ratio = varargin{1}{2};
+    
     import FunctionSpace.BasisUnit.RKPM.BasisUnit
-%     import Utility.PointUtility.ShapeFunction
-
-    import Utility.BasicUtility.CellData2Matrix
 
     interior = this.domain_data_.interior_;
     boundary = this.domain_data_.boundary_;

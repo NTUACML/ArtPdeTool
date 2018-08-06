@@ -31,7 +31,7 @@ classdef FunctionSpaceBuilder
                         if(isempty(varargin))
                             function_space.generate();
                         else
-                            function_space.generate(varargin{1}, varargin{2});
+                            function_space.generate(varargin{1});
                         end
                     else
                         disp('Error <FunctionSpaceBuilder>! check function space domain type!'); 

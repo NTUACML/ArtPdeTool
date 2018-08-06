@@ -30,9 +30,9 @@ classdef RKPM_FunctionSpace < FunctionSpace.FunctionSpaceBase
         function generate(this, varargin)
             import Utility.BasicUtility.Order
             if(isempty(varargin))
-                generateRKPM_FunctionSpace(this, Order.Linear, support_size_ratio);
+                generateRKPM_FunctionSpace(this, {Order.Linear, support_size_ratio});
             else
-                generateRKPM_FunctionSpace(this, varargin{1}, varargin{2});
+                generateRKPM_FunctionSpace(this, varargin{1});
             end
         end
     end
