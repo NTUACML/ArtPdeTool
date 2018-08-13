@@ -4,10 +4,10 @@ clc; clear; close all;
 import Domain.*
 import FunctionSpace.*
 
-mesh_type_domain = MeshDomain();
-mesh_type_domain.generate('UnitCube');
-% %% Domain
-% mesh_type_domain = DomainBuilder.create('Mesh', 'UnitCube');
+% mesh_type_domain = MeshDomain();
+% mesh_type_domain.generate('UnitCube');
+%% Domain
+mesh_type_domain = DomainBuilder.create('Mesh', 'UnitCube');
 % 
 % % Function Space
 % import Utility.BasicUtility.Order

@@ -15,6 +15,12 @@ classdef DomainData < handle
         function this = DomainData()
         end
         
+        function disp(this)
+            disp(['Number of point: ', num2str(this.num_point_)])
+            disp(['Number of interior unit: ', num2str(this.num_interior_)])
+            disp(['Number of boundary unit: ', num2str(this.num_boundary_)])
+        end
+        
         function point = getPoint(this, point_id)
             if(point_id > this.num_point_)
                 disp('Error<DomainData> ! Check point_id!');

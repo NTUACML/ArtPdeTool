@@ -17,14 +17,23 @@ classdef MeshDomain < Domain.DomainData.DomainData
         end
 
         function disp(this)
-            disp('The mesh type domain info: ')
+            disp('> The mesh type basic info: ')
             disp(['Mesh name: ', this.name_])
-%             disp(this.interior_);
-%             disp(this.boundary_);
+            disp@Domain.DomainData.DomainData(this)
+            disp('> The mesh type interior unit info: ')
+            for i = 1 : this.num_interior_
+                disp(['>> Interoir: ', num2str(i)])
+                disp(this.interior_data_{i})
+            end
+            disp('> The mesh type boundary unit info: ')
+            for i = 1 : this.num_boundary_
+                disp(['>> Boundary: ', num2str(i)])
+                disp(this.boundary_data_{i})
+            end
         end
     end
     
-    methods%(Access = {?Domain.DomainBuilder})
+    methods(Access = {?Domain.DomainBuilder})
         function generate(this, name)
             switch name
                 case 'UnitCube'

@@ -41,7 +41,7 @@ function UnitCube(this)
     mapping_point_2_node_tool = Point2NodeIndexMapping();
     
     % -> create boundary patch 1
-    this.boundary_data_{1} = MeshDomainInteriorUnit(3, 'Down_Side');
+    this.boundary_data_{1} = MeshDomainBoundaryUnit(3, 'Down_Side');
     bc_unit = this.boundary_data_{1};
     mapping_point_2_node_tool.clear();
     
@@ -62,7 +62,7 @@ function UnitCube(this)
     % -> boundary patch 1 end
     
     % -> create boundary patch 2
-    this.boundary_data_{2} = MeshDomainInteriorUnit(3, 'Up_Side');
+    this.boundary_data_{2} = MeshDomainBoundaryUnit(3, 'Up_Side');
     bc_unit = this.boundary_data_{2};
     mapping_point_2_node_tool.clear();
     
@@ -83,7 +83,7 @@ function UnitCube(this)
     % -> boundary patch 2 end
     
     % -> create boundary patch 3
-    this.boundary_data_{3} = MeshDomainInteriorUnit(3, 'Rare_Side');
+    this.boundary_data_{3} = MeshDomainBoundaryUnit(3, 'Rare_Side');
     bc_unit = this.boundary_data_{3};
     mapping_point_2_node_tool.clear();
     
@@ -104,7 +104,7 @@ function UnitCube(this)
     % -> boundary patch 3 end
     
     % -> create boundary patch 4
-    this.boundary_data_{4} = MeshDomainInteriorUnit(3, 'Right_Side');
+    this.boundary_data_{4} = MeshDomainBoundaryUnit(3, 'Right_Side');
     bc_unit = this.boundary_data_{4};
     mapping_point_2_node_tool.clear();
     
@@ -125,7 +125,7 @@ function UnitCube(this)
     % -> boundary patch 4 end
     
     % -> create boundary patch 5
-    this.boundary_data_{5} = MeshDomainInteriorUnit(3, 'Front_Side');
+    this.boundary_data_{5} = MeshDomainBoundaryUnit(3, 'Front_Side');
     bc_unit = this.boundary_data_{5};
     mapping_point_2_node_tool.clear();
     
@@ -146,7 +146,7 @@ function UnitCube(this)
     % -> boundary patch 5 end
     
     % -> create boundary patch 6
-    this.boundary_data_{6} = MeshDomainInteriorUnit(3, 'Right_Side');
+    this.boundary_data_{6} = MeshDomainBoundaryUnit(3, 'Right_Side');
     bc_unit = this.boundary_data_{6};
     mapping_point_2_node_tool.clear();
     

@@ -20,6 +20,15 @@ classdef MeshDomainBoundaryUnit < Domain.DomainUnit.DomainBoundaryUnit & Domain.
                 point_id = this.node_to_point_id_(node_id);
             end
         end
+        
+        function disp(this)
+            disp(['unit name: ', this.name_])
+            disp(['unit type: ', this.type_])
+            disp(['Data dimension: ', num2str(this.dim_)])
+            disp(['Mesh dimension: ', num2str(this.dim_ - 1)])
+            disp(['Number of node: ', num2str(this.num_node_)])
+            disp(['Number of element: ', num2str(this.num_element_)])
+        end
     end
     
 end

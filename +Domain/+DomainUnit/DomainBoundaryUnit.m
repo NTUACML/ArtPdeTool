@@ -1,4 +1,4 @@
-classdef DomainBoundaryUnit
+classdef DomainBoundaryUnit < handle
     %DOMAINBOUNDARYUNIT Summary of this class goes here
     %   Detailed explanation goes here
     
