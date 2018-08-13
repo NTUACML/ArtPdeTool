@@ -41,6 +41,17 @@ classdef Point2NodeIndexMapping < handle
         function point_id = getAllPointId(this)
             point_id = cell2mat(keys(this.dict_));
         end
+        
+        function node_2_point_mapping = getNode2PointMapping(this)
+            node_id = this.getAllNodeId();
+            point_id = this.getAllPointId();
+            
+            % sort by node id
+            [node_id,I] = sort(node_id);
+            point_id = point_id(I);
+            
+            node_2_point_mapping = [node_id', point_id'];
+        end
     end
     
     methods (Access = private)
