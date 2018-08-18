@@ -1,13 +1,20 @@
 clc; clear; close all;
 
 %% Include package
+import Geometry.*
 import Domain.*
 import FunctionSpace.*
 
+geometry = GeometryBuilder.create('FEM', 'UnitCube');
+
+% interior_patch = Utility.MeshUtility.Patch.InteriorPatch(3, 'Interoir');
+% boundary_patch = Utility.MeshUtility.Patch.BoundaryPatch(3, 'Boundary');
+
+
 % mesh_type_domain = MeshDomain();
 % mesh_type_domain.generate('UnitCube');
-%% Domain
-mesh_type_domain = DomainBuilder.create('Mesh', 'UnitCube');
+% %% Domain
+% mesh_type_domain = DomainBuilder.create('Mesh', 'UnitCube');
 % 
 % % Function Space
 % import Utility.BasicUtility.Order

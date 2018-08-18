@@ -3,42 +3,37 @@ classdef Element < handle
     %   Detailed explanation goes here
     
     properties
+        num_node_ = 0
         node_id_
         element_type_
     end
     
     methods
-        function this = Element(dim, connectivity)
+        function this = Element(dim, node_id)
+            this.node_id_ = node_id;
             if(dim == 2)
-                this.generateDim2Element(connectivity);
+                this.generateDim2Element(node_id);
             elseif(dim == 3)
-                this.generateDim3Element(connectivity);
+                this.generateDim3Element(node_id);
             end
-        end
-        
-        function [element_type, node_id] = getElement(this)
-            element_type = this.element_type_;
-            node_id = this.node_id_;
         end
     end
     
     methods(Access = private)
-        function this = generateDim2Element(this, connectivity)
+        function this = generateDim2Element(this, node_id)
             import Utility.MeshUtility.ElementType
-            num_node = length(connectivity);
-            if(num_node == 4)
+            this.num_node_ = length(node_id);
+            if(this.num_node_ == 4)
                 this.element_type_ = ElementType.Quad4;
             end
-            this.node_id_ = connectivity;
         end
         
-        function this = generateDim3Element(this, connectivity)
+        function this = generateDim3Element(this, node_id)
             import Utility.MeshUtility.ElementType
-            num_node = length(connectivity);
-            if(num_node == 8)
+            this.num_node_ = length(node_id);
+            if(this.num_node_ == 8)
                 this.element_type_ = ElementType.Hexa8;
             end
-            this.node_id_ = connectivity;
         end
     end
     
