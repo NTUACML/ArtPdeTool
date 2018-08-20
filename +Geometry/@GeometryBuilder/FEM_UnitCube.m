@@ -8,11 +8,10 @@ function geometry = FEM_UnitCube(this, var)
     import Utility.MeshfreeUtility.*
     
     % Generate geometry unit
-    geometry = cell(1, 1);
-    geometry{1} = Geometry();
+    geometry = Geometry();
     
     % Generate data in geometry{1}
-    geo = geometry{1};
+    geo = geometry;
     %> Generate point data
     geo.num_point_ = 8;
     cube_point = [0 0 0;
