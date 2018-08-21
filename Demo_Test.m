@@ -1,13 +1,24 @@
 clc; clear; close all;
 
 %% Include package
+import Geometry.*
+import Variable.*
 import Domain.*
-import FunctionSpace.*
+
+fem_unit_cube_geo = GeometryBuilder.create('FEM', 'UnitCube');
+var_u = Variable('velocity', 3);
+var_p = Variable('pressure', 1);
+fem_domain_u = FEM_Domain(var_u, fem_unit_cube_geo);
+fem_domain_p = FEM_Domain(var_p, fem_unit_cube_geo);
+
+% interior_patch = Utility.MeshUtility.Patch.InteriorPatch(3, 'Interoir');
+% boundary_patch = Utility.MeshUtility.Patch.BoundaryPatch(3, 'Boundary');
+
 
 % mesh_type_domain = MeshDomain();
 % mesh_type_domain.generate('UnitCube');
-%% Domain
-mesh_type_domain = DomainBuilder.create('Mesh', 'UnitCube');
+% %% Domain
+% mesh_type_domain = DomainBuilder.create('Mesh', 'UnitCube');
 % 
 % % Function Space
 % import Utility.BasicUtility.Order
