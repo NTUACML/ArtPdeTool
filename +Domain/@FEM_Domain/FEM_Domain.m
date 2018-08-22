@@ -12,30 +12,10 @@ classdef FEM_Domain < Domain.DomainBase
             this.setIsoparametricGeometry(isoparametric_geometry);
             % generate variable data
             this.generateVariableData();
-            % generate interior domain
+            % generate interior domain (FEM method)
             this.generateInteriorDomain();
-            
         end
-        
-%         function setApproximatedGeometry(this, approximated_geo, ...
-%                                                 varargin)
-%             setApproximatedGeometry@Domain.DomainBase(this, approximated_geo);
-%             if(isempty(varargin))
-%                 this.createFEM_FunctionSpace([])
-%             else
-%                 this.createFEM_FunctionSpace(varargin{1})
-%             end
-%         end
-%         
-%         function setIntegralGeometry(this, approximated_geo, ...
-%                                                 varargin)
-%             setIntegralGeometry@Domain.DomainBase(this, approximated_geo);
-%             if(isempty(varargin))
-%                 this.createFEM_IntegrationRule([])
-%             else
-%                 this.createFEM_IntegrationRule(varargin{1})
-%             end
-%         end
+
     end
     
     % header define
@@ -47,15 +27,20 @@ classdef FEM_Domain < Domain.DomainBase
         
         function generateInteriorDomain(this)
             import Domain.InteriorDomain.FEM.*
-            this.num_interior_domain_ = 1;
-            this.interior_domain_ = InteriorDomain();
+            % create interior domain by the interior patch 
+            % in side of the approximated geometry 
+            this.interior_domain_ = ...
+                InteriorDomain(this.approximated_geo_.interior_patch_data_);
+            % add integration rule by the interior patch
+            % in side of the integral geometry 
+            this.interior_domain_.setIntergationRule(...
+                this.integral_geo_.interior_patch_data_);
         end
     end
     
     % cpp define
     methods (Access = private)
-%         createFEM_FunctionSpace(this, var)
-%         createFEM_IntegrationRule(this, var)
+
     end
 end
 

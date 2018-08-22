@@ -8,11 +8,11 @@ classdef InteriorMeshPatch < Utility.BasicUtility.Patch ...
     end
     
     methods
-        function this = InteriorMeshPatch(dim, name)
+        function this = InteriorMeshPatch(dim, name, num_point, point_data)
             import Utility.BasicUtility.PatchType
             import Utility.BasicUtility.Region
             this@Utility.BasicUtility.Patch(dim, name, PatchType.Mesh, Region.Interior);
-            this@Utility.MeshUtility.MeshPatch.MeshPatchBase(dim);             
+            this@Utility.MeshUtility.MeshPatch.MeshPatchBase(dim, num_point, point_data);             
         end
     end
     

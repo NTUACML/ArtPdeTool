@@ -6,9 +6,8 @@ classdef DomainBase < handle
         variable_
         approximated_geo_
         integral_geo_
-        num_interior_domain_ = 0
-        num_boundary_domain_ = 0
         interior_domain_
+        num_boundary_domain_ = 0
         boundary_domain_
     end
     

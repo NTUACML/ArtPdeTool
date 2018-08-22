@@ -8,11 +8,14 @@ classdef InteriorDomain < handle
     end
     
     methods
-        function this = InteriorDomain()
+        function this = InteriorDomain(patch)
             import FunctionSpace.FEM.*
+            this.function_space_ = FunctionSpace(patch);
+        end
+        
+        function setIntergationRule(this, patch)
             import IntegrationRule.FEM.*
-            this.function_space_ = FunctionSpace();
-            this.intergation_rule_ = IntegrationRule();
+            this.intergation_rule_ = IntegrationRule(patch);
         end
     end
     

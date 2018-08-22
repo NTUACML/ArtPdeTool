@@ -11,6 +11,31 @@ var_p = Variable('pressure', 1);
 fem_domain_u = FEM_Domain(var_u, fem_unit_cube_geo);
 fem_domain_p = FEM_Domain(var_p, fem_unit_cube_geo);
 
+% test
+u_int_rule = fem_domain_u.interior_domain_.intergation_rule_;
+u_fs = fem_domain_u.interior_domain_.function_space_;
+
+unit_id = 1;
+int_unit = u_int_rule.integral_unit_data_{1};
+
+u_fs.query(int_unit);
+
+[n_q, xi, w] = int_unit.gauss_quadrature_();
+n_q
+xi
+w
+
+q_id = 1
+
+[N, dN_dxi] = int_unit.evaluate_basis_(xi(q_id, :))
+non_zero_id = int_unit.non_zero_id_
+
+
+
+
+% 
+
+
 % interior_patch = Utility.MeshUtility.Patch.InteriorPatch(3, 'Interoir');
 % boundary_patch = Utility.MeshUtility.Patch.BoundaryPatch(3, 'Boundary');
 

@@ -25,10 +25,9 @@ function geometry = FEM_UnitCube(this, var)
     
     geo.point_data_ = PointList(cube_point);
     %> Generate interior patch
-    geo.num_interior_patch_ = 1;
-    geo.interior_patch_data_ = cell(geo.num_interior_patch_, 1);
-    geo.interior_patch_data_{1} = MeshPatch.InteriorMeshPatch(3, 'Interior_1');
-    patch = geo.interior_patch_data_{1};
+    geo.interior_patch_data_ = MeshPatch.InteriorMeshPatch(3, 'Interior_1',...
+                               geo.num_point_, geo.point_data_);
+    patch = geo.interior_patch_data_;
     %>> Generate element
     patch.num_element_ = 1;
     patch.element_data_ = cell(patch.num_element_, 1);
@@ -41,7 +40,9 @@ function geometry = FEM_UnitCube(this, var)
 
     % Boundary patch 1
     patch_id = 1;
-    geo.boundary_patch_data_{patch_id} = MeshPatch.BoundaryMeshPatch(3, 'Down_Side');
+    geo.boundary_patch_data_{patch_id} = ...
+                                       MeshPatch.BoundaryMeshPatch(3, 'Down_Side',...
+                                       geo.num_point_, geo.point_data_);
     patch = geo.boundary_patch_data_{patch_id};
     %>> Generate element
     patch.num_element_ = 1;
@@ -51,7 +52,9 @@ function geometry = FEM_UnitCube(this, var)
     
     % Boundary patch 2
     patch_id = 2;
-    geo.boundary_patch_data_{patch_id} = MeshPatch.BoundaryMeshPatch(3, 'Up_Side');
+    geo.boundary_patch_data_{patch_id} = ...
+                                       MeshPatch.BoundaryMeshPatch(3, 'Up_Side',...
+                                       geo.num_point_, geo.point_data_);
     patch = geo.boundary_patch_data_{patch_id};
     %>> Generate element
     patch.num_element_ = 1;
@@ -61,7 +64,9 @@ function geometry = FEM_UnitCube(this, var)
     
     % Boundary patch 3
     patch_id = 3;
-    geo.boundary_patch_data_{patch_id} = MeshPatch.BoundaryMeshPatch(3, 'Rare_Side');
+    geo.boundary_patch_data_{patch_id} = ...
+                                       MeshPatch.BoundaryMeshPatch(3, 'Rare_Side',...
+                                       geo.num_point_, geo.point_data_);
     patch = geo.boundary_patch_data_{patch_id};
     %>> Generate element
     patch.num_element_ = 1;
@@ -71,7 +76,9 @@ function geometry = FEM_UnitCube(this, var)
     
     % Boundary patch 4
     patch_id = 4;
-    geo.boundary_patch_data_{patch_id} = MeshPatch.BoundaryMeshPatch(3, 'Right_Side');
+    geo.boundary_patch_data_{patch_id} = ...
+                                       MeshPatch.BoundaryMeshPatch(3, 'Right_Side',...
+                                       geo.num_point_, geo.point_data_);
     patch = geo.boundary_patch_data_{patch_id};
     %>> Generate element
     patch.num_element_ = 1;
@@ -81,7 +88,9 @@ function geometry = FEM_UnitCube(this, var)
     
     % Boundary patch 5
     patch_id = 5;
-    geo.boundary_patch_data_{patch_id} = MeshPatch.BoundaryMeshPatch(3, 'Front_Side');
+    geo.boundary_patch_data_{patch_id} = ...
+                                       MeshPatch.BoundaryMeshPatch(3, 'Front_Side',....
+                                       geo.num_point_, geo.point_data_);
     patch = geo.boundary_patch_data_{patch_id};
     %>> Generate element
     patch.num_element_ = 1;
@@ -91,7 +100,9 @@ function geometry = FEM_UnitCube(this, var)
     
     % Boundary patch 6
     patch_id = 6;
-    geo.boundary_patch_data_{patch_id} = MeshPatch.BoundaryMeshPatch(3, 'Right_Side');
+    geo.boundary_patch_data_{patch_id} = ...
+                                       MeshPatch.BoundaryMeshPatch(3, 'Right_Side',...
+                                       geo.num_point_, geo.point_data_);
     patch = geo.boundary_patch_data_{patch_id};
     %>> Generate element
     patch.num_element_ = 1;
@@ -101,11 +112,13 @@ function geometry = FEM_UnitCube(this, var)
     
     % Boundary patch 7
     patch_id = 7;
-    geo.boundary_patch_data_{patch_id} = PointPatch.BoundaryPointPatch(3, 'G_Point');
+    geo.boundary_patch_data_{patch_id} = ...
+                                        PointPatch.BoundaryPointPatch(3, 'G_Point',...
+                                        geo.num_point_, geo.point_data_);
     patch = geo.boundary_patch_data_{patch_id};
-    %>> define Point
-    patch.num_point_ = 1;
-    patch.point_id_ = [7];
+    %>> define Patch Point
+    patch.num_patch_point_ = 1;
+    patch.patch_point_id_ = [7];
     
     
 end

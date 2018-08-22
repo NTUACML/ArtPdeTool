@@ -2,7 +2,7 @@ function [ shape_function ] = MappingElementType2ShapeFunction( element_type )
 %MESHTYPEMAPPINGSHAPEFUNCTION Summary of this function goes here
 %   Detailed explanation goes here
     import Utility.MeshUtility.ElementType
-    import Utility.MeshUtility.ShapeFunction
+    import FunctionSpace.FEM.ShapeFunction
 switch element_type
     case ElementType.Line2
         shape_function = @(xi) ShapeFunction.Line2(xi);
