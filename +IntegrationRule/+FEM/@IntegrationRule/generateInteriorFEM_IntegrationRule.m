@@ -8,6 +8,7 @@ function generateInteriorFEM_IntegrationRule( this )
     if(this.type_ == PatchType.Mesh)
         this.num_integral_unit_ = this.patch_data_.num_element_;
         this.integral_unit_data_ = cell(this.num_integral_unit_, 1);
+        
         for i = 1 : this.num_integral_unit_
             this.integral_unit_data_{i} = IntegralUnit(i);
             unit = this.integral_unit_data_{i};

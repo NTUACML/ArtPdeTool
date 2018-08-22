@@ -28,11 +28,11 @@ classdef FEM_Domain < Domain.DomainBase
         function generateInteriorDomain(this)
             import Domain.InteriorDomain.FEM.*
             % create interior domain by the interior patch 
-            % in side of the approximated geometry 
+            % inside of the approximated geometry 
             this.interior_domain_ = ...
                 InteriorDomain(this.approximated_geo_.interior_patch_data_);
             % add integration rule by the interior patch
-            % in side of the integral geometry 
+            % inside of the integral geometry 
             this.interior_domain_.setIntergationRule(...
                 this.integral_geo_.interior_patch_data_);
         end
