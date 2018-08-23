@@ -4,6 +4,7 @@ clc; clear; close all;
 import Geometry.*
 import Variable.*
 import Domain.*
+import BoundaryCondition.*
 
 fem_unit_cube_geo = GeometryBuilder.create('FEM', 'UnitCube');
 var_u = Variable('velocity', 3);
@@ -11,24 +12,41 @@ var_p = Variable('pressure', 1);
 fem_domain_u = FEM_Domain(var_u, fem_unit_cube_geo);
 fem_domain_p = FEM_Domain(var_p, fem_unit_cube_geo);
 
-% test
-u_int_rule = fem_domain_u.interior_domain_.intergation_rule_;
-u_fs = fem_domain_u.interior_domain_.function_space_;
+bc_u = BoundaryCondition('Up_Side', var_u);
+% Type 1 (General description)
+bc_u.setDirichlet({1 1 1})
+bc_u.setNeumann({0 0}, 'component', [2 3])
+disp(bc_u)
 
-unit_id = 1;
-int_unit = u_int_rule.integral_unit_data_{1};
+% Type 2 (weak formulation description) - Essential
+bc_u.setEssential({1 0 0})
+disp(bc_u)
 
-u_fs.query(int_unit);
+% Type 3 (weak formulation description) - Natural
+bc_u.setNatural({0})
+disp(bc_u)
 
-[n_q, xi, w] = int_unit.gauss_quadrature_();
-n_q
-xi
-w
 
-q_id = 1
 
-[N, dN_dxi] = int_unit.evaluate_basis_(xi(q_id, :))
-non_zero_id = int_unit.non_zero_id_
+
+% % test
+% u_int_rule = fem_domain_u.interior_domain_.intergation_rule_;
+% u_fs = fem_domain_u.interior_domain_.function_space_;
+% 
+% unit_id = 1;
+% int_unit = u_int_rule.integral_unit_data_{1};
+% 
+% u_fs.query(int_unit);
+% 
+% [n_q, xi, w] = int_unit.gauss_quadrature_();
+% n_q
+% xi
+% w
+% 
+% q_id = 1
+% 
+% [N, dN_dxi] = int_unit.evaluate_basis_(xi(q_id, :))
+% non_zero_id = int_unit.non_zero_id_
 
 
 
