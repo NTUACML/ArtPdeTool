@@ -93,7 +93,7 @@ classdef BoundaryCondition < handle
         end
         
         function disp(this)
-            disp(['Boundary condition for ', this.variable_.name_])
+            disp(['The ', this.bc_patch_name_ ,' boundary condition for ', this.variable_.name_])
             disp(['with ', num2str(this.variable_.num_dof_), ' DOF is:'])
             disp(this.bc_setting_)
         end

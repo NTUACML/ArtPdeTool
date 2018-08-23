@@ -12,19 +12,21 @@ var_p = Variable('pressure', 1);
 fem_domain_u = FEM_Domain(var_u, fem_unit_cube_geo);
 fem_domain_p = FEM_Domain(var_p, fem_unit_cube_geo);
 
-bc_u = BoundaryCondition('Up_Side', var_u);
 % Type 1 (General description)
-bc_u.setDirichlet({1 1 1})
-bc_u.setNeumann({0 0}, 'component', [2 3])
-disp(bc_u)
+bc_u_up = BoundaryCondition('Up_Side', var_u);
+bc_u_up.setDirichlet({1 1 1})
+bc_u_up.setNeumann({0 0}, 'component', [2 3])
+disp(bc_u_up)
 
 % Type 2 (weak formulation description) - Essential
-bc_u.setEssential({1 0 0})
-disp(bc_u)
+bc_u_down = BoundaryCondition('Down_Side', var_u);
+bc_u_down.setEssential({1 0 0})
+disp(bc_u_down)
 
 % Type 3 (weak formulation description) - Natural
-bc_u.setNatural({0})
-disp(bc_u)
+bc_u_right = BoundaryCondition('Right_Side', var_u);
+bc_u_right.setNatural({100})
+disp(bc_u_right)
 
 
 
