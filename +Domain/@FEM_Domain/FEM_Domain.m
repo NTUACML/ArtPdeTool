@@ -15,7 +15,16 @@ classdef FEM_Domain < Domain.DomainBase
             % generate interior domain (FEM method)
             this.generateInteriorDomain();
         end
-
+        
+        function setBoundaryCondition(this, imposed_bc, varargin)
+            import Domain.BoundaryDomain.FEM.BoundaryDomain
+            setBoundaryCondition@Domain.DomainBase(this, imposed_bc);
+            if(this.num_boundary_domain_ == 1)
+                this.boundary_domain_ = BoundaryDomain();
+            else
+                this.boundary_domain_ = {this.boundary_domain_; BoundaryDomain()};
+            end
+        end
     end
     
     % header define

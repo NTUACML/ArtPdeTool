@@ -33,6 +33,15 @@ classdef DomainBase < handle
                 disp('> empty integral geometry builded!');
             end
         end
+        
+        function setBoundaryCondition(this, imposed_bc)
+            if(isa(imposed_bc, 'BoundaryCondition.BoundaryCondition'))
+                this.num_boundary_domain_ = this.num_boundary_domain_ + 1;
+            else
+                disp('Error <DomainBase> - setBoundaryCondition!');
+                disp('> the imposed bc type should be created by BoundaryCondition class!');
+            end
+        end
     end
     
     methods (Access = protected)
@@ -53,6 +62,7 @@ classdef DomainBase < handle
                 disp('> check approximated geometry setted up properly!');
             end
         end
+        
     end
     
 end

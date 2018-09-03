@@ -6,18 +6,12 @@ import Variable.*
 import Domain.*
 import BoundaryCondition.*
 
-%% Geometry data input
 fem_unit_cube_geo = GeometryBuilder.create('FEM', 'UnitCube');
-
-%% Variable define in the problem
 var_u = Variable('velocity', 3);
 var_p = Variable('pressure', 1);
-
-%% Domain create
 fem_domain_u = FEM_Domain(var_u, fem_unit_cube_geo);
 fem_domain_p = FEM_Domain(var_p, fem_unit_cube_geo);
 
-%% Boundary condition create
 % Type 1 (General description)
 bc_u_up = BoundaryCondition('Up_Side', var_u);
 bc_u_up.setDirichlet({1 1 1})
@@ -33,12 +27,6 @@ disp(bc_u_down)
 bc_u_right = BoundaryCondition('Right_Side', var_u);
 bc_u_right.setTraction({100 0 0})
 disp(bc_u_right)
-
-%% Boundary condition impose on the domain
-fem_domain_u.setBoundaryCondition(bc_u_up);
-
-
-
 
 
 
