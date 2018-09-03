@@ -25,7 +25,7 @@ disp(bc_u_down)
 
 % Type 3 (weak formulation description) - Natural
 bc_u_right = BoundaryCondition('Right_Side', var_u);
-bc_u_right.setNatural({100})
+bc_u_right.setTraction({100 0 0}) % Bug
 disp(bc_u_right)
 
 

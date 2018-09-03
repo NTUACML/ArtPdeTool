@@ -78,17 +78,17 @@ classdef BoundaryCondition < handle
             end
         end
         
-        function setNatural(this, value)
+        function setTraction(this, value)
             import Utility.BasicUtility.BC_Type
             num_dof = this.variable_.num_dof_;
-            this.setAllDefaultType(num_dof, BC_Type.Natural);
-            if(length(value) == 1)
+            this.setAllDefaultType(num_dof, BC_Type.Traction);
+            if(length(value) == num_dof)
                 for i = 1 : num_dof
-                    this.bc_setting_{i, 2} = value{1};
+                    this.bc_setting_{i, 2} = value{i};
                 end
             else
-                disp('Error <BoundaryCondition> -> setNatural!');
-                disp('> The natural (traction) boundary condition only one control value');
+                disp('Error <BoundaryCondition> -> setTraction!');
+                disp('> The value should set the same number of DOF!');
             end
         end
         
