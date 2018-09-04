@@ -14,13 +14,8 @@ classdef FunctionSpace < FunctionSpace.FunctionSpaceBase
             this@FunctionSpace.FunctionSpaceBase(patch)
             this.region_ = patch.patch_region_;
             this.type_ = patch.patch_type_;
-            import Utility.BasicUtility.Region
-            if(this.region_ == Region.Interior)
-                this.generateInteriorFEM_QueryResults();
-            else
-                % Todo: gen_boundary
-            end
-            
+            % pre-calculated query basis function results
+            this.generateFEM_QueryResults();
         end
         
         function query(this, query_unit, varargin)
@@ -34,7 +29,7 @@ classdef FunctionSpace < FunctionSpace.FunctionSpaceBase
     end
     
     methods (Access = private)
-        generateInteriorFEM_QueryResults(this)
+        generateFEM_QueryResults(this)
         queryFEM_FunctionSpace(this, query_unit)
     end
 end

@@ -34,8 +34,16 @@ bc_u_right = BoundaryCondition('Right_Side', var_u);
 bc_u_right.setTraction({100 0 0})
 disp(bc_u_right)
 
+% Type 4 (direct force) - Essential
+bc_u_G = BoundaryCondition('G_Point', var_u);
+bc_u_G.setEssential({1 0 0})
+disp(bc_u_G)
+
 %% Boundary condition impose on the domain
 fem_domain_u.setBoundaryCondition(bc_u_up);
+fem_domain_u.setBoundaryCondition(bc_u_down);
+fem_domain_u.setBoundaryCondition(bc_u_G);
+
 
 
 

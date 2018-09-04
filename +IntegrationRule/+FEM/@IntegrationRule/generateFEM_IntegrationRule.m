@@ -1,4 +1,4 @@
-function generateInteriorFEM_IntegrationRule( this )
+function generateFEM_IntegrationRule( this )
 %GENERATEINTERIORFEM_INTEGRATIONRULE Summary of this function goes here
 %   Detailed explanation goes here
     import Utility.BasicUtility.PatchType
@@ -20,7 +20,7 @@ function generateInteriorFEM_IntegrationRule( this )
                 GaussQuadrature.MappingElementType2GaussQuadrature(element_type);
         end
     else
-        disp('Error <FEM.IntegrationRule>! (Interior)');
+        disp('Error <FEM.IntegrationRule>! -> generateFEM_IntegrationRule');
         disp('> PatchType error!');
     end
         

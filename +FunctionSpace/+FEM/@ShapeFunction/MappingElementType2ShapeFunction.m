@@ -4,6 +4,8 @@ function [ shape_function ] = MappingElementType2ShapeFunction( element_type )
     import Utility.MeshUtility.ElementType
     import FunctionSpace.FEM.ShapeFunction
 switch element_type
+    case ElementType.Point1
+        shape_function = @(xi) ShapeFunction.Point1(xi);
     case ElementType.Line2
         shape_function = @(xi) ShapeFunction.Line2(xi);
     case ElementType.Quad4

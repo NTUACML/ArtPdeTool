@@ -37,6 +37,15 @@ classdef DomainBase < handle
         function setBoundaryCondition(this, imposed_bc)
             if(isa(imposed_bc, 'BoundaryCondition.BoundaryCondition'))
                 this.num_boundary_domain_ = this.num_boundary_domain_ + 1;
+                if(this.num_boundary_domain_ == 1)
+                    this.boundary_domain_ = cell(this.num_boundary_domain_, 1);
+                else
+                    tmp = this.boundary_domain_;
+                    this.boundary_domain_ = cell(this.num_boundary_domain_, 1);
+                    for i = 1 : this.num_boundary_domain_ - 1
+                        this.boundary_domain_{i} = tmp{i};
+                    end
+                end
             else
                 disp('Error <DomainBase> - setBoundaryCondition!');
                 disp('> the imposed bc type should be created by BoundaryCondition class!');
@@ -62,6 +71,17 @@ classdef DomainBase < handle
                 disp('> check approximated geometry setted up properly!');
             end
         end
+        
+        function bc_patch_id = searchApproximatedBoundaryPatchByName(this, name)
+            bc_patch_id = 0;
+            for i = 1 : this.approximated_geo_.num_boundary_patch_
+                if(strcmp(this.approximated_geo_.boundary_patch_data_{i}.patch_name_, name))
+                    bc_patch_id = i;
+                end
+            end
+        end
+            
+            
         
     end
     

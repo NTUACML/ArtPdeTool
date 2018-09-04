@@ -9,8 +9,14 @@ classdef BoundaryDomain < handle
     end
     
     methods
-        function this = BoundaryDomain()
-            
+        function this = BoundaryDomain(patch)
+            import FunctionSpace.FEM.*
+            this.function_space_ = FunctionSpace(patch);
+        end
+        
+        function setIntergationRule(this, patch)
+            import IntegrationRule.FEM.*
+            this.intergation_rule_ = IntegrationRule(patch);
         end
     end
     

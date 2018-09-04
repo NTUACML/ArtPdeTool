@@ -12,18 +12,12 @@ classdef IntegrationRule < IntegrationRule.IntegrationRuleBase
             this@IntegrationRule.IntegrationRuleBase(patch)
             this.region_ = patch.patch_region_;
             this.type_ = patch.patch_type_;
-            import Utility.BasicUtility.Region
-            if(this.region_ == Region.Interior)
-                this.generateInteriorFEM_IntegrationRule();
-            else
-                % Todo: gen_boundary
-            end
-            
+            this.generateFEM_IntegrationRule();
         end
     end
     
     methods (Access = private)
-        generateInteriorFEM_IntegrationRule(this)
+        generateFEM_IntegrationRule(this)
     end
     
 end
