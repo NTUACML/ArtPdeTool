@@ -44,6 +44,9 @@ fem_domain_u.setBoundaryCondition(bc_u_up);
 fem_domain_u.setBoundaryCondition(bc_u_down);
 fem_domain_u.setBoundaryCondition(bc_u_G);
 
+%% System construction by Domain Mannger (DM)
+
+%dof_m = DOF_Mannger(fem_domain_u, fem_domain_p);
 
 
 

@@ -80,6 +80,15 @@ classdef DomainBase < handle
                 end
             end
         end
+        
+        function bc_patch_id = searchIntegralBoundaryPatchByName(this, name)
+            bc_patch_id = 0;
+            for i = 1 : this.integral_geo_.num_boundary_patch_
+                if(strcmp(this.integral_geo_.boundary_patch_data_{i}.patch_name_, name))
+                    bc_patch_id = i;
+                end
+            end
+        end
             
             
         

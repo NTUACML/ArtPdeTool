@@ -19,6 +19,9 @@ function generateFEM_IntegrationRule( this )
             unit.gauss_quadrature_ = ...
                 GaussQuadrature.MappingElementType2GaussQuadrature(element_type);
         end
+        
+    elseif(this.type_ == PatchType.Point)
+        % no integration rule in FEM
     else
         disp('Error <FEM.IntegrationRule>! -> generateFEM_IntegrationRule');
         disp('> PatchType error!');

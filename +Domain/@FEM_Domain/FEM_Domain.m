@@ -19,24 +19,20 @@ classdef FEM_Domain < Domain.DomainBase
         function setBoundaryCondition(this, imposed_bc, varargin)
             import Domain.BoundaryDomain.FEM.BoundaryDomain
             setBoundaryCondition@Domain.DomainBase(this, imposed_bc);
-            % search approximated domain id
-            bc_patch_id = this.searchApproximatedBoundaryPatchByName(imposed_bc.bc_patch_name_);
-            if(bc_patch_id == 0)
+            % search approximated and integral domain id
+            bc_approched_patch_id = this.searchApproximatedBoundaryPatchByName(imposed_bc.bc_patch_name_);
+            bc_integral_patch_id = this.searchIntegralBoundaryPatchByName(imposed_bc.bc_patch_name_);
+            if(bc_approched_patch_id == 0 || bc_integral_patch_id == 0)
                 disp('Error <FEM_Domain> - setBoundaryCondition!');
                 disp('> the boundary patch not found, check patch name again, please!');
                 return;
             end
             % create new boundary domain
-            bc_patch = this.approximated_geo_.boundary_patch_data_{bc_patch_id};
-            this.boundary_domain_{this.num_boundary_domain_} = BoundaryDomain(bc_patch);
-            % generate BC contents
-            if(isempty(varargin))
-                bc_method = [];
-            else
-                bc_method = varargin{1};
-            end
-            this.generateBoundaryDomain(imposed_bc, bc_method);
-            
+            bc_approched_patch = this.approximated_geo_.boundary_patch_data_{bc_approched_patch_id};
+            this.boundary_domain_{this.num_boundary_domain_} = BoundaryDomain(bc_approched_patch);
+            % set integration rule
+            bc_integral_patch = this.integral_geo_.boundary_patch_data_{bc_integral_patch_id};
+            this.boundary_domain_{this.num_boundary_domain_}.setIntergationRule(bc_integral_patch);
         end
     end
     
@@ -59,10 +55,6 @@ classdef FEM_Domain < Domain.DomainBase
                 this.integral_geo_.interior_patch_data_);
         end
         
-        function generateBoundaryDomain(this, imposed_bc, bc_method)
-            
-            
-        end
     end
     
     % cpp define

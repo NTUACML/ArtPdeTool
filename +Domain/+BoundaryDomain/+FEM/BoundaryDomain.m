@@ -5,7 +5,6 @@ classdef BoundaryDomain < handle
     properties
         function_space_
         intergation_rule_
-        direct_force_
     end
     
     methods
