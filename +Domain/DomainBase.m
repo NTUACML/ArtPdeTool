@@ -3,6 +3,7 @@ classdef DomainBase < handle
     %   Detailed explanation goes here
     
     properties
+        domain_id_ = 0
         variable_
         approximated_geo_
         integral_geo_
