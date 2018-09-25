@@ -7,7 +7,7 @@ import Domain.*
 % import Variable.*
 % import BoundaryCondition.*
 % import DomainMannger.*
-% 
+
 %% Geometry data input
 fem_unit_cube_geo = GeometryBuilder.create('FEM', 'UnitCube');
 
@@ -15,11 +15,11 @@ fem_unit_cube_geo = GeometryBuilder.create('FEM', 'UnitCube');
 fem_domain = DomainBuilder.create('FEM');
 
 fem_linear_basis = fem_domain.generateBasis(fem_unit_cube_geo);
-% 
+
 % %% Variable define in the problem
 % var_u = Variable('velocity', 3);
 % var_p = Variable('pressure', 1);
-% 
+
 % %% Domain create
 % fem_domain_u = FEM_Domain(var_u, fem_unit_cube_geo);
 % fem_domain_p = FEM_Domain(var_p, fem_unit_cube_geo);
