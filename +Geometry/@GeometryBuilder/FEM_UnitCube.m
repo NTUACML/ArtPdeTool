@@ -41,7 +41,7 @@ function geometry = FEM_UnitCube(this, var)
     patch.num_element_ = 1;
     patch.element_data_ = cell(patch.num_element_, 1);
     %>> define element
-    patch.element_data_{1} = Element(patch.dim_, [1 2 3 4]);
+    patch.element_data_{1} = BoundaryElement(patch.dim_, [1 2 3 4]);
     
     % Create Boundary patch (Up_Side)
     patch = topo.newBoundayPatch('Up_Side');
@@ -49,7 +49,7 @@ function geometry = FEM_UnitCube(this, var)
     patch.num_element_ = 1;
     patch.element_data_ = cell(patch.num_element_, 1);
     %>> define element
-    patch.element_data_{1} = Element(patch.dim_, [5 6 7 8]);
+    patch.element_data_{1} = BoundaryElement(patch.dim_, [5 6 7 8]);
     
     % Create Boundary patch (Rare_Side)
     patch = topo.newBoundayPatch('Rare_Side');
@@ -57,7 +57,7 @@ function geometry = FEM_UnitCube(this, var)
     patch.num_element_ = 1;
     patch.element_data_ = cell(patch.num_element_, 1);
     %>> define element
-    patch.element_data_{1} = Element(patch.dim_, [1 2 6 5]);
+    patch.element_data_{1} = BoundaryElement(patch.dim_, [1 2 6 5]);
     
     % Create Boundary patch (Right_Side)
     patch = topo.newBoundayPatch('Right_Side');
@@ -65,7 +65,7 @@ function geometry = FEM_UnitCube(this, var)
     patch.num_element_ = 1;
     patch.element_data_ = cell(patch.num_element_, 1);
     %>> define element
-    patch.element_data_{1} = Element(patch.dim_, [2 3 7 6]);
+    patch.element_data_{1} = BoundaryElement(patch.dim_, [2 3 7 6]);
     
     % Create Boundary patch (Front_Side)
     patch = topo.newBoundayPatch('Front_Side');
@@ -73,7 +73,7 @@ function geometry = FEM_UnitCube(this, var)
     patch.num_element_ = 1;
     patch.element_data_ = cell(patch.num_element_, 1);
     %>> define element
-    patch.element_data_{1} = Element(patch.dim_, [3 4 8 7]);
+    patch.element_data_{1} = BoundaryElement(patch.dim_, [3 4 8 7]);
     
     % Create Boundary patch (Left_Side)
     patch = topo.newBoundayPatch('Left_Side');
@@ -81,7 +81,7 @@ function geometry = FEM_UnitCube(this, var)
     patch.num_element_ = 1;
     patch.element_data_ = cell(patch.num_element_, 1);
     %>> define element
-    patch.element_data_{1} = Element(patch.dim_, [1 4 8 5]);
+    patch.element_data_{1} = BoundaryElement(patch.dim_, [1 4 8 5]);
     
 end
 
