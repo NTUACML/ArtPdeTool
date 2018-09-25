@@ -2,56 +2,62 @@ clc; clear; close all;
 
 %% Include package
 import Geometry.*
-import Variable.*
 import Domain.*
-import BoundaryCondition.*
-import DomainMannger.*
 
+% import Variable.*
+% import BoundaryCondition.*
+% import DomainMannger.*
+% 
 %% Geometry data input
 fem_unit_cube_geo = GeometryBuilder.create('FEM', 'UnitCube');
 
-%% Variable define in the problem
-var_u = Variable('velocity', 3);
-var_p = Variable('pressure', 1);
-
 %% Domain create
-fem_domain_u = FEM_Domain(var_u, fem_unit_cube_geo);
-fem_domain_p = FEM_Domain(var_p, fem_unit_cube_geo);
+fem_domain = DomainBuilder.create('FEM');
 
-%% Boundary condition create
-% Type 1 (General description)
-bc_u_up = BoundaryCondition('Up_Side', var_u);
-bc_u_up.setDirichlet({1 1 1})
-bc_u_up.setNeumann({0 0}, 'component', [2 3])
-% disp(bc_u_up)
-
-% Type 2 (weak formulation description) - Essential
-bc_u_down = BoundaryCondition('Down_Side', var_u);
-bc_u_down.setEssential({1 0 0})
-% disp(bc_u_down)
-
-% Type 3 (weak formulation description) - Traction
-bc_u_right = BoundaryCondition('Right_Side', var_u);
-bc_u_right.setTraction({100 0 0})
-% disp(bc_u_right)
-
-% Type 4 (direct force) - Essential
-bc_u_G = BoundaryCondition('G_Point', var_u);
-bc_u_G.setEssential({1 0 0})
-% disp(bc_u_G)
-
-%% Boundary condition impose on the domain
-fem_domain_u.setBoundaryCondition(bc_u_up);
-fem_domain_u.setBoundaryCondition(bc_u_down);
-fem_domain_u.setBoundaryCondition(bc_u_G);
-
-%% System constructioned by Domain Mannger (DM)
-DM = DomainMannger();
-DM.addDomain(fem_domain_u);
-DM.addDomain(fem_domain_p);
-
-global_id_u = DM.queryAssemblyId(fem_domain_u, [1, 2, 3, 4]);
-global_id_p = DM.queryAssemblyId(fem_domain_p, [1, 2, 3, 4]);
+fem_linear_basis = fem_domain.generateBasis(fem_unit_cube_geo);
+% 
+% %% Variable define in the problem
+% var_u = Variable('velocity', 3);
+% var_p = Variable('pressure', 1);
+% 
+% %% Domain create
+% fem_domain_u = FEM_Domain(var_u, fem_unit_cube_geo);
+% fem_domain_p = FEM_Domain(var_p, fem_unit_cube_geo);
+% 
+% %% Boundary condition create
+% % Type 1 (General description)
+% bc_u_up = BoundaryCondition('Up_Side', var_u);
+% bc_u_up.setDirichlet({1 1 1})
+% bc_u_up.setNeumann({0 0}, 'component', [2 3])
+% % disp(bc_u_up)
+% 
+% % Type 2 (weak formulation description) - Essential
+% bc_u_down = BoundaryCondition('Down_Side', var_u);
+% bc_u_down.setEssential({1 0 0})
+% % disp(bc_u_down)
+% 
+% % Type 3 (weak formulation description) - Traction
+% bc_u_right = BoundaryCondition('Right_Side', var_u);
+% bc_u_right.setTraction({100 0 0})
+% % disp(bc_u_right)
+% 
+% % Type 4 (direct force) - Essential
+% bc_u_G = BoundaryCondition('G_Point', var_u);
+% bc_u_G.setEssential({1 0 0})
+% % disp(bc_u_G)
+% 
+% %% Boundary condition impose on the domain
+% fem_domain_u.setBoundaryCondition(bc_u_up);
+% fem_domain_u.setBoundaryCondition(bc_u_down);
+% fem_domain_u.setBoundaryCondition(bc_u_G);
+% 
+% %% System constructioned by Domain Mannger (DM)
+% DM = DomainMannger();
+% DM.addDomain(fem_domain_u);
+% DM.addDomain(fem_domain_p);
+% 
+% global_id_u = DM.queryAssemblyId(fem_domain_u, [1, 2, 3, 4]);
+% global_id_p = DM.queryAssemblyId(fem_domain_p, [1, 2, 3, 4]);
 
 
 

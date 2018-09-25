@@ -1,4 +1,4 @@
-classdef InteriorMeshPatch < Utility.BasicUtility.Patch ...
+classdef DomainMeshPatch < Utility.BasicUtility.Patch ...
                          & ... 
                          Utility.MeshUtility.MeshPatch.MeshPatchBase
     %INTERIORPATCH Summary of this class goes here
@@ -8,10 +8,10 @@ classdef InteriorMeshPatch < Utility.BasicUtility.Patch ...
     end
     
     methods
-        function this = InteriorMeshPatch(dim, name, num_point, point_data)
+        function this = DomainMeshPatch(dim, name, num_point, point_data)
             import Utility.BasicUtility.PatchType
             import Utility.BasicUtility.Region
-            this@Utility.BasicUtility.Patch(dim, name, PatchType.Mesh, Region.Interior);
+            this@Utility.BasicUtility.Patch(dim, name, PatchType.Mesh, Region.Domain);
             this@Utility.MeshUtility.MeshPatch.MeshPatchBase(dim, num_point, point_data);             
         end
     end

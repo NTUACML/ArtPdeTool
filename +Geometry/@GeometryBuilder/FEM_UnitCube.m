@@ -25,9 +25,9 @@ function geometry = FEM_UnitCube(this, var)
     
     geo.point_data_ = PointList(cube_point);
     %> Generate interior patch
-    geo.interior_patch_data_ = MeshPatch.InteriorMeshPatch(3, 'Interior_1',...
+    geo.domain_patch_data_ = MeshPatch.DomainMeshPatch(3, 'Domain',...
                                geo.num_point_, geo.point_data_);
-    patch = geo.interior_patch_data_;
+    patch = geo.domain_patch_data_;
     %>> Generate element
     patch.num_element_ = 1;
     patch.element_data_ = cell(patch.num_element_, 1);
