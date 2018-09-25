@@ -27,13 +27,13 @@ function geometry = FEM_UnitCube(this, var)
     topo.point_data_ = PointList(cube_point);
     
     % Get Domain patch
-    patch = topo.getDomainPatch();
+    domain_patch = topo.getDomainPatch();
     
     %> Generate domain element
-    patch.num_element_ = 1;
-    patch.element_data_ = cell(patch.num_element_, 1);
+    domain_patch.num_element_ = 1;
+    domain_patch.element_data_ = cell(domain_patch.num_element_, 1);
     %>> define element
-    patch.element_data_{1} = Element(patch.dim_, [1 2 3 4 5 6 7 8]);
+    domain_patch.element_data_{1} = Element(domain_patch.dim_, [1 2 3 4 5 6 7 8]);
     
     % Create Boundary patch (Down_Side)
     patch = topo.newBoundayPatch('Down_Side');
@@ -41,7 +41,8 @@ function geometry = FEM_UnitCube(this, var)
     patch.num_element_ = 1;
     patch.element_data_ = cell(patch.num_element_, 1);
     %>> define element
-    patch.element_data_{1} = BoundaryElement(patch.dim_, [1 2 3 4]);
+    patch.element_data_{1} = BoundaryElement(patch.dim_, [1 2 3 4], 1);
+    patch.element_data_{1}.generateOrientation(domain_patch);
     
     % Create Boundary patch (Up_Side)
     patch = topo.newBoundayPatch('Up_Side');
@@ -49,7 +50,8 @@ function geometry = FEM_UnitCube(this, var)
     patch.num_element_ = 1;
     patch.element_data_ = cell(patch.num_element_, 1);
     %>> define element
-    patch.element_data_{1} = BoundaryElement(patch.dim_, [5 6 7 8]);
+    patch.element_data_{1} = BoundaryElement(patch.dim_, [5 6 7 8], 1);
+    patch.element_data_{1}.generateOrientation(domain_patch);
     
     % Create Boundary patch (Rare_Side)
     patch = topo.newBoundayPatch('Rare_Side');
@@ -57,7 +59,8 @@ function geometry = FEM_UnitCube(this, var)
     patch.num_element_ = 1;
     patch.element_data_ = cell(patch.num_element_, 1);
     %>> define element
-    patch.element_data_{1} = BoundaryElement(patch.dim_, [1 2 6 5]);
+    patch.element_data_{1} = BoundaryElement(patch.dim_, [1 2 6 5], 1);
+    patch.element_data_{1}.generateOrientation(domain_patch);
     
     % Create Boundary patch (Right_Side)
     patch = topo.newBoundayPatch('Right_Side');
@@ -65,7 +68,8 @@ function geometry = FEM_UnitCube(this, var)
     patch.num_element_ = 1;
     patch.element_data_ = cell(patch.num_element_, 1);
     %>> define element
-    patch.element_data_{1} = BoundaryElement(patch.dim_, [2 3 7 6]);
+    patch.element_data_{1} = BoundaryElement(patch.dim_, [2 3 7 6], 1);
+    patch.element_data_{1}.generateOrientation(domain_patch);
     
     % Create Boundary patch (Front_Side)
     patch = topo.newBoundayPatch('Front_Side');
@@ -73,7 +77,8 @@ function geometry = FEM_UnitCube(this, var)
     patch.num_element_ = 1;
     patch.element_data_ = cell(patch.num_element_, 1);
     %>> define element
-    patch.element_data_{1} = BoundaryElement(patch.dim_, [3 4 8 7]);
+    patch.element_data_{1} = BoundaryElement(patch.dim_, [3 4 8 7], 1);
+    patch.element_data_{1}.generateOrientation(domain_patch);
     
     % Create Boundary patch (Left_Side)
     patch = topo.newBoundayPatch('Left_Side');
@@ -81,7 +86,7 @@ function geometry = FEM_UnitCube(this, var)
     patch.num_element_ = 1;
     patch.element_data_ = cell(patch.num_element_, 1);
     %>> define element
-    patch.element_data_{1} = BoundaryElement(patch.dim_, [1 4 8 5]);
-    
+    patch.element_data_{1} = BoundaryElement(patch.dim_, [1 4 8 5], 1);
+    patch.element_data_{1}.generateOrientation(domain_patch);
 end
 
