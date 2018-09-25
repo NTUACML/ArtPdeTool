@@ -8,11 +8,11 @@ classdef BoundaryPointPatch < Utility.BasicUtility.Patch ...
     end
     
     methods
-        function this = BoundaryPointPatch(dim, name)
+        function this = BoundaryPointPatch(dim, name, num_point, point_data)
             import Utility.BasicUtility.PatchType
             import Utility.BasicUtility.Region
             this@Utility.BasicUtility.Patch(dim, name, PatchType.Point, Region.Boundary);
-            this@Utility.MeshfreeUtility.PointPatch.PointPatchBase();             
+            this@Utility.MeshfreeUtility.PointPatch.PointPatchBase(num_point, point_data);             
         end
     end
     
