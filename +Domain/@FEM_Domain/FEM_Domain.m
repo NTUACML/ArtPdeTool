@@ -10,15 +10,10 @@ classdef FEM_Domain < Domain.DomainBase
             this@Domain.DomainBase('FEM');
         end
         
-        function basis = generateBasis(this, geometry, varargin)
-            if(isa(geometry, 'Geometry.Geometry'))
-                disp('FEM basis')
-                basis = [];
-            else
-                disp('Error <FEM Domain>! check geometry input type!');
-                disp('> empty basis builded!');
-                basis = [];
-            end
+        function basis = generateBasis(this, topology, varargin)
+            import BasisFunction.FEM.BasisFunction
+            % create basis function
+            basis = BasisFunction.FEM.BasisFunction(topology);
         end
         
         function variable = generateVariable(this, name, num_dof, basis, varargin);
@@ -29,7 +24,7 @@ classdef FEM_Domain < Domain.DomainBase
             else
                 disp('Error <FEM Domain>! check basis input type!');
                 disp('> empty variable builded!');
-                basis = [];
+                variable = [];
             end
         end
     end

@@ -10,11 +10,13 @@ import Domain.*
 
 %% Geometry data input
 fem_unit_cube_geo = GeometryBuilder.create('FEM', 'UnitCube');
+isoparametric_topo = fem_unit_cube_geo.topology_data_{1};
 
 %% Domain create
 fem_domain = DomainBuilder.create('FEM');
 
-fem_linear_basis = fem_domain.generateBasis(fem_unit_cube_geo);
+%% Basis create
+fem_linear_basis = fem_domain.generateBasis(isoparametric_topo);
 
 % %% Variable define in the problem
 % var_u = Variable('velocity', 3);

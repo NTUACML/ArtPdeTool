@@ -13,7 +13,7 @@ classdef BoundaryElement < Utility.MeshUtility.Element
             this.element_id_ = element_id;
         end
         
-        function get_orientation(this, domain_patch)
+        function generateOrientation(this, domain_patch)
             element_connectivity = domain_patch.element_data_{this.element_id_}.node_id_;
             [~, this.orientation_id_] = ismember(this.node_id_, element_connectivity);
         end
