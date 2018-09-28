@@ -12,17 +12,17 @@ classdef BasisFunction < BasisFunction.BasisFunctionBase
         end
         
         function status = generate(this, generate_parameter)
-            
+            status = this.generateFEM_shapefunction(generate_parameter);
         end
         
         function results = query(this, query_unit, query_parameter)
-            
+            results = this.queryFEM_shapefunction(query_unit, query_parameter);
         end
     end
     
     methods(Access = private)
         status = generateFEM_shapefunction(this, generate_parameter)
-        
+        results = queryFEM_shapefunction(this, query_unit, query_parameter)
     end
     
 end

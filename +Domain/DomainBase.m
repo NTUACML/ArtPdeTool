@@ -4,6 +4,7 @@ classdef DomainBase < handle
     
     properties
         type_
+        dof_mannger_
     end
     
     methods
