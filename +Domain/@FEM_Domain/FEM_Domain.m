@@ -54,6 +54,31 @@ classdef FEM_Domain < Domain.DomainBase
                 variable = [];
             end
         end
+        
+        function test_variable = generateTestVariable(this, variable, basis, varargin)
+            if(isa(variable, 'Variable.Variable') &&... 
+               isa(basis, 'BasisFunction.BasisFunctionBase'))
+               import TestVariable.TestVariable
+                
+                % create test variable
+                test_variable = TestVariable(variable, basis);
+                % generate test variable
+                num_genetrate_var = length(varargin);
+                if(num_genetrate_var == 0)
+                    genetrate_var = [];
+                else
+                    genetrate_var = varargin{1};  
+                end
+            
+                genetrated_status = basis.generate(genetrate_var);
+            
+                % error check
+            else
+                disp('Error <FEM Domain>! check basis input type!');
+                disp('> empty test variable builded!');
+                test_variable = [];
+            end
+        end
     end
     
 end

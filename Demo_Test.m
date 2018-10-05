@@ -19,14 +19,16 @@ fem_linear_basis = fem_domain.generateBasis(isoparametric_topo);
 var_u = fem_domain.generateVariable('velocity', fem_linear_basis,...
                                     VariableType.Vector, 3);
 var_p = fem_domain.generateVariable('pressure', fem_linear_basis,...
-                                    VariableType.Scalar, 1);
-                                
-disp(var_u);
-disp(var_p);
-% 
-% test_u = TestSpace(var_u, fem_linear_basis);
-% test_p = TestSpace(var_p, fem_linear_basis);
-% 
+                                    VariableType.Scalar, 1);                             
+% disp(var_u);
+% disp(var_p);
+
+%% Test variable define
+test_u = fem_domain.generateTestVariable(var_u, fem_linear_basis);
+test_p = fem_domain.generateTestVariable(var_p, fem_linear_basis);
+
+%% Constraint (Acquire prescribed D.O.F.)
+
 % const = Constraint(isoparametric_topo.boundary('xx_patch'), 'FEM');
 % test_u.applyConst(const, conponent, value);
 % 
