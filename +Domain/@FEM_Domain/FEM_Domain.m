@@ -28,11 +28,26 @@ classdef FEM_Domain < Domain.DomainBase
             
         end
         
-        function variable = generateVariable(this, name, num_dof, basis, varargin);
-            if(1)
-            %if(isa(basis, ' '))
-                disp('FEM basis')
-                variable = [];
+        function variable = generateVariable(this, name, basis, type, type_parameter, varargin)
+            if(isa(basis, 'BasisFunction.BasisFunctionBase'))
+                import Variable.Variable
+                % get variable number by basis
+                num_var = basis.num_basis_;
+                % new the variable
+                var = Variable(name, num_var);
+                % generate the variable by type
+                status = var.generate(type, type_parameter);
+                % check status and add to DOF mannger
+                if(status)
+                    % DM
+                    this.dof_mannger_.addVariable(var);
+                    variable = var;
+                else
+                    variable = [];
+                    disp('Error <FEM Domain>! - generateVariable!');
+                    disp('> variable generate error!');
+                    disp('> empty variable builded!');
+                end
             else
                 disp('Error <FEM Domain>! check basis input type!');
                 disp('> empty variable builded!');
