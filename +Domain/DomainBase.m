@@ -21,6 +21,7 @@ classdef DomainBase < handle
         basis = generateBasis(this, topology, varargin);
         variable = generateVariable(this, name, basis, type, type_parameter, varargin);
         test_variable = generateTestVariable(this, variable, basis, varargin);
+        constraint = generateConstraint(this, type, patch, varargin);
     end
     
 end

@@ -7,13 +7,13 @@ import Domain.*
 
 %% Geometry data input
 fem_unit_cube_geo = GeometryBuilder.create('FEM', 'UnitCube');
-isoparametric_topo = fem_unit_cube_geo.topology_data_{1};
+iso_topo = fem_unit_cube_geo.topology_data_{1};
 
 %% Domain create
 fem_domain = DomainBuilder.create('FEM');
 
 %% Basis create
-fem_linear_basis = fem_domain.generateBasis(isoparametric_topo);
+fem_linear_basis = fem_domain.generateBasis(iso_topo);
 
 %% Variable define
 var_u = fem_domain.generateVariable('velocity', fem_linear_basis,...
@@ -28,8 +28,9 @@ test_u = fem_domain.generateTestVariable(var_u, fem_linear_basis);
 test_p = fem_domain.generateTestVariable(var_p, fem_linear_basis);
 
 %% Constraint (Acquire prescribed D.O.F.)
+constraint = fem_domain.generateConstraint('FEM',...
+                                      iso_topo.getBoundayPatch('Up_Side'));
 
-% const = Constraint(isoparametric_topo.boundary('xx_patch'), 'FEM');
 % test_u.applyConst(const, conponent, value);
 % 
 % exp1 = Dot(Grad(test_u), Grad(var_u)); %+ test_p * var_p;

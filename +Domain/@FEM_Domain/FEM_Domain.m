@@ -70,7 +70,7 @@ classdef FEM_Domain < Domain.DomainBase
                     genetrate_var = varargin{1};  
                 end
             
-                genetrated_status = basis.generate(genetrate_var);
+                genetrated_status = test_variable.generate(genetrate_var);
             
                 % error check
             else
@@ -78,6 +78,27 @@ classdef FEM_Domain < Domain.DomainBase
                 disp('> empty test variable builded!');
                 test_variable = [];
             end
+        end
+        
+        function constraint = generateConstraint(this, type, patch, varargin)
+            import Constraint.ConstraintBuilder
+            % The constraint builded by builder.
+            constraint = ConstraintBuilder.create(type);
+            % Create constraint info.
+            
+            num_genetrate_var = length(varargin);
+            if(num_genetrate_var == 0)
+            	genetrate_var = [];
+            else
+                genetrate_var = varargin{1};  
+            end
+            genetrated_status = constraint.generate(patch, genetrate_var);
+            
+            % error check
+            if(~genetrated_status)
+                disp('Error <FEM Domain>! constraint generate error!');
+                disp('> Please check generated method in the Constraint data');
+            end 
         end
     end
     
