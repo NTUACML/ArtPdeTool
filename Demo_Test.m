@@ -1,24 +1,55 @@
 clc; clear; close all;
 
 %% Include package
+import Utility.BasicUtility.*
 import Geometry.*
 import Domain.*
 
-% import Variable.*
-% import BoundaryCondition.*
-% import DomainMannger.*
-
 %% Geometry data input
 fem_unit_cube_geo = GeometryBuilder.create('FEM', 'UnitCube');
+iso_topo = fem_unit_cube_geo.topology_data_{1};
 
 %% Domain create
 fem_domain = DomainBuilder.create('FEM');
 
-fem_linear_basis = fem_domain.generateBasis(fem_unit_cube_geo);
+%% Basis create
+fem_linear_basis = fem_domain.generateBasis(iso_topo);
 
-% %% Variable define in the problem
-% var_u = Variable('velocity', 3);
-% var_p = Variable('pressure', 1);
+%% Variable define
+var_u = fem_domain.generateVariable('velocity', fem_linear_basis,...
+                                    VariableType.Vector, 3);
+var_p = fem_domain.generateVariable('pressure', fem_linear_basis,...
+                                    VariableType.Scalar, 1);                             
+% disp(var_u);
+% disp(var_p);
+
+%% Test variable define
+test_u = fem_domain.generateTestVariable(var_u, fem_linear_basis);
+test_p = fem_domain.generateTestVariable(var_p, fem_linear_basis);
+
+%% Constraint (Acquire prescribed D.O.F.)
+constraint = fem_domain.generateConstraint('FEM',...
+                                      iso_topo.getBoundayPatch('Up_Side'));
+
+% test_u.applyConst(const, conponent, value);
+% 
+% exp1 = Dot(Grad(test_u), Grad(var_u)); %+ test_p * var_p;
+% exp2 = test_u * var_u;
+% exp3 = test_p * var_p;
+% %exp3.static(var_xxx)
+% 
+% fem_domain.int(exp1, topo, p=2);
+% 
+% fem_domain.boundary('xx_patch').int(exp2);
+% 
+% fem_domain.solver('BiCG').solve();
+% 
+% interpo_basis = fem_domain.generateBasis(interpo_topo);
+% 
+% intpo_some = Interpolation('Methods', interpo_basis);
+% 
+% interpo_var_u = intpo_some(target_topo, var_u);
+
 
 % %% Domain create
 % fem_domain_u = FEM_Domain(var_u, fem_unit_cube_geo);

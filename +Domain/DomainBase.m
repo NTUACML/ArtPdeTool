@@ -4,17 +4,24 @@ classdef DomainBase < handle
     
     properties
         type_
+        dof_mannger_
     end
     
     methods
         function this = DomainBase(type)
+            import DofMannger.*
+            % set domain type
             this.type_ = type;
+            % Dof Mannger init
+            this.dof_mannger_ = DofMannger();
         end
     end
     
     methods (Abstract)
-        basis = generateBasis(this, geometry, varargin);
-        variable = generateVariable(this, name, num_dof, basis, varargin);
+        basis = generateBasis(this, topology, varargin);
+        variable = generateVariable(this, name, basis, type, type_parameter, varargin);
+        test_variable = generateTestVariable(this, variable, basis, varargin);
+        constraint = generateConstraint(this, type, patch, varargin);
     end
     
 end
