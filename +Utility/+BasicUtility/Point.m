@@ -40,6 +40,14 @@ classdef Point < handle
             end
         end
         
+        function w = getW(this)
+            if(dim >= 4)
+                w = this.data_(4);
+            else
+                w = 0;
+            end
+        end
+        
     end
     
     methods (Access = private)
