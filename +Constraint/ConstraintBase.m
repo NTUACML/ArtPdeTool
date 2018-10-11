@@ -4,16 +4,19 @@ classdef ConstraintBase < handle
     
     properties
         patch_data_
+        constraint_var_
         constraint_var_id_
+        constraint_data_
     end
     
     methods
-        function this = ConstraintBase()    
+        function this = ConstraintBase(patch)
+            this.patch_data_ = patch;
         end      
     end
     
     methods (Abstract)
-        status = generate(this, patch, generate_parameter);
+        status = generate(this, variable, constraint_data, genetrate_parameter);
     end
     
 end

@@ -5,6 +5,8 @@ classdef DomainBase < handle
     properties
         type_
         dof_mannger_
+        num_constraint_ = 0
+        constraint_
     end
     
     methods
@@ -14,6 +16,9 @@ classdef DomainBase < handle
             this.type_ = type;
             % Dof Mannger init
             this.dof_mannger_ = DofMannger();
+            % 
+            this.constraint_ = containers.Map(...
+                'KeyType','double','ValueType','any');
         end
     end
     
@@ -21,7 +26,7 @@ classdef DomainBase < handle
         basis = generateBasis(this, topology, varargin);
         variable = generateVariable(this, name, basis, type, type_parameter, varargin);
         test_variable = generateTestVariable(this, variable, basis, varargin);
-        constraint = generateConstraint(this, type, patch, varargin);
+        constraint = generateConstraint(this, patch, variable, constraint_data, varargin);
     end
     
 end

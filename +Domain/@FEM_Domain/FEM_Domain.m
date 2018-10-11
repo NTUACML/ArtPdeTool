@@ -80,25 +80,57 @@ classdef FEM_Domain < Domain.DomainBase
             end
         end
         
-        function constraint = generateConstraint(this, type, patch, varargin)
-            import Constraint.ConstraintBuilder
-            % The constraint builded by builder.
-            constraint = ConstraintBuilder.create(type);
-            % Create constraint info.
-            
-            num_genetrate_var = length(varargin);
-            if(num_genetrate_var == 0)
-            	genetrate_var = [];
+        function constraint = generateConstraint(this, patch, variable, constraint_data, varargin)
+            import Utility.BasicUtility.Region
+            if(isa(patch, 'Utility.MeshUtility.MeshPatch') ...
+                    && (patch.region_ == Region.Boundary)...
+                    && isa(variable, 'Variable.Variable'))
+                import Constraint.FEM.Constraint
+                
+                constraint = Constraint(patch);
+                % generate constraint
+                num_genetrate_var = length(varargin);
+                if(num_genetrate_var == 0)
+                    genetrate_var = [];
+                else
+                    genetrate_var = varargin{1};  
+                end
+                genetrated_status = constraint.generate(variable, constraint_data, genetrate_var);
+                
+                if(genetrated_status)
+                    this.num_constraint_ = this.num_constraint_ + 1;
+                    this.constraint_(this.num_constraint_) = constraint;
+                else
+                    disp('Error <FEM Domain>! - generateConstraint!');
+                    disp('> generated fail! please check it~');
+                    constraint = [];
+                end
+                
             else
-                genetrate_var = varargin{1};  
+                disp('Error <FEM Domain>! - generateConstraint!');
+                disp('> Please check patch data is boundary patch and Mesh type, ');
+                disp('> var is Variable type.');
+                constraint = [];
             end
-            genetrated_status = constraint.generate(patch, genetrate_var);
             
-            % error check
-            if(~genetrated_status)
-                disp('Error <FEM Domain>! constraint generate error!');
-                disp('> Please check generated method in the Constraint data');
-            end 
+%             import Constraint.ConstraintBuilder
+%             % The constraint builded by builder.
+%             constraint = ConstraintBuilder.create(type);
+%             % Create constraint info.
+%             
+%             num_genetrate_var = length(varargin);
+%             if(num_genetrate_var == 0)
+%             	genetrate_var = [];
+%             else
+%                 genetrate_var = varargin{1};  
+%             end
+%             genetrated_status = constraint.generate(patch, genetrate_var);
+%             
+%             % error check
+%             if(~genetrated_status)
+%                 disp('Error <FEM Domain>! constraint generate error!');
+%                 disp('> Please check generated method in the Constraint data');
+%             end 
         end
     end
     
