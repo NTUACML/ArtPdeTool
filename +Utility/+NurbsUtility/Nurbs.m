@@ -43,6 +43,7 @@ classdef Nurbs
                 for i = 1:this.basis_number_(1)
                     control_pnt(:,i) = control_point_list(i,:)';
                 end
+                this.nurbs_tool_object_ = nrbmak(control_pnt, knot_vectors{1});
             elseif this.geometry_dimension_ == 2
                 control_pnt = zeros(4,this.basis_number_(1), this.basis_number_(2));   
                 for i = 1:this.basis_number_(1)
@@ -51,10 +52,11 @@ classdef Nurbs
                         control_pnt(:,i,j) = control_point_list(n,:)';
                     end
                 end
+                this.nurbs_tool_object_ = nrbmak(control_pnt, knot_vectors);
             elseif this.geometry_dimension_ == 3
                 disp('Currently not support nurbs solid!');
             end
-            this.nurbs_tool_object_ = nrbmak(control_pnt, knot_vectors);
+
         end
         
         function plotNurbs(this, number_points)

@@ -19,5 +19,12 @@ domain_nurbs = Nurbs(knot_vectors, order, control_point);
 domain_nurbs.type_
 domain_nurbs.dispControlPoints();
 domain_nurbs.plotNurbs([20, 10]);
-%%  create nurbs patch
+%%  create nurbs geometry
+import Geometry.*
+
+geo = GeometryBuilder.create('IGA', 'Rectangle', [20, 2]);
+nurbs_topology = geo.topology_data_{1};
+
+
+
 

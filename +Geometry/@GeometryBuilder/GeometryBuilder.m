@@ -27,9 +27,15 @@ classdef GeometryBuilder
                     disp('> empty geometry builded!');
                     geometry = [];
                 case 'IGA'
-                    disp('Warning <GeometryBuilder>! IGA type not support yet!');
-                    disp('> empty geometry builded!');
-                    geometry = [];
+                    switch name
+                        case 'Rectangle'
+                            geometry = Geometry.GeometryBuilder.IGA_Rectangle(varargin{1});
+                        otherwise
+                            disp('Warning <GeometryBuilder>!');
+                            disp('> name in IGA type was not exist!');
+                            disp('> empty geometry builded!');
+                            geometry = []; 
+                    end
                 otherwise  
                 	disp('Error <GeometryBuilder>! check domain input type!');
                     disp('> empty geometry builded!');
@@ -41,6 +47,7 @@ classdef GeometryBuilder
     
     methods(Static, Access = private)
         geometry = FEM_UnitCube(this, var);
+        geometry = IGA_Rectangle(this, varargin)
     end
 end
 
