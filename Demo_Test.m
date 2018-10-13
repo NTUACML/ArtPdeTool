@@ -29,7 +29,9 @@ test_p = fem_domain.generateTestVariable(var_p, fem_linear_basis);
 
 %% Constraint (Acquire prescribed D.O.F.)
 up_side_patch = iso_topo.getBoundayPatch('Up_Side');
-constraint = fem_domain.generateConstraint(up_side_patch, var_u, {1, @()1});
+down_side_patch = iso_topo.getBoundayPatch('Down_Side');
+u_constraint_up = fem_domain.generateConstraint(up_side_patch, var_u, {1, @()1});
+u_constraint_down = fem_domain.generateConstraint(down_side_patch, var_u, {1, @()2});
 
 % 
 % exp1 = Dot(Grad(test_u), Grad(var_u)); %+ test_p * var_p;
