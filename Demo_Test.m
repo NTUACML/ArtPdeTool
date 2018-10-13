@@ -33,15 +33,17 @@ test_p = fem_domain.generateTestVariable(var_p, fem_linear_basis);
 % exp3 = test_p * var_p;
 % %exp3.static(var_xxx)
 
-exp = Expression.ExpressionBase;
+exp1 = Expression.ExpressionBase;
+exp2 = Expression.ExpressionBase;
 
 %% Integral variation equations
+% Domain integral
 int_doamin_patch = iso_topo.getDomainPatch();
+fem_domain.calIntegral(int_doamin_patch, exp1);
 
-fem_domain.calIntegral(int_doamin_patch, exp);
-% 
-% fem_domain.boundary('xx_patch').int(exp2);
-
+% Boundary integral
+int_right_patch = iso_topo.getBoundayPatch('Right_Side');
+fem_domain.calIntegral(int_right_patch, exp2);
 
 %% Constraint (Acquire prescribed D.O.F.)
 up_side_patch = iso_topo.getBoundayPatch('Up_Side');

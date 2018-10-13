@@ -33,7 +33,7 @@ classdef DomainBase < handle
         test_variable = generateTestVariable(this, variable, basis, varargin);
         constraint = generateConstraint(this, patch, variable, constraint_data, varargin);
         status = calIntegral(this, patch, expression, varargin);
-        %status = cal(this, expression, varargin);
+        %status = cal(this, patch, expression, varargin);
     end
     
 end
