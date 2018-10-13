@@ -113,24 +113,41 @@ classdef FEM_Domain < Domain.DomainBase
                 constraint = [];
             end
             
-%             import Constraint.ConstraintBuilder
-%             % The constraint builded by builder.
-%             constraint = ConstraintBuilder.create(type);
-%             % Create constraint info.
-%             
-%             num_genetrate_var = length(varargin);
-%             if(num_genetrate_var == 0)
-%             	genetrate_var = [];
-%             else
-%                 genetrate_var = varargin{1};  
-%             end
-%             genetrated_status = constraint.generate(patch, genetrate_var);
-%             
-%             % error check
-%             if(~genetrated_status)
-%                 disp('Error <FEM Domain>! constraint generate error!');
-%                 disp('> Please check generated method in the Constraint data');
-%             end 
+        end
+        
+        function status = calIntegral(this, patch, expression, varargin)
+            % Check input data
+            if(isa(patch, 'Utility.BasicUtility.Patch') ...
+               && ...
+               isa(expression, 'Expression.ExpressionBase'))
+                import IntegrationRule.FEM.IntegrationRule
+                % create integration rule
+                int_rule = IntegrationRule(patch, expression);
+                % generate integration rule
+                num_genetrate_var = length(varargin);
+                if(num_genetrate_var == 0)
+                    genetrate_var = [];
+                else
+                    genetrate_var = varargin{1};  
+                end
+                
+                genetrated_status = int_rule.generate(genetrate_var);
+                
+                if(genetrated_status)
+                    this.num_integration_rule_ = this.num_integration_rule_ + 1;
+                    this.integration_rule_(this.num_integration_rule_) = int_rule;
+                    status = true;
+                else
+                    disp('Error <FEM Domain>! - calIntegral!');
+                    disp('> generated fail! please check it~');
+                    status = false;
+                end
+            else
+                disp('Error <FEM Domain>! - calIntegral!');
+                disp('> Please check Patch data and Expression type, ');
+                disp('> No integration rule created.');
+                status = false;
+            end
         end
     end
     
