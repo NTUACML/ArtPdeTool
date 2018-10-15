@@ -3,7 +3,7 @@ classdef IntegrationRuleBase < handle
     %   Detailed explanation goes here
     
     properties
-        patch_data_
+        integral_patch_
         expression_
         num_integral_unit_ = 0
         integral_unit_
@@ -11,7 +11,7 @@ classdef IntegrationRuleBase < handle
     
     methods
         function this = IntegrationRuleBase(patch, expression)
-            this.patch_data_ = patch;
+            this.integral_patch_ = patch;
             this.expression_ = expression;
         end
     end
