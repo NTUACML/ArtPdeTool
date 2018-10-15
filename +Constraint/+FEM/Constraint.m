@@ -6,20 +6,25 @@ classdef Constraint < Constraint.ConstraintBase
     end
     
     methods
-        function this = Constraint()
-            this@Constraint.ConstraintBase();
+        function this = Constraint(patch)
+            this@Constraint.ConstraintBase(patch);
         end
         
-        function status = generate(this, patch, generate_parameter)
-            import Utility.BasicUtility.Region
-            if(isa(patch, 'Utility.MeshUtility.MeshPatch') ...
-                    && (patch.region_ == Region.Boundary))
-                this.patch_data_ = patch;
-                this.constraint_var_id_ = this.getPatchPrescribedVarId();
+        function status = generate(this, variable, constraint_data, genetrate_parameter)
+            % get constraint_var
+            this.constraint_var_ = variable;
+            % get constraint_var_id 
+            this.constraint_var_id_ = this.getPatchPrescribedVarId();
+            
+            if(length(constraint_data) <= 2 ...
+               && constraint_data{1} <= variable.num_dof_)
+                % get constraint_data
+                this.constraint_data_ = constraint_data;
                 status = true;
             else
-                disp('Error <FEM Constraint>! - generate');
-                disp('> Please check patch data is boundary patch and Mesh type.');
+                disp('Error <FEM Constraint>! check Constraint data!');
+                disp('> Please check constraint_data data is cell type, ');
+                disp('> and the first: dof_id, the second: constaint function.');
                 status = false;
             end
         end

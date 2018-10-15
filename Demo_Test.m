@@ -27,23 +27,35 @@ var_p = fem_domain.generateVariable('pressure', fem_linear_basis,...
 test_u = fem_domain.generateTestVariable(var_u, fem_linear_basis);
 test_p = fem_domain.generateTestVariable(var_p, fem_linear_basis);
 
-%% Constraint (Acquire prescribed D.O.F.)
-constraint = fem_domain.generateConstraint('FEM',...
-                                      iso_topo.getBoundayPatch('Up_Side'));
-
-% test_u.applyConst(const, conponent, value);
-% 
+%% Expresion define
 % exp1 = Dot(Grad(test_u), Grad(var_u)); %+ test_p * var_p;
 % exp2 = test_u * var_u;
 % exp3 = test_p * var_p;
 % %exp3.static(var_xxx)
-% 
-% fem_domain.int(exp1, topo, p=2);
-% 
-% fem_domain.boundary('xx_patch').int(exp2);
-% 
+
+exp1 = Expression.ExpressionBase;
+exp2 = Expression.ExpressionBase;
+
+%% Integral variation equations
+% Domain integral
+int_doamin_patch = iso_topo.getDomainPatch();
+fem_domain.calIntegral(int_doamin_patch, exp1);
+
+% Boundary integral
+int_right_patch = iso_topo.getBoundayPatch('Right_Side');
+fem_domain.calIntegral(int_right_patch, exp2);
+
+%% Constraint (Acquire prescribed D.O.F.)
+up_side_patch = iso_topo.getBoundayPatch('Up_Side');
+down_side_patch = iso_topo.getBoundayPatch('Down_Side');
+u_constraint_up = fem_domain.generateConstraint(up_side_patch, var_u, {1, @()1});
+u_constraint_down = fem_domain.generateConstraint(down_side_patch, var_p, {1, @()2});
+
+%% Solve domain equation system
 % fem_domain.solver('BiCG').solve();
-% 
+
+%% Data Interpolation
+
 % interpo_basis = fem_domain.generateBasis(interpo_topo);
 % 
 % intpo_some = Interpolation('Methods', interpo_basis);
@@ -51,6 +63,13 @@ constraint = fem_domain.generateConstraint('FEM',...
 % interpo_var_u = intpo_some(target_topo, var_u);
 
 
+
+
+
+
+
+
+%% Old test code
 % %% Domain create
 % fem_domain_u = FEM_Domain(var_u, fem_unit_cube_geo);
 % fem_domain_p = FEM_Domain(var_p, fem_unit_cube_geo);
