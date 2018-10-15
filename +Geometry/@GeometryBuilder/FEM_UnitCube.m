@@ -1,4 +1,4 @@
-function geometry = FEM_UnitCube(this, var)
+function geometry = FEM_UnitCube(var)
 %FEM_UNITCUBE Summary of this function goes here
 %   Detailed explanation goes here
 
