@@ -46,8 +46,8 @@ classdef GeometryBuilder
     
     
     methods(Static, Access = private)
-        geometry = FEM_UnitCube(this, var);
-        geometry = IGA_Rectangle(this, varargin)
+        geometry = FEM_UnitCube(var);
+        geometry = IGA_Rectangle(varargin)
     end
 end
 

@@ -46,7 +46,7 @@ classdef NurbsTopology < Geometry.Topology.TopologyBase
                 boundary_patch = this.boundary_patch_data_(patch_name);
             else
                 boundary_patch = [];
-                disp('Error <MeshTopology> - getBoundayPatch!');
+                disp('Error <NurbsTopology> - getBoundayPatch!');
                 disp(['> You entered patch name: ''', patch_name, ''' not existed']);
                 disp('> Please new this patch via newBoundayPatch interface.');
             end
