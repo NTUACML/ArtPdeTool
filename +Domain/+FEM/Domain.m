@@ -1,4 +1,4 @@
-classdef FEM_Domain < Domain.DomainBase
+classdef Domain < Domain.DomainBase
     %UNTITLED Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -6,7 +6,7 @@ classdef FEM_Domain < Domain.DomainBase
     end
     
     methods
-        function this = FEM_Domain()
+        function this = Domain()
             this@Domain.DomainBase('FEM');
         end
         
