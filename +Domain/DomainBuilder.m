@@ -9,7 +9,7 @@ classdef DomainBuilder
         function domain = create(type)
             switch type
                 case 'FEM'
-                    domain = Domain.FEM_Domain();
+                    domain = Domain.FEM.Domain();
                 case 'EFG'
                     disp('Warning <DomainBuilder>! EFG type not support yet!');
                     disp('> empty geometry builded!');
