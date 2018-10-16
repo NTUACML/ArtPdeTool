@@ -5,6 +5,7 @@ classdef GaussQuadrature
     methods(Static)
         [num_quadrature, position, weighting] = Hexa8()
         [num_quadrature, position, weighting] = Line2()
+        [num_quadrature, position, weighting] = Quad4()
         [ gauss_quadrature ] = MappingElementType2GaussQuadrature( this, element_type )
     end
     
