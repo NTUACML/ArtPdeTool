@@ -19,9 +19,7 @@ classdef DomainBuilder
                     disp('> empty geometry builded!');
                     domain = [];
                 case 'IGA'
-                    disp('Warning <DomainBuilder>! IGA type not support yet!');
-                    disp('> empty geometry builded!');
-                    domain = [];
+                    domain = Domain.IGA.Domain();
                 otherwise  
                 	disp('Error <DomainBuilder>! check domain input type!');
                     disp('> empty geometry builded!');
