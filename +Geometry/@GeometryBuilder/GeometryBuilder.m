@@ -10,8 +10,10 @@ classdef GeometryBuilder
             switch type
                 case 'FEM'
                     switch name
-                        case 'UnitCube'
-                            geometry = Geometry.GeometryBuilder.FEM_UnitCube([]);
+                        case 'UnitCube_1_1_1'
+                            geometry = Geometry.GeometryBuilder.FEM_UnitCube_1_1_1([]);
+                        case 'UnitCube_2_2_2'
+                            geometry = Geometry.GeometryBuilder.FEM_UnitCube_1_1_1([]);
                         otherwise
                             disp('Warning <GeometryBuilder>!');
                             disp('> name in FEM type was not exist!');
@@ -46,7 +48,7 @@ classdef GeometryBuilder
     
     
     methods(Static, Access = private)
-        geometry = FEM_UnitCube(var);
+        geometry = FEM_UnitCube_1_1_1(var);
         geometry = IGA_Rectangle(varargin)
     end
 end

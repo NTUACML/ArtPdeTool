@@ -1,4 +1,4 @@
-function geometry = FEM_UnitCube(var)
+function geometry = FEM_UnitCube_2_2_2(var)
 %FEM_UNITCUBE Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -15,14 +15,29 @@ function geometry = FEM_UnitCube(var)
     geometry.topology_data_ = {topo};
     
     % Generate point data
-    cube_point = [0 0 0;
-                  1 0 0;
-                  1 1 0;
-                  0 1 0;
-                  0 0 1;
-                  1 0 1;
-                  1 1 1;
-                  0 1 1];
+    cube_point = [0.0 0.0 0.0;
+                  0.5 0.0 0.0;
+                  1.0 0.0 0.0;
+                  0.0 0.5 0.0;
+                  0.5 0.5 0.0;
+                  1.0 0.5 0.0;
+                  0.0 1.0 0.0;
+                  0.5 1.0 0.0;
+                  1.0 1.0 0.0;
+                  0.0 0.0 0.5;
+                  0.5 0.0 0.5;
+                  1.0 0.0 0.5;
+                  0.0 0.5 0.5;
+                  0.5 0.5 0.5;
+                  1.0 0.5 0.5;
+                  0.0 1.0 0.5;
+                  0.5 1.0 0.5;
+                  1.0 1.0 0.5;
+                  0.0 0.0 1.0;
+                  0.5 0.0 1.0;
+                  1.0 0.0 1.0;
+                  
+                  ];
     
     topo.point_data_ = PointList(cube_point);
     
