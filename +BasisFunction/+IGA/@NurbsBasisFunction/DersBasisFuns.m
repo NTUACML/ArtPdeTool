@@ -2,11 +2,11 @@ function [i,ders] = DersBasisFuns(u, p, U, varargin)
 % Compute the non-vanishing basisfunction and it's derivative
 % Input: i, u, p, U
 % Output: ders
-
+import BasisFunction.IGA.NurbsBasisFunction
 
 % compute span index integer
 n = length(U) - p - 2;
-i = FindSpan(n,p,u,U);
+i = NurbsBasisFunction.FindSpan(n,p,u,U);
 
 ndu(1,1) = 1;
 

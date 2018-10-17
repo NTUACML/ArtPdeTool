@@ -15,11 +15,13 @@ classdef BasisFunction < BasisFunction.BasisFunctionBase
         function status = generate(this, generate_parameter)
             %status = this.generateFEM_shapefunction(generate_parameter);
            nurbs_data = this.topology_data_.domain_patch_data_.nurbs_data_;
-           xi = [0.1 0.2];
-           p = nurbs_data.order_;
+           xi = {0.1 0.2};
+           p = {nurbs_data.order_(1), nurbs_data.order_(2)};
            knots = nurbs_data.knot_vectors_;
            omega = nurbs_data.control_points_(:,4);
-            [ GlobalDof, R, dR_dxi ] = Nurbs_ShapeFunc( xi, p, knots, omega );
+           
+           import BasisFunction.IGA.NurbsBasisFunction
+            [ GlobalDof, R, dR_dxi ] = NurbsBasisFunction.Nurbs_ShapeFunc( xi, p, knots, omega );
             status = true;
         end
         
@@ -30,8 +32,8 @@ classdef BasisFunction < BasisFunction.BasisFunctionBase
     end
     
     methods(Access = private)
-        status = generateFEM_shapefunction(this, generate_parameter)
-        results = queryFEM_shapefunction(this, query_unit, query_parameter)
+%         status = generateFEM_shapefunction(this, generate_parameter)
+%         results = queryFEM_shapefunction(this, query_unit, query_parameter)
     end
     
 end

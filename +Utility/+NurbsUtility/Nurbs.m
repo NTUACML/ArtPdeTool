@@ -46,9 +46,9 @@ classdef Nurbs
                 this.nurbs_tool_object_ = nrbmak(control_pnt, knot_vectors{1});
             elseif this.geometry_dimension_ == 2
                 control_pnt = zeros(4,this.basis_number_(1), this.basis_number_(2));   
-                for i = 1:this.basis_number_(1)
-                    for j = 1:this.basis_number_(2)
-                        n = (i-1)*this.basis_number_(2)+j;
+                for j = 1:this.basis_number_(2)
+                    for i = 1:this.basis_number_(1)
+                        n = (j-1)*this.basis_number_(1)+i;
                         control_pnt(:,i,j) = control_point_list(n,:)';
                     end
                 end
@@ -71,9 +71,9 @@ classdef Nurbs
                     disp(str);
                 end
             elseif this.geometry_dimension_ == 2
-                for i = 1:this.basis_number_(1)
-                    for j = 1:this.basis_number_(2)
-                        n = (i-1)*this.basis_number_(2)+j;
+                for j = 1:this.basis_number_(2)
+                    for i = 1:this.basis_number_(1)
+                        n = (j-1)*this.basis_number_(1)+i;
                         str = ['(',num2str(i),', ',num2str(j),') ',num2str(this.control_points_(n,:))];
                         disp(str);
                     end

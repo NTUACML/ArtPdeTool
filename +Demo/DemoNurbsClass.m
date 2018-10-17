@@ -7,7 +7,8 @@ D = 2;
 t_1 = linspace(0, L, 4);
 t_2 = linspace(-D/2, D/2, 4);
 
-[t_1, t_2] = meshgrid(t_1, t_2);
+[t_2, t_1] = meshgrid(t_2, t_1);
+
 
 control_point = PointList([t_1(:), t_2(:), zeros(size(t_1(:))), ones(size(t_1(:)))]);
 %% create Nurbs object
@@ -18,7 +19,7 @@ domain_nurbs = Nurbs(knot_vectors, order, control_point);
 
 domain_nurbs.type_
 domain_nurbs.dispControlPoints();
-domain_nurbs.plotNurbs([20, 10]);
+domain_nurbs.plotNurbs([20, 5]);
 %%  create nurbs geometry
 import Geometry.*
 

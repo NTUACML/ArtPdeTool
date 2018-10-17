@@ -1,7 +1,7 @@
 function DemoIGADomain
 clc; clear; close all;
 
-addpath ../../NonlinearWeakForm
+%addpath ../../NonlinearWeakForm
 
 %%  create nurbs geometry
 import Geometry.*

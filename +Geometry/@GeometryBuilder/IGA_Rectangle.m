@@ -20,7 +20,7 @@ function geometry = IGA_Rectangle(varargin)
     t_1 = linspace(0, L, 4);
     t_2 = linspace(-D/2, D/2, 4);
     
-    [t_1, t_2] = meshgrid(t_1, t_2);
+    [t_2, t_1] = meshgrid(t_2, t_1);
     
     topo.point_data_ = PointList([t_1(:), t_2(:), zeros(size(t_1(:))), ones(size(t_1(:)))]);
    
@@ -33,28 +33,28 @@ function geometry = IGA_Rectangle(varargin)
     % Create Boundary nurbs patch (Down_Side)
     patch = topo.newBoundayPatch('Down_Side');
     %> Generate nurbs
-    id = [1 5 9 13];
+    id = [1 2 3 4];
     point = PointList(topo.point_data_(id,:));
     patch.nurbs_data_ = Nurbs(knot_vectors(1), order(1), point);
     
     % Create Boundary nurbs patch (Up_Side)
     patch = topo.newBoundayPatch('Up_Side');
     %> Generate nurbs
-    id = [4 8 12 16];
+    id = [13 14 15 16];
     point = PointList(topo.point_data_(id,:));
     patch.nurbs_data_ = Nurbs(knot_vectors(1), order(1), point);
     
     % Create Boundary nurbs patch (Right_Side)
     patch = topo.newBoundayPatch('Right_Side');
     %> Generate nurbs
-    id = [13 14 15 16];
+    id = [4 8 12 16];
     point = PointList(topo.point_data_(id,:));
     patch.nurbs_data_ = Nurbs(knot_vectors(2), order(2), point);
        
     % Create Boundary nurbs patch (Left_Side)
     patch = topo.newBoundayPatch('Left_Side');
     %> Generate nurbs
-    id = [1 2 3 4];
+    id = [1 5 9 13];
     point = PointList(topo.point_data_(id,:));
     patch.nurbs_data_ = Nurbs(knot_vectors(2), order(2), point);
 end
