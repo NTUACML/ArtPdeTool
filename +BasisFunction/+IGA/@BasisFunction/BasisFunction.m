@@ -3,7 +3,6 @@ classdef BasisFunction < BasisFunction.BasisFunctionBase
     %   Detailed explanation goes here
     
     properties (Access = private)
-        %FEM_shapefunction_ 
         Nurbs_basis_function_ %{1. non_zero_id, 2. evaluate_basis}
     end
     
@@ -13,28 +12,19 @@ classdef BasisFunction < BasisFunction.BasisFunctionBase
         end
         
         function status = generate(this, generate_parameter)
-            %status = this.generateFEM_shapefunction(generate_parameter);
-           nurbs_data = this.topology_data_.domain_patch_data_.nurbs_data_;
-           xi = {0.1 0.2};
-           p = {nurbs_data.order_(1), nurbs_data.order_(2)};
-           knots = nurbs_data.knot_vectors_;
-           omega = nurbs_data.control_points_(:,4);
-           
-           import BasisFunction.IGA.NurbsBasisFunction
-            [ GlobalDof, R, dR_dxi ] = NurbsBasisFunction.Nurbs_ShapeFunc( xi, p, knots, omega );
+            import BasisFunction.IGA.NurbsBasisFunction
+            nurbs_data = this.topology_data_.domain_patch_data_.nurbs_data_;
+
+            this.Nurbs_basis_function_ = @(xi) NurbsBasisFunction.Nurbs_ShapeFunc( xi, num2cell(nurbs_data.order_), nurbs_data.knot_vectors_, nurbs_data.control_points_(:,4) );
             status = true;
         end
         
         function results = query(this, query_unit, query_parameter)
-            %results = this.queryFEM_shapefunction(query_unit, query_parameter);
-            results = 0;
+            [ GlobalDof, R, dR_dxi ] = this.Nurbs_basis_function_(query_unit.query_protocol_{2});
+            results = {GlobalDof, R, dR_dxi};
         end
     end
     
-    methods(Access = private)
-%         status = generateFEM_shapefunction(this, generate_parameter)
-%         results = queryFEM_shapefunction(this, query_unit, query_parameter)
-    end
     
 end
 

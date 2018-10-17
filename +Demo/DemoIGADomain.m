@@ -18,8 +18,14 @@ iga_domain = DomainBuilder.create('IGA');
 
 %% Basis create
 nurbs_basis = iga_domain.generateBasis(nurbs_topology);
+import BasisFunction.IGA.QueryUnit
+import Utility.BasicUtility.Region
 
+query_unit = QueryUnit();
+xi = {0.1 0.2};
+query_unit.query_protocol_ = {Region.Domain, xi};
 
+results = nurbs_basis.query(query_unit);
 
 
 end

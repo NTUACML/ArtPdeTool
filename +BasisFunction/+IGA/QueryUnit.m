@@ -3,7 +3,7 @@ classdef QueryUnit < handle
     %   Detailed explanation goes here
     
     properties
-        query_protocol_     % IGA: {region, element_id}
+        query_protocol_     % IGA: {region, xi}
         non_zero_id_ = []
         evaluate_basis_ = []
     end
