@@ -85,7 +85,7 @@ classdef Domain < Domain.DomainBase
             if(isa(patch, 'Utility.NurbsUtility.NurbsPatch') ...
                     && (patch.region_ == Region.Boundary)...
                     && isa(variable, 'Variable.Variable'))
-                import Constraint.Nurbs.Constraint
+                import Constraint.IGA.Constraint
                 
                 constraint = Constraint(patch);
                 % generate constraint
@@ -101,13 +101,13 @@ classdef Domain < Domain.DomainBase
                     this.num_constraint_ = this.num_constraint_ + 1;
                     this.constraint_(this.num_constraint_) = constraint;
                 else
-                    disp('Error <Nurbs Domain>! - generateConstraint!');
+                    disp('Error <IGA Domain>! - generateConstraint!');
                     disp('> generated fail! please check it~');
                     constraint = [];
                 end
                 
             else
-                disp('Error <Nurbs Domain>! - generateConstraint!');
+                disp('Error <IGA Domain>! - generateConstraint!');
                 disp('> Please check patch data is boundary patch and Nurbs type, ');
                 disp('> var is Variable type.');
                 constraint = [];
