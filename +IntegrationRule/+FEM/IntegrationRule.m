@@ -101,14 +101,14 @@ classdef IntegrationRule < IntegrationRule.IntegrationRuleBase
                     position = [position, -ones(num_quadrature,1)];
                 case 2 % zeta = 1
                     position = [position, ones(num_quadrature,1)];
-                case 3 % xi = -1
-                    position = [-ones(num_quadrature,1), position];
-                case 4 % xi = 1
-                    position = [ones(num_quadrature,1), position];
-                case 5 % eta = -1
+                case 3 % eta = -1
                     position = [position(:,1), -ones(num_quadrature,1), position(:,2)];
-                case 6 % eta = 1
+                case 4 % eta = 1
                     position = [position(:,1), ones(num_quadrature,1), position(:,2)];
+                case 5 % xi = -1
+                    position = [-ones(num_quadrature,1), position];
+                case 6 % xi = 1
+                    position = [ones(num_quadrature,1), position];
             end
         end
         

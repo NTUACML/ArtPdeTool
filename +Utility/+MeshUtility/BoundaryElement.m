@@ -40,9 +40,9 @@ classdef BoundaryElement < Utility.MeshUtility.Element
                         which_bdr_id = 3;
                     elseif ismember(orientation_id, [2 3 7 6])
                         which_bdr_id = 4;
-                    elseif ismember(orientation_id, [1 2 6 5])
-                        which_bdr_id = 5; 
                     elseif ismember(orientation_id, [3 4 8 7])
+                        which_bdr_id = 5; 
+                    elseif ismember(orientation_id, [1 2 6 5])
                         which_bdr_id = 6;    
                     end
                 otherwise
