@@ -21,6 +21,7 @@ nurbs_basis = iga_domain.generateBasis(nurbs_topology);
 import BasisFunction.IGA.QueryUnit
 import Utility.BasicUtility.Region
 
+% Test query function 
 query_unit = QueryUnit();
 xi = {0.1 0.2};
 query_unit.query_protocol_ = {Region.Domain, xi};

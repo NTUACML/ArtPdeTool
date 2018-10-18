@@ -24,7 +24,6 @@ classdef BasisFunction < BasisFunction.BasisFunctionBase
             results = {GlobalDof, R, dR_dxi};
         end
     end
-    
-    
+ 
 end
 
