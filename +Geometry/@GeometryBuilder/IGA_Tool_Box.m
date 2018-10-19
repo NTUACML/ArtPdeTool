@@ -22,6 +22,12 @@ function geometry = IGA_Tool_Box( varargin )
             temp_point((j-1)*varargin{1}.number(1)+i,:) = varargin{1}.coefs(:,i,j)';
         end
     end
+    % the coordinates of control points from nurbs_tool_box containe
+    % weighting, we have to normalize them to obtain the PHYSICAL
+    % coordinates
+    temp_point(:,1) = temp_point(:,1)./temp_point(:,4);
+    temp_point(:,2) = temp_point(:,2)./temp_point(:,4);
+    temp_point(:,3) = temp_point(:,3)./temp_point(:,4);
 
     topo.point_data_ = PointList(temp_point);
    
