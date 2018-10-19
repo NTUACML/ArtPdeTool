@@ -32,30 +32,27 @@ import Utility.BasicUtility.Region
 
 %% Test query function 
 query_unit = QueryUnit();
-xi = {0.3311 0.873};
+xi = {0.1973 0.78229};
 query_unit.query_protocol_ = {Region.Domain, xi};
-
 results = nurbs_basis.query(query_unit);
+
 non_zero_id = results{1};
 R = results{2};
-% dR_dxi = results{3}(1,:);
-% dR_deta = results{3}(2,:);
+dR_dxi = results{3}(1,:);
+dR_deta = results{3}(2,:);
 
 nurbs_data = nurbs_topology.domain_patch_data_.nurbs_data_;
 control_point = nurbs_data.control_points_(:,:);
 
 nurbs_val = R*control_point(non_zero_id,1:3);
-c = norm(nurbs_val(1:2));
+dnurbs_val_dxi = dR_dxi*control_point(non_zero_id,1:3);
+dnurbs_val_deta = dR_deta*control_point(non_zero_id,1:3);
+
 
 %% Test 
-[p,w] = nrbeval(nurbs_cylinder,xi);
-p = p/w;
-b = norm(p(1:2));
+% dnurbs_cylinder = nrbderiv(nurbs_cylinder);
+% [pnt,jac] = nrbdeval(nurbs_cylinder, dnurbs_cylinder, xi) ;
 
-dnurbs_cylinder = nrbderiv(nurbs_cylinder);
-[pnt,jac] = nrbdeval(nurbs_cylinder, dnurbs_cylinder, xi) ;
-
-a = norm(pnt(1:2));
 
 end
 
