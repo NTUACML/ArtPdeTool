@@ -53,6 +53,7 @@ u_constraint_down = fem_domain.generateConstraint(down_side_patch, var_p, {1, @(
 
 %% Solve domain equation system
 % fem_domain.solver('BiCG').solve();
+fem_domain.solve('default');
 
 %% Data Interpolation
 

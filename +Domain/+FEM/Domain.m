@@ -40,7 +40,7 @@ classdef Domain < Domain.DomainBase
                 % check status and add to DOF mannger
                 if(status)
                     % DM
-                    this.dof_mannger_.addVariable(var);
+                    this.dof_manager_.addVariable(var);
                     variable = var;
                 else
                     variable = [];
@@ -148,6 +148,25 @@ classdef Domain < Domain.DomainBase
                 disp('> No integration rule created.');
                 status = false;
             end
+        end
+        
+        function status = solve(this, varargin)
+            num_solver_parameter = length(varargin);
+            if(num_solver_parameter == 0)
+            	solver_parameter = [];
+            else
+            	solver_parameter = varargin{1};  
+            end
+            
+            import Assembler.FEM.Assembler
+            % new assembler
+            this.assembler_ = Assembler(this.dof_manager_);
+            this.assembler_.generate();
+            
+            
+            
+            
+            status = true;
         end
     end
     
