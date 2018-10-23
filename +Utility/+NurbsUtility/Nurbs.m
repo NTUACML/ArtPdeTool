@@ -38,18 +38,23 @@ classdef Nurbs
             this.control_points_ = control_point_list;
             
             % generate nurbs toolbox object
+            % 
             if this.geometry_dimension_ == 1
                 control_pnt = zeros(4,this.basis_number_(1));
                 for i = 1:this.basis_number_(1)
                     control_pnt(:,i) = control_point_list(i,:)';
+                    % multiply by weighting
+                    control_pnt(1:end-1,i) = control_pnt(1:end-1,i)*control_pnt(end,i);
                 end
                 this.nurbs_tool_object_ = nrbmak(control_pnt, knot_vectors{1});
             elseif this.geometry_dimension_ == 2
                 control_pnt = zeros(4,this.basis_number_(1), this.basis_number_(2));   
-                for i = 1:this.basis_number_(1)
-                    for j = 1:this.basis_number_(2)
-                        n = (i-1)*this.basis_number_(2)+j;
+                for j = 1:this.basis_number_(2)
+                    for i = 1:this.basis_number_(1)
+                        n = (j-1)*this.basis_number_(1)+i;
                         control_pnt(:,i,j) = control_point_list(n,:)';
+                        % multiply by weighting
+                        control_pnt(1:end-1,i,j) = control_pnt(1:end-1,i,j)*control_pnt(end,i,j);
                     end
                 end
                 this.nurbs_tool_object_ = nrbmak(control_pnt, knot_vectors);
@@ -71,9 +76,9 @@ classdef Nurbs
                     disp(str);
                 end
             elseif this.geometry_dimension_ == 2
-                for i = 1:this.basis_number_(1)
-                    for j = 1:this.basis_number_(2)
-                        n = (i-1)*this.basis_number_(2)+j;
+                for j = 1:this.basis_number_(2)
+                    for i = 1:this.basis_number_(1)
+                        n = (j-1)*this.basis_number_(1)+i;
                         str = ['(',num2str(i),', ',num2str(j),') ',num2str(this.control_points_(n,:))];
                         disp(str);
                     end
