@@ -174,11 +174,15 @@ classdef PointList < handle
             
             subs_rows = subs{1};
             subs_cols = subs{2};
-            if(subs_rows == ':')
+            
+            if(ischar(subs_rows))
                 subs_rows = 1 : this.num_rows_;
+                disp('change rows')
             end
-            if(subs_cols == ':')
+            
+            if(ischar(subs_cols))
                 subs_cols = 1 : this.num_cols_;
+                disp('change cols')
             end
             num_run_rows = length(subs_rows);
             num_run_cols = length(subs_cols);
