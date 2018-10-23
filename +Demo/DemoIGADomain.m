@@ -11,7 +11,7 @@ import Geometry.*
 % create by object from the nurbs tool box
 nurbs_cylinder = nrbcylind(3,1,[],deg2rad(0),deg2rad(360));
 nurbs_cylinder = nrbdegelev(nurbs_cylinder, [0 1]); 
-nurbs_cylinder = nrbkntins(nurbs_cylinder,{[], [0.125 0.375 0.625 0.875]}); 
+nurbs_cylinder = nrbkntins(nurbs_cylinder,{[0.1], [0.125 0.375 0.625 0.875]}); 
 
 
 geo = GeometryBuilder.create('IGA', 'Nurbs_Object', nurbs_cylinder);
@@ -66,17 +66,24 @@ int_doamin_patch = nurbs_topology.getDomainPatch();
 % parametric coordinate.
 % number_quad_pt = [2 2];
 % iga_domain.calIntegral(int_doamin_patch, exp1, {'Default', number_quad_pt});
-
 iga_domain.calIntegral(int_doamin_patch, exp1);
 
-integration_rule = iga_domain.integration_rule_(1)
+integration_rule = iga_domain.integration_rule_(1);
 
 % integration_rule.integral_unit_{1}.quadrature_{1}
 % integration_rule.integral_unit_{1}.quadrature_{2}
 % integration_rule.integral_unit_{1}.quadrature_{3}
 
 figure; hold on;
-[m] = mesh2d(4, 1, 1, 1);
+knot_vectors = nurbs_topology.domain_patch_data_.nurbs_data_.knot_vectors_;
+unique_knot{1} = unique(knot_vectors{1});
+unique_knot{2} = unique(knot_vectors{2});
+[yy, xx] = meshgrid(unique_knot{2}, unique_knot{1});
+
+m = mesh2d(length(unique_knot{1})-1, length(unique_knot{2})-1, 1, 1);
+m.xI(:,1) = xx(:);
+m.xI(:,2) = yy(:);
+
 quadplot(m.connect, m.xI(:,1), m.xI(:,2));
 for i = 1:integration_rule.num_integral_unit_
     position = integration_rule.integral_unit_{i}.quadrature_{2};

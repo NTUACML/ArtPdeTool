@@ -52,7 +52,6 @@ classdef Nurbs
                 for j = 1:this.basis_number_(2)
                     for i = 1:this.basis_number_(1)
                         n = (j-1)*this.basis_number_(1)+i;
-                        disp(n)
                         control_pnt(:,i,j) = control_point_list(n,:)';
                         % multiply by weighting
                         control_pnt(1:end-1,i,j) = control_pnt(1:end-1,i,j)*control_pnt(end,i,j);

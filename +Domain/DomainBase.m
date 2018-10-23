@@ -14,11 +14,10 @@ classdef DomainBase < handle
     
     methods
         function this = DomainBase(type)
-            import DofManager.*
             % set domain type
             this.type_ = type;
             % Dof Mannger init
-            this.dof_manager_ = DofManager();
+            this.dof_manager_ = DofManager.DofManager;
             % Constraint init
             this.constraint_ = containers.Map(...
                 'KeyType','double','ValueType','any');

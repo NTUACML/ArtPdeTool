@@ -149,6 +149,11 @@ classdef Domain < Domain.DomainBase
                 status = false;
             end
         end
+        
+        function status = solve(this, varargin)
+            
+            status = true;
+        end
     end
     
 end
