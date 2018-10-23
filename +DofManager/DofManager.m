@@ -1,4 +1,4 @@
-classdef DofMannger < handle
+classdef DofManager < handle
     %DOFMANNGER Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -9,7 +9,7 @@ classdef DofMannger < handle
     end
     
     methods
-        function this = DofMannger()
+        function this = DofManager()
             this.var_data_ = containers.Map(...
                 'KeyType','char','ValueType','any');
         end

@@ -6,7 +6,7 @@ import Geometry.*
 import Domain.*
 
 %% Geometry data input
-fem_unit_cube_geo = GeometryBuilder.create('FEM', 'UnitCube_1_1_1');
+fem_unit_cube_geo = GeometryBuilder.create('FEM', 'UnitCube_2_2_2');
 iso_topo = fem_unit_cube_geo.topology_data_{1};
 
 %% Domain create
@@ -42,7 +42,7 @@ int_doamin_patch = iso_topo.getDomainPatch();
 fem_domain.calIntegral(int_doamin_patch, exp1);
 
 % Boundary integral
-int_right_patch = iso_topo.getBoundayPatch('Right_Side');
+int_right_patch = iso_topo.getBoundayPatch('Down_Side');
 fem_domain.calIntegral(int_right_patch, exp2);
 
 %% Constraint (Acquire prescribed D.O.F.)
@@ -53,6 +53,7 @@ u_constraint_down = fem_domain.generateConstraint(down_side_patch, var_p, {1, @(
 
 %% Solve domain equation system
 % fem_domain.solver('BiCG').solve();
+fem_domain.solve('default');
 
 %% Data Interpolation
 
