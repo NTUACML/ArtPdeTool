@@ -11,7 +11,9 @@ import Geometry.*
 % create by object from the nurbs tool box
 nurbs_cylinder = nrbcylind(3,1,[],deg2rad(0),deg2rad(360));
 nurbs_cylinder = nrbdegelev(nurbs_cylinder, [0 1]); 
- 
+nurbs_cylinder = nrbkntins(nurbs_cylinder,{[], [0.125 0.375 0.625 0.875]}); 
+
+
 geo = GeometryBuilder.create('IGA', 'Nurbs_Object', nurbs_cylinder);
 nurbs_topology = geo.topology_data_{1};
 
@@ -74,8 +76,11 @@ integration_rule = iga_domain.integration_rule_(1)
 % integration_rule.integral_unit_{1}.quadrature_{3}
 
 figure; hold on;
+[m] = mesh2d(4, 1, 1, 1);
+quadplot(m.connect, m.xI(:,1), m.xI(:,2));
 for i = 1:integration_rule.num_integral_unit_
     position = integration_rule.integral_unit_{i}.quadrature_{2};
     plot(position(:,1), position(:,2), 'r.');
 end
 
+end
