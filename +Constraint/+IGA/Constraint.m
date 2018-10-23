@@ -22,7 +22,7 @@ classdef Constraint < Constraint.ConstraintBase
                 this.constraint_data_ = constraint_data;
                 status = true;
             else
-                disp('Error <FEM Constraint>! check Constraint data!');
+                disp('Error <IGA Constraint>! check Constraint data!');
                 disp('> Please check constraint_data data is cell type, ');
                 disp('> and the first: dof_id, the second: constaint function.');
                 status = false;
