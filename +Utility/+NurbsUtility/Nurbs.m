@@ -69,13 +69,17 @@ classdef Nurbs < handle
         end
         
         function degreeElevation(this, degree)
-            new_nurbs = this.nurbs_tool_object_;
-            this.nurbs_tool_object_  = nrbdegelev(new_nurbs, degree);
+            this.nurbs_tool_object_  = nrbdegelev(this.nurbs_tool_object_, degree);
+            this.DataUpdateByTool();
         end
         
         function knotInsertion(this, knots)
-            new_nurbs = nrbkntins(this.nurbs_tool_object_, knots); 
-            this.nurbs_tool_object_ = new_nurbs;
+            this.nurbs_tool_object_ = nrbkntins(this.nurbs_tool_object_, knots); 
+            this.DataUpdateByTool();
+        end
+        
+        function debug(this)
+            disp(this.nurbs_tool_object_)
         end
         
         function dispControlPoints(this)
@@ -100,5 +104,45 @@ classdef Nurbs < handle
         
     end
     
+    methods(Access = private)
+        function DataUpdateByTool(this)
+            if(~isempty(this.nurbs_tool_object_))
+                import Utility.BasicUtility.PointList
+                % Update - basis_number
+                this.basis_number_ = this.nurbs_tool_object_.number;
+                % Update - order
+                this.order_ = this.nurbs_tool_object_.order - 1;
+                % Update - knot_vectors
+                this.knot_vectors_ = this.nurbs_tool_object_.knots;
+                % Update - control_points
+                temp_point = zeros(prod(this.basis_number_), 4);
+                
+                if this.geometry_dimension_ == 1
+                    for i = 1:this.basis_number_(1)
+                        temp_point(i,:) = this.nurbs_tool_object_.coefs(:,i,:)';
+                    end
+                elseif this.geometry_dimension_ == 2
+                    for j = 1:this.basis_number_(2)
+                        for i = 1:this.basis_number_(1)
+                            temp_point((j-1)*this.basis_number_(1)+i,:) = this.nurbs_tool_object_.coefs(:,i,j)';
+                        end
+                    end
+                elseif this.geometry_dimension_ == 3
+                    disp('Error <Nurbs>! - DataUpdateByTool');
+                    disp('> Currently not support nurbs solid!');
+                end
+                
+    
+                % the coordinates of control points from nurbs_tool_box containe
+                % weighting, we have to normalize them to obtain the PHYSICAL
+                % coordinates
+                temp_point(:,1) = temp_point(:,1)./temp_point(:,4);
+                temp_point(:,2) = temp_point(:,2)./temp_point(:,4);
+                temp_point(:,3) = temp_point(:,3)./temp_point(:,4);
+
+                this.control_points_ = PointList(temp_point);
+            end
+        end
+    end
 end
 
