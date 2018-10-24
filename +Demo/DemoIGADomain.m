@@ -5,22 +5,34 @@ clc; clear; close all;
 import Geometry.*
 
 % create by PDEtool database
-% geo = GeometryBuilder.create('IGA', 'Rectangle', [20, 2]);
+% length = 20;
+% hight = 2;
+% geo = GeometryBuilder.create('IGA', 'Rectangle', {length, hight});
 % nurbs_topology = geo.topology_data_{1};
+
+% height = 3;
+% radius = 1;
+% center = [];
+% sang = deg2rad(0);      % start angle
+% eang = deg2rad(360);    % end angle
+% 
+% geo = GeometryBuilder.create('IGA', 'CylinderSurface', {height, radius, center, sang, eang});
+% nurbs_topology = geo.topology_data_{1};
+% nurbs_data = nurbs_topology.domain_patch_data_.nurbs_data_;
+% nurbs_data.degreeElevation([0 1]);
+% nurbs_data.knotInsertion({[0.1], [0.125 0.375 0.625 0.875]});
 
 % create by object from the nurbs tool box
 nurbs_cylinder = nrbcylind(3,1,[],deg2rad(0),deg2rad(360));
 nurbs_cylinder = nrbdegelev(nurbs_cylinder, [0 1]); 
 nurbs_cylinder = nrbkntins(nurbs_cylinder,{[0.1], [0.125 0.375 0.625 0.875]}); 
-
-
 geo = GeometryBuilder.create('IGA', 'Nurbs_Object', nurbs_cylinder);
 nurbs_topology = geo.topology_data_{1};
 
 %% plot nurbs surface
-% figure; hold on;
-% nurbs_topology.domain_patch_data_.nurbs_data_.plotNurbs([36 2]);
-% hold off;
+figure; hold on;
+nurbs_topology.domain_patch_data_.nurbs_data_.plotNurbs([36 2]);
+hold off;
 
 %% create Domain
 import Domain.*

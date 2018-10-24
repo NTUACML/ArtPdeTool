@@ -32,8 +32,10 @@ classdef GeometryBuilder
                     switch name
                         case 'Rectangle'
                             geometry = Geometry.GeometryBuilder.IGA_Rectangle(varargin{1});
+                        case 'CylinderSurface'
+                            geometry = Geometry.GeometryBuilder.IGA_CylinderSurface(varargin{1});
                         case 'Nurbs_Object'
-                            geometry = Geometry.GeometryBuilder.IGA_Tool_Box(varargin{1});
+                            geometry = Geometry.GeometryBuilder.IGA_Tool_Box(varargin{1});    
                         otherwise
                             disp('Warning <GeometryBuilder>!');
                             disp('> name in IGA type was not exist!');
@@ -54,6 +56,7 @@ classdef GeometryBuilder
         geometry = FEM_UnitCube_2_2_2(var);
         
         geometry = IGA_Rectangle(varargin);
+        geometry = IGA_CylinderSurface(varargin);
         geometry = IGA_Tool_Box(varargin);
     end
 end
