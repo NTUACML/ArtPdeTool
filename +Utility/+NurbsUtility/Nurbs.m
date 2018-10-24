@@ -64,8 +64,32 @@ classdef Nurbs < handle
 
         end
         
+        function plotNurbsSurface(this, varargin)
+            import Utility.NurbsUtility.NurbsType
+            if isequal(this.type_, NurbsType.Surface)
+                import Utility.Resources.plotNurbs
+                plotNurbs(this.nurbs_tool_object_, varargin{1});
+            else
+                disp('Input nurbs error!please input a surface nurbs!');
+            end
+        end
+        
         function plotNurbs(this, number_points)
             nrbplot(this.nurbs_tool_object_, number_points); 
+        end
+        
+        function plotParametricMesh(this)
+            import Utility.Resources.mesh2d
+            import Utility.Resources.quadplot
+            unique_knot{1} = unique(this.knot_vectors_{1});
+            unique_knot{2} = unique(this.knot_vectors_{2});
+            [yy, xx] = meshgrid(unique_knot{2}, unique_knot{1});
+            
+            m = mesh2d(length(unique_knot{1})-1, length(unique_knot{2})-1, 1, 1);
+            m.xI(:,1) = xx(:);
+            m.xI(:,2) = yy(:);
+            
+            quadplot(m.connect, m.xI(:,1), m.xI(:,2));
         end
         
         function degreeElevation(this, degree)
@@ -143,6 +167,8 @@ classdef Nurbs < handle
                 this.control_points_ = PointList(temp_point);
             end
         end
+        
+        
     end
 end
 
