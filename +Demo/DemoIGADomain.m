@@ -13,13 +13,13 @@ height = 3;
 radius = 1;
 center = [];
 start_angle = deg2rad(0);    
-end_angle = deg2rad(240);  
+end_angle = deg2rad(120);  
 
 geo = GeometryBuilder.create('IGA', 'CylinderSurface', {height, radius, center, start_angle, end_angle});
 nurbs_topology = geo.topology_data_{1};
 nurbs_data = nurbs_topology.domain_patch_data_.nurbs_data_;
 nurbs_data.degreeElevation([0 1]);
-nurbs_data.knotInsertion({[0.1], [0.125 0.375 0.625 0.875]});
+nurbs_data.knotInsertion({[0.1], [0.125 0.375 0.625 0.75]});
 
 % create by object from the nurbs tool box
 % nurbs_cylinder = nrbcylind(3,1,[],deg2rad(0),deg2rad(360));
@@ -29,10 +29,10 @@ nurbs_data.knotInsertion({[0.1], [0.125 0.375 0.625 0.875]});
 % nurbs_topology = geo.topology_data_{1};
 
 %% plot nurbs surface
-figure; hold on; view([40 30]); grid on;
-nurbs_data.plotNurbsSurface({[24 1] 'plotKnotMesh'});
-% nurbs_data.plotNurbs([24 2]);
-hold off;
+% figure; hold on; view([40 30]); grid on;
+% nurbs_data.plotNurbsSurface({[24 1] 'plotKnotMesh'});
+% % nurbs_data.plotNurbs([24 2]);
+% hold off;
 
 %% create Domain
 import Domain.*
@@ -76,6 +76,7 @@ int_doamin_patch = nurbs_topology.getDomainPatch();
 % sub-domains, which is denoted by 'Default'.
 % The second parameter decides how many quad points are generated in each
 % parametric coordinate.
+
 % number_quad_pt = [2 2];
 % iga_domain.calIntegral(int_doamin_patch, exp1, {'Default', number_quad_pt});
 iga_domain.calIntegral(int_doamin_patch, exp1);
@@ -86,6 +87,7 @@ integration_rule = iga_domain.integration_rule_(1);
 % integration_rule.integral_unit_{1}.quadrature_{2}
 % integration_rule.integral_unit_{1}.quadrature_{3}
 
+%% plot integration point in parametric space
 figure; hold on;
 nurbs_data.plotParametricMesh();
 for i = 1:integration_rule.num_integral_unit_
@@ -93,4 +95,17 @@ for i = 1:integration_rule.num_integral_unit_
     plot(position(:,1), position(:,2), 'r.');
 end
 hold off;
+
+%% plot integration point in physical space
+figure; hold on; view([130 30]); grid on;
+nurbs_data.plotNurbsSurface({[24 1] 'plotKnotMesh'});
+
+for i = 1:integration_rule.num_integral_unit_
+    position = integration_rule.integral_unit_{i}.quadrature_{2};
+    position = nurbs_data.evaluateNurbs(position);
+
+    plot3(position(:,1), position(:,2), position(:,3), 'r.');
+end
+hold off;
+
 end

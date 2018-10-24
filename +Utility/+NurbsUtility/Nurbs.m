@@ -64,6 +64,15 @@ classdef Nurbs < handle
 
         end
         
+        function position = evaluateNurbs(this, xi)
+%             [p,~] = nrbdeval(nurbs, dnurbs, {xi(:,1), xi(:,2)});
+            position = zeros(size(xi,1), 3);
+            for i = 1:size(xi,1)
+                [p,w] = nrbeval(this.nurbs_tool_object_,{xi(i,1), xi(i,2)});
+                position(i,:) = p/w;
+            end
+        end
+        
         function plotNurbsSurface(this, varargin)
             import Utility.NurbsUtility.NurbsType
             if isequal(this.type_, NurbsType.Surface)
