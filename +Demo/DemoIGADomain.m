@@ -5,7 +5,9 @@ clc; clear; close all;
 import Geometry.*
 
 % create by PDEtool database
-% geo = GeometryBuilder.create('IGA', 'Rectangle', [20, 2]);
+% length = 20;
+% hight = 2;
+% geo = GeometryBuilder.create('IGA', 'Rectangle', {length, hight});
 % nurbs_topology = geo.topology_data_{1};
 
 % height = 3;
@@ -16,6 +18,7 @@ import Geometry.*
 % 
 % geo = GeometryBuilder.create('IGA', 'CylinderSurface', {height, radius, center, sang, eang});
 % nurbs_topology = geo.topology_data_{1};
+% nurbs_data = nurbs_topology.domain_patch_data_.nurbs_data_;
 % nurbs_data.degreeElevation([0 1]);
 % nurbs_data.knotInsertion({[0.1], [0.125 0.375 0.625 0.875]});
 

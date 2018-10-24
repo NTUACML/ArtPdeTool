@@ -68,15 +68,15 @@ classdef Nurbs < handle
             nrbplot(this.nurbs_tool_object_, number_points); 
         end
         
-%         function degreeElevation(this, degree)
-%             new_nurbs = nrbdegelev(this.nurbs_tool_object_, degree);
-%             this.nurbs_tool_object_ = new_nurbs;
-%         end
-%         
-%         function knotInsertion(this, knots)
-%             new_nurbs = nrbkntins(this.nurbs_tool_object_, knots); 
-%             this.nurbs_tool_object_ = new_nurbs;
-%         end
+        function degreeElevation(this, degree)
+            new_nurbs = this.nurbs_tool_object_;
+            this.nurbs_tool_object_  = nrbdegelev(new_nurbs, degree);
+        end
+        
+        function knotInsertion(this, knots)
+            new_nurbs = nrbkntins(this.nurbs_tool_object_, knots); 
+            this.nurbs_tool_object_ = new_nurbs;
+        end
         
         function dispControlPoints(this)
             disp('(id) coordinates');

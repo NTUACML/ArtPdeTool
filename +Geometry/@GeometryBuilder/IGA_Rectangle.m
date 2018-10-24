@@ -15,8 +15,8 @@ function geometry = IGA_Rectangle(varargin)
     % Generate knot vectors, order, and control points
     knot_vectors = {[0, 0, 0, 0, 1, 1, 1, 1], [0, 0, 0, 0, 1, 1, 1, 1]};
     order = [3, 3];
-    L = varargin{1}(1);
-    D = varargin{1}(2);
+    L = varargin{1}{1};
+    D = varargin{1}{2};
     t_1 = linspace(0, L, 4);
     t_2 = linspace(-D/2, D/2, 4);
     
