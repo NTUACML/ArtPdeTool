@@ -73,6 +73,17 @@ function geometry = IGA_CylinderSurface( varargin )
     parametric_mapping = {[0] [0 1]};
     patch.nurbs_data_ = BoundaryNurbs(knot_vectors(2), order(2), point, parametric_mapping);
     
+    % Create Boundary nurbs patch (Up_Side_Partilly)
+    patch = topo.newBoundayPatch('Up_Side_Partially');
+    %> Generate nurbs
+    crv = nrbcirc(varargin{1}{2},[0 0 varargin{1}{1}],varargin{1}{4}, 0.5*varargin{1}{5});
+    for i = 1:crv.number
+        crv.coefs(1:3,i) = crv.coefs(1:3,i)/crv.coefs(4,i);
+    end
+    
+    point = PointList(crv.coefs');
+    parametric_mapping = {[0 0.5] [1]};
+    patch.nurbs_data_ = BoundaryNurbs({crv.knots}, crv.order-1, point, parametric_mapping);
     
 end
 

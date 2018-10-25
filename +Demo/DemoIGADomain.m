@@ -13,13 +13,13 @@ height = 3;
 radius = 1;
 center = [];
 start_angle = deg2rad(0);    
-end_angle = deg2rad(120);  
+end_angle = deg2rad(180);  
 
 geo = GeometryBuilder.create('IGA', 'CylinderSurface', {height, radius, center, start_angle, end_angle});
 nurbs_topology = geo.topology_data_{1};
 nurbs_data = nurbs_topology.domain_patch_data_.nurbs_data_;
 nurbs_data.degreeElevation([0 1]);
-nurbs_data.knotInsertion({[0.1], [0.125 0.375 0.625 0.75]});
+nurbs_data.knotInsertion({[0.9], [0.125 0.375 0.625 0.75]});
 
 % create by object from the nurbs tool box
 % nurbs_cylinder = nrbcylind(3,1,[],deg2rad(0),deg2rad(360));
@@ -28,8 +28,8 @@ nurbs_data.knotInsertion({[0.1], [0.125 0.375 0.625 0.75]});
 % geo = GeometryBuilder.create('IGA', 'Nurbs_Object', nurbs_cylinder);
 % nurbs_topology = geo.topology_data_{1};
 
-%% plot nurbs surface
-% figure; hold on; view([40 30]); grid on;
+% plot nurbs surface
+% figure; hold on; view([130 30]); grid on;
 % nurbs_data.plotNurbsSurface({[24 1] 'plotKnotMesh'});
 % % nurbs_data.plotNurbs([24 2]);
 % hold off;
@@ -66,8 +66,7 @@ import Utility.BasicUtility.Region
 %% create expression
 exp1 = Expression.ExpressionBase;
 
-%% Integral variation equations
-% domain integral
+%% domain integral
 int_doamin_patch = nurbs_topology.getDomainPatch();
 % integrating the expression over the domain patch, 'int_doamin_patch', by
 % dividing domain patch into sub-domains. 
@@ -82,10 +81,6 @@ int_doamin_patch = nurbs_topology.getDomainPatch();
 iga_domain.calIntegral(int_doamin_patch, exp1);
 
 integration_rule = iga_domain.integration_rule_(1);
-
-% integration_rule.integral_unit_{1}.quadrature_{1}
-% integration_rule.integral_unit_{1}.quadrature_{2}
-% integration_rule.integral_unit_{1}.quadrature_{3}
 
 %% plot integration point in parametric space
 figure; hold on;
@@ -105,6 +100,22 @@ for i = 1:integration_rule.num_integral_unit_
     position = nurbs_data.evaluateNurbs(position);
 
     plot3(position(:,1), position(:,2), position(:,3), 'r.');
+end
+
+
+%% boundary integral
+int_boundary_patch = nurbs_topology.boundary_patch_data_('Up_Side_Partially');
+% int_boundary_patch.nurbs_data_.knotInsertion([0.25]);
+int_boundary_patch.nurbs_data_.plotNurbs([24]);
+
+iga_domain.calIntegral(int_boundary_patch, exp1);
+bdr_integration_rule = iga_domain.integration_rule_(2);
+
+for i = 1:bdr_integration_rule.num_integral_unit_
+    position = bdr_integration_rule.integral_unit_{i}.quadrature_{2};
+    position = nurbs_data.evaluateNurbs(position);
+
+    plot3(position(:,1), position(:,2), position(:,3), 'ro');
 end
 hold off;
 

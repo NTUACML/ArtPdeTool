@@ -65,7 +65,6 @@ classdef Nurbs < handle
         end
         
         function position = evaluateNurbs(this, xi)
-%             [p,~] = nrbdeval(nurbs, dnurbs, {xi(:,1), xi(:,2)});
             position = zeros(size(xi,1), 3);
             for i = 1:size(xi,1)
                 [p,w] = nrbeval(this.nurbs_tool_object_,{xi(i,1), xi(i,2)});
@@ -146,7 +145,11 @@ classdef Nurbs < handle
                 % Update - order
                 this.order_ = this.nurbs_tool_object_.order - 1;
                 % Update - knot_vectors
-                this.knot_vectors_ = this.nurbs_tool_object_.knots;
+                if iscell(this.nurbs_tool_object_.knots)
+                    this.knot_vectors_ = this.nurbs_tool_object_.knots;
+                else
+                    this.knot_vectors_ = {this.nurbs_tool_object_.knots};
+                end
                 % Update - control_points
                 temp_point = zeros(prod(this.basis_number_), 4);
                 

@@ -29,7 +29,7 @@ if strcmp(varargin{1}{2}, 'plotKnotMesh')
         for i = 1:length(pp(:,1))
             p(i,:) = [NurbsMapping(pp(i,:), nurbs)]';
         end
-        plot3(p(:,1), p(:,2), p(:,3), 'k-', 'Linewidth', 1.2);
+        plot3(p(:,1), p(:,2), p(:,3), 'k-', 'Linewidth', 1);
     end
 
     for i_knot = 1:length(knot_2(1,:))
@@ -38,7 +38,7 @@ if strcmp(varargin{1}{2}, 'plotKnotMesh')
         for i = 1:length(pp(:,1))
             p(i,:) = [NurbsMapping(pp(i,:), nurbs)]';
         end
-        plot3(p(:,1), p(:,2), p(:,3), 'k-', 'Linewidth', 1.2);
+        plot3(p(:,1), p(:,2), p(:,3), 'k-', 'Linewidth', 1);
     end    
 end
 
