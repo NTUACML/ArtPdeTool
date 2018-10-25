@@ -31,7 +31,7 @@ classdef IntegralUnit < BasisFunction.IGA.QueryUnit
      methods (Access=private)   
         function modifyQueryProtocol(this)
             import Utility.BasicUtility.Region        
-            this.query_protocol_ = {Region.Domain, this.int_element_data_.neighbor_element_id_};
+            this.query_protocol_{1} = Region.Domain;
         end
     end
     

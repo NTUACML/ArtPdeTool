@@ -1,0 +1,26 @@
+% Makes a simple 2D uniform mesh.
+function [m] = mesh2d(ex, ey, lx, ly)       
+    m.ne = ex*ey;
+    m.nn = (ex+1)*(ey+1);
+    m.xI = zeros(m.nn,2);
+    m.connect = zeros(m.ne, 4);
+    xx = linspace(0,lx,ex+1);
+    yy = linspace(0,ly,ey+1);    
+    ct = 0;
+    for j=1:ey+1
+        for i=1:ex+1
+            ct = ct + 1;
+            m.xI(ct,:) = [xx(i), yy(j)];            
+        end
+    end        
+    ct = 0;
+    for j=1:ey
+        for i=1:ex
+            ct = ct + 1;
+            n0 = i + (j-1)*(ex+1);
+            m.connect(ct,:) = [n0, n0+1, n0+ex+2, n0+ex+1];
+        end
+    end
+end
+
+

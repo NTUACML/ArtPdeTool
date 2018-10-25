@@ -3,7 +3,6 @@ clc; clear; close all;
 
 %% create Geometry
 import Geometry.*
-
 % create by PDEtool database
 % length = 20;
 % hight = 2;
@@ -13,26 +12,27 @@ import Geometry.*
 height = 3;
 radius = 1;
 center = [];
-sang = deg2rad(0);      % start angle
-eang = deg2rad(360);    % end angle
+start_angle = deg2rad(0);    
+end_angle = deg2rad(180);  
 
-geo = GeometryBuilder.create('IGA', 'CylinderSurface', {height, radius, center, sang, eang});
+geo = GeometryBuilder.create('IGA', 'CylinderSurface', {height, radius, center, start_angle, end_angle});
 nurbs_topology = geo.topology_data_{1};
 nurbs_data = nurbs_topology.domain_patch_data_.nurbs_data_;
 nurbs_data.degreeElevation([0 1]);
-nurbs_data.knotInsertion({[0.1], [0.125 0.375 0.625 0.875]});
+nurbs_data.knotInsertion({[0.9], [0.125 0.375 0.625 0.75]});
 
-% % create by object from the nurbs tool box
+% create by object from the nurbs tool box
 % nurbs_cylinder = nrbcylind(3,1,[],deg2rad(0),deg2rad(360));
 % nurbs_cylinder = nrbdegelev(nurbs_cylinder, [0 1]); 
 % nurbs_cylinder = nrbkntins(nurbs_cylinder,{[0.1], [0.125 0.375 0.625 0.875]}); 
 % geo = GeometryBuilder.create('IGA', 'Nurbs_Object', nurbs_cylinder);
 % nurbs_topology = geo.topology_data_{1};
 
-%% plot nurbs surface
-figure; hold on;
-nurbs_topology.domain_patch_data_.nurbs_data_.plotNurbs([36 2]);
-hold off;
+% plot nurbs surface
+% figure; hold on; view([130 30]); grid on;
+% nurbs_data.plotNurbsSurface({[24 1] 'plotKnotMesh'});
+% % nurbs_data.plotNurbs([24 2]);
+% hold off;
 
 %% create Domain
 import Domain.*
@@ -66,8 +66,7 @@ import Utility.BasicUtility.Region
 %% create expression
 exp1 = Expression.ExpressionBase;
 
-%% Integral variation equations
-% domain integral
+%% domain integral
 int_doamin_patch = nurbs_topology.getDomainPatch();
 % integrating the expression over the domain patch, 'int_doamin_patch', by
 % dividing domain patch into sub-domains. 
@@ -76,30 +75,48 @@ int_doamin_patch = nurbs_topology.getDomainPatch();
 % sub-domains, which is denoted by 'Default'.
 % The second parameter decides how many quad points are generated in each
 % parametric coordinate.
+
 % number_quad_pt = [2 2];
 % iga_domain.calIntegral(int_doamin_patch, exp1, {'Default', number_quad_pt});
 iga_domain.calIntegral(int_doamin_patch, exp1);
 
 integration_rule = iga_domain.integration_rule_(1);
 
-% integration_rule.integral_unit_{1}.quadrature_{1}
-% integration_rule.integral_unit_{1}.quadrature_{2}
-% integration_rule.integral_unit_{1}.quadrature_{3}
-
+%% plot integration point in parametric space
 figure; hold on;
-knot_vectors = nurbs_topology.domain_patch_data_.nurbs_data_.knot_vectors_;
-unique_knot{1} = unique(knot_vectors{1});
-unique_knot{2} = unique(knot_vectors{2});
-[yy, xx] = meshgrid(unique_knot{2}, unique_knot{1});
-
-m = mesh2d(length(unique_knot{1})-1, length(unique_knot{2})-1, 1, 1);
-m.xI(:,1) = xx(:);
-m.xI(:,2) = yy(:);
-
-quadplot(m.connect, m.xI(:,1), m.xI(:,2));
+nurbs_data.plotParametricMesh();
 for i = 1:integration_rule.num_integral_unit_
     position = integration_rule.integral_unit_{i}.quadrature_{2};
     plot(position(:,1), position(:,2), 'r.');
 end
+hold off;
+
+%% plot integration point in physical space
+figure; hold on; view([130 30]); grid on;
+nurbs_data.plotNurbsSurface({[24 1] 'plotKnotMesh'});
+
+for i = 1:integration_rule.num_integral_unit_
+    position = integration_rule.integral_unit_{i}.quadrature_{2};
+    position = nurbs_data.evaluateNurbs(position);
+
+    plot3(position(:,1), position(:,2), position(:,3), 'r.');
+end
+
+
+%% boundary integral
+int_boundary_patch = nurbs_topology.boundary_patch_data_('Up_Side_Partially');
+% int_boundary_patch.nurbs_data_.knotInsertion([0.25]);
+int_boundary_patch.nurbs_data_.plotNurbs([24]);
+
+iga_domain.calIntegral(int_boundary_patch, exp1);
+bdr_integration_rule = iga_domain.integration_rule_(2);
+
+for i = 1:bdr_integration_rule.num_integral_unit_
+    position = bdr_integration_rule.integral_unit_{i}.quadrature_{2};
+    position = nurbs_data.evaluateNurbs(position);
+
+    plot3(position(:,1), position(:,2), position(:,3), 'ro');
+end
+hold off;
 
 end

@@ -5,8 +5,8 @@ import Utility.NurbsUtility.NurbsType
 import IntegrationRule.IGA.GaussQuadrature
 
 switch nurbs_type
-    case NurbsType.Solid
-        [num_quadrature, position, weighting] = GaussQuadrature.Hexa8();
+    case NurbsType.Curve
+        [num_quadrature, position, weighting] = GaussQuadrature.Line2();
         lu = unit_span{1}(2)-unit_span{1}(1);
         position(:,1) = 0.5*(position(:,1)+1)*lu + unit_span{1}(1);
         weighting = weighting/2*lu;
@@ -19,8 +19,8 @@ switch nurbs_type
         position(:,2) = 0.5*(position(:,2)+1)*lv + unit_span{2}(1);
         weighting = weighting/4*lu*lv;
         gauss_quadrature = {num_quadrature, position, weighting};
-    case NurbsType.Curve
-        [num_quadrature, position, weighting] = GaussQuadrature.Line2();
+    case NurbsType.Solid
+        [num_quadrature, position, weighting] = GaussQuadrature.Hexa8();
         lu = unit_span{1}(2)-unit_span{1}(1);
         lv = unit_span{2}(2)-unit_span{2}(1);
         lw = unit_span{2}(2)-unit_span{2}(1);
