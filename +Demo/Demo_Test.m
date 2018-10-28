@@ -4,6 +4,7 @@ clc; clear; close all;
 import Utility.BasicUtility.*
 import Geometry.*
 import Domain.*
+import Operation.*
 
 %% Geometry data input
 fem_unit_cube_geo = GeometryBuilder.create('FEM', 'UnitCube_2_2_2');
@@ -27,23 +28,25 @@ var_p = fem_domain.generateVariable('pressure', fem_linear_basis,...
 test_u = fem_domain.generateTestVariable(var_u, fem_linear_basis);
 test_p = fem_domain.generateTestVariable(var_p, fem_linear_basis);
 
-%% Expresion define
+%% Operation define (By User)
 % exp1 = Dot(Grad(test_u), Grad(var_u)); %+ test_p * var_p;
 % exp2 = test_u * var_u;
 % exp3 = test_p * var_p;
 % %exp3.static(var_xxx)
+operation1 = Operation();
+operation1.setOperator('grad_v_dot_grad_u');
 
-exp1 = Expression.ExpressionBase;
-exp2 = Expression.ExpressionBase;
+%% Expression acquired
+exp1 = operation1.getExpression('FEM', {test_u, var_u});
 
 %% Integral variation equations
 % Domain integral
 int_doamin_patch = iso_topo.getDomainPatch();
 fem_domain.calIntegral(int_doamin_patch, exp1);
 
-% Boundary integral
-int_right_patch = iso_topo.getBoundayPatch('Down_Side');
-fem_domain.calIntegral(int_right_patch, exp2);
+% % Boundary integral
+% int_right_patch = iso_topo.getBoundayPatch('Down_Side');
+% fem_domain.calIntegral(int_right_patch, exp2);
 
 %% Constraint (Acquire prescribed D.O.F.)
 up_side_patch = iso_topo.getBoundayPatch('Up_Side');

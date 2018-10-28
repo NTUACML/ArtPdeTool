@@ -31,10 +31,8 @@ classdef Domain < Domain.DomainBase
         function variable = generateVariable(this, name, basis, type, type_parameter, varargin)
             if(isa(basis, 'BasisFunction.BasisFunctionBase'))
                 import Variable.Variable
-                % get variable number by basis
-                num_var = basis.num_basis_;
                 % new the variable
-                var = Variable(name, num_var);
+                var = Variable(name, basis);
                 % generate the variable by type
                 status = var.generate(type, type_parameter);
                 % check status and add to DOF mannger
@@ -163,8 +161,17 @@ classdef Domain < Domain.DomainBase
             this.assembler_ = Assembler(this.dof_manager_);
             this.assembler_.generate();
             
-            
-            
+            % Loop integral rule
+            for i_int_rule = 1 : this.num_integration_rule_
+                int_rule = this.integration_rule_(i_int_rule);
+                int_exp = int_rule.expression_;
+                % Loop int unit
+                for i_int_unit = 1 : int_rule.num_integral_unit_
+                    int_unit = int_rule.integral_unit_{i_int_unit};
+                    % Expression evaluate
+                    [type, var, basis_id, data] = int_exp.eval(int_unit)
+                end
+            end
             
             status = true;
         end
