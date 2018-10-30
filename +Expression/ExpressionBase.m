@@ -9,10 +9,5 @@ classdef ExpressionBase < handle
         function this = ExpressionBase()
         end
     end
-    
-    methods(Abstract)
-        [type, var, basis_id, data] = eval(this, query_unit);
-    end
-    
 end
 

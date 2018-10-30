@@ -10,6 +10,7 @@ classdef DomainBase < handle
         constraint_
         integration_rule_
         assembler_
+        mapping_
     end
     
     methods
@@ -32,6 +33,7 @@ classdef DomainBase < handle
         variable = generateVariable(this, name, basis, type, type_parameter, varargin);
         test_variable = generateTestVariable(this, variable, basis, varargin);
         constraint = generateConstraint(this, patch, variable, constraint_data, varargin);
+        status = setMapping(this, basis, varargin);
         status = calIntegral(this, patch, expression, varargin);
         %status = cal(this, patch, expression, varargin);
         status = solve(this, varargin);

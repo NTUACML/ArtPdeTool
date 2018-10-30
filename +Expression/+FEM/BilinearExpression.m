@@ -10,7 +10,7 @@ classdef BilinearExpression < Expression.FEM.Expression
             this@Expression.FEM.Expression();
         end
         
-        function [type, var, basis_id, data] = eval(this, query_unit)
+        function [type, var, basis_id, data] = eval(this, query_unit, mapping)
             import Utility.BasicUtility.VariableType
             type = VariableType.Matrix;
             var = {this.test_; this.var_};
@@ -32,8 +32,8 @@ classdef BilinearExpression < Expression.FEM.Expression
             % Put non_zero id
             basis_id = {test_non_zero_id, var_non_zero_id};
             
-            % Cal Jacobin
-            %... Todo...
+            % get local mapping
+            F = mapping.queryLocalMapping(query_unit);
             
             % Local integration
             data = zeros(length(test_non_zero_id), ...
@@ -42,9 +42,19 @@ classdef BilinearExpression < Expression.FEM.Expression
             for i_q = 1 : num_q
                 i_qx = qx(i_q, :);
                 i_qw = qw(i_q);
-                B_test = test_eval(i_qx);
-                B_var = var_eval(i_qx);
-                data = data + (B_test' * B_var).* i_qw; %*J
+                % Jacobian
+                [dxi_dx, dx_dxi] = F.calJacobian(i_qx);
+                
+                [~, d_test_dxi] = test_eval(i_qx);
+                [~, d_var_dxi] = var_eval(i_qx);
+                
+                d_test_dx = dxi_dx * d_test_dxi;
+                d_var_dx = dxi_dx * d_var_dxi;
+                
+                B_test = d_test_dx;
+                B_var = d_var_dx;
+                
+                data = data + (B_test' * B_var).* i_qw * det(dx_dxi);
             end
         end
 

@@ -28,6 +28,9 @@ var_p = fem_domain.generateVariable('pressure', fem_linear_basis,...
 test_u = fem_domain.generateTestVariable(var_u, fem_linear_basis);
 test_p = fem_domain.generateTestVariable(var_p, fem_linear_basis);
 
+%% Set domain mapping - > physical domain to parametric domain
+fem_domain.setMapping(fem_linear_basis);
+
 %% Operation define (By User)
 % exp1 = Dot(Grad(test_u), Grad(var_u)); %+ test_p * var_p;
 % exp2 = test_u * var_u;
@@ -35,6 +38,7 @@ test_p = fem_domain.generateTestVariable(var_p, fem_linear_basis);
 % %exp3.static(var_xxx)
 operation1 = Operation();
 operation1.setOperator('grad_v_dot_grad_u');
+%dot(FEM::grad(test_u), FEM::gard(var_u))+ dot(test_p, var_u)
 
 %% Expression acquired
 exp1 = operation1.getExpression('FEM', {test_u, var_u});

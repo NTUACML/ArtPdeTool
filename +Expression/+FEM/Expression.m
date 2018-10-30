@@ -22,5 +22,9 @@ classdef Expression < Expression.ExpressionBase
         
     end
     
+    methods(Abstract)
+        [type, var, basis_id, data] = eval(this, query_unit, mapping);
+    end
+
 end
 
