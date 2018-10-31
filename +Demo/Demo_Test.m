@@ -17,16 +17,19 @@ fem_domain = DomainBuilder.create('FEM');
 fem_linear_basis = fem_domain.generateBasis(iso_topo);
 
 %% Variable define
-var_u = fem_domain.generateVariable('velocity', fem_linear_basis,...
-                                    VariableType.Vector, 3);
-var_p = fem_domain.generateVariable('pressure', fem_linear_basis,...
-                                    VariableType.Scalar, 1);                             
+% var_u = fem_domain.generateVariable('velocity', fem_linear_basis,...
+%                                     VariableType.Vector, 3);
+% var_p = fem_domain.generateVariable('pressure', fem_linear_basis,...
+%                                     VariableType.Scalar, 1);     
+var_t = fem_domain.generateVariable('temperature', fem_linear_basis,...
+                                    VariableType.Scalar, 1);      
 % disp(var_u);
 % disp(var_p);
-
+% disp(var_t);
 %% Test variable define
-test_u = fem_domain.generateTestVariable(var_u, fem_linear_basis);
-test_p = fem_domain.generateTestVariable(var_p, fem_linear_basis);
+% test_u = fem_domain.generateTestVariable(var_u, fem_linear_basis);
+% test_p = fem_domain.generateTestVariable(var_p, fem_linear_basis);
+test_t = fem_domain.generateTestVariable(var_t, fem_linear_basis);
 
 %% Set domain mapping - > physical domain to parametric domain
 fem_domain.setMapping(fem_linear_basis);
@@ -37,11 +40,11 @@ fem_domain.setMapping(fem_linear_basis);
 % exp3 = test_p * var_p;
 % %exp3.static(var_xxx)
 operation1 = Operation();
-operation1.setOperator('grad_v_dot_grad_u');
+operation1.setOperator('grad_test_dot_grad_var');
 %dot(FEM::grad(test_u), FEM::gard(var_u))+ dot(test_p, var_u)
 
 %% Expression acquired
-exp1 = operation1.getExpression('FEM', {test_u, var_u});
+exp1 = operation1.getExpression('FEM', {test_t, var_t});
 
 %% Integral variation equations
 % Domain integral
@@ -55,12 +58,16 @@ fem_domain.calIntegral(int_doamin_patch, exp1);
 %% Constraint (Acquire prescribed D.O.F.)
 up_side_patch = iso_topo.getBoundayPatch('Up_Side');
 down_side_patch = iso_topo.getBoundayPatch('Down_Side');
-u_constraint_up = fem_domain.generateConstraint(up_side_patch, var_u, {1, @()1});
-u_constraint_down = fem_domain.generateConstraint(down_side_patch, var_p, {1, @()2});
-
+% u_constraint_up = fem_domain.generateConstraint(up_side_patch, var_u, {1, @()1});
+% u_constraint_down = fem_domain.generateConstraint(down_side_patch, var_p, {1, @()2});
+t_constraint_up = fem_domain.generateConstraint(up_side_patch, var_t, {1, @()1});
+t_constraint_down = fem_domain.generateConstraint(down_side_patch, var_t, {1, @()0});
 %% Solve domain equation system
 % fem_domain.solver('BiCG').solve();
 fem_domain.solve('default');
+
+%% Show result
+disp(var_t);
 
 %% Data Interpolation
 

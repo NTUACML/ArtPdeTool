@@ -36,7 +36,17 @@ classdef DofManager < handle
             end 
         end
         
-        function domain_dof_id = getDomainDofId(this, var, basis_id, dof_id)
+        function var_data = getVariableData(this, var)
+            if(isKey(this.var_data_, var.name_))
+                var_data = this.var_data_(var.name_);
+            else
+                var_data = [];
+                disp('Error <DofMannger> - getVariableData!');
+                disp('> The variable not existed in DofMannger.');
+            end
+        end
+        
+        function domain_dof_id = getAssemblyId_by_DofId(this, var, basis_id, dof_id)
             if(isa(var, 'Variable.Variable'))
                 var_data = getVariableData(this, var);
                 if(~isempty(var_data))
@@ -47,23 +57,35 @@ classdef DofManager < handle
                 end
             else
                 domain_dof_id = [];
-                disp('Error <DofMannger> - addVariable!');
+                disp('Error <DofMannger> - getAssemblyId_by_DofId!');
+                disp('> the variable should be a Variable type.');
+            end
+        end
+        
+        function domain_dof_id = getAssemblyId(this, var, basis_id)
+            if(isa(var, 'Variable.Variable'))
+                var_data = getVariableData(this, var);
+                if(~isempty(var_data))
+                    var_start_id = var_data{2};
+                    num_dof = var.num_dof_;
+                    num_basis = length(basis_id);
+                    domain_dof_id = zeros(num_basis * num_dof, 1);
+                    for i = 1 : num_basis
+                        id = var_start_id + var.getVarDofId(basis_id(i), (1:num_dof)');
+                        count_start = num_dof*i-(num_dof-1);
+                        count_end = num_dof*i;
+                        domain_dof_id(count_start : count_end, 1) = id;
+                    end
+                else
+                    domain_dof_id = [];
+                end
+            else
+                domain_dof_id = [];
+                disp('Error <DofMannger> - getAssemblyId!');
                 disp('> the variable should be a Variable type.');
             end
         end
     end
     
-    
-    methods (Access = private)
-        function var_data = getVariableData(this, var)
-            if(isKey(this.var_data_, var.name_))
-                var_data = this.var_data_(var.name_);
-            else
-                var_data = [];
-                disp('Error <DofMannger> - getVariableData!');
-                disp('> The variable not existed in DofMannger.');
-            end
-        end
-    end
 end
 

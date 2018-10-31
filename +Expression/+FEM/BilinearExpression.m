@@ -11,8 +11,8 @@ classdef BilinearExpression < Expression.FEM.Expression
         end
         
         function [type, var, basis_id, data] = eval(this, query_unit, mapping)
-            import Utility.BasicUtility.VariableType
-            type = VariableType.Matrix;
+            import Utility.BasicUtility.AssemblyType
+            type = AssemblyType.Matrix;
             var = {this.test_; this.var_};
             % Get quadrature
             [num_q, qx, qw] = query_unit.quadrature_();
@@ -40,20 +40,26 @@ classdef BilinearExpression < Expression.FEM.Expression
                    length(var_non_zero_id));
                
             for i_q = 1 : num_q
+                % get Quadrature
                 i_qx = qx(i_q, :);
                 i_qw = qw(i_q);
-                % Jacobian
+                
+                % cal Jacobian
                 [dxi_dx, dx_dxi] = F.calJacobian(i_qx);
                 
+                % eval basis derivative with xi
                 [~, d_test_dxi] = test_eval(i_qx);
                 [~, d_var_dxi] = var_eval(i_qx);
                 
+                % eval basis derivative with x
                 d_test_dx = dxi_dx * d_test_dxi;
                 d_var_dx = dxi_dx * d_var_dxi;
                 
+                % eval bilinear form
                 B_test = d_test_dx;
                 B_var = d_var_dx;
                 
+                % add to local matrix
                 data = data + (B_test' * B_var).* i_qw * det(dx_dxi);
             end
         end

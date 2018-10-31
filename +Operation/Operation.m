@@ -20,7 +20,7 @@ classdef Operation < handle
             switch(method)
                 case 'FEM'
                     import Expression.FEM.*
-                    if(this.op_data_ == 'grad_v_dot_grad_u')
+                    if(this.op_data_ == 'grad_test_dot_grad_var')
                         % Bilinear form
                         if(~isempty(varargin) || ~(length(varargin{1}) < 2))
                             var_in = varargin{1};

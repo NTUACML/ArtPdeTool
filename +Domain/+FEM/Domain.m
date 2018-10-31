@@ -169,24 +169,69 @@ classdef Domain < Domain.DomainBase
             	solver_parameter = varargin{1};  
             end
             
-            import Assembler.FEM.Assembler
-            % new assembler
-            this.assembler_ = Assembler(this.dof_manager_);
-            this.assembler_.generate();
+            if(~isempty(this.mapping_))
+                import Assembler.FEM.Assembler
+                import Utility.BasicUtility.AssemblyType
+                % new assembler
+                this.assembler_ = Assembler(this.dof_manager_);
+                this.assembler_.generate();
             
-            % Loop integral rule
-            for i_int_rule = 1 : this.num_integration_rule_
-                int_rule = this.integration_rule_(i_int_rule);
-                int_exp = int_rule.expression_;
-                % Loop int unit
-                for i_int_unit = 1 : int_rule.num_integral_unit_
-                    int_unit = int_rule.integral_unit_{i_int_unit};
-                    % Expression evaluate
-                    [type, var, basis_id, data] = int_exp.eval(int_unit, this.mapping_)
+                % Loop integral rule
+                for i_int_rule = 1 : this.num_integration_rule_
+                    int_rule = this.integration_rule_(i_int_rule);
+                    int_exp = int_rule.expression_;
+                    % Loop int unit
+                    for i_int_unit = 1 : int_rule.num_integral_unit_
+                        int_unit = int_rule.integral_unit_{i_int_unit};
+                        % Expression evaluate
+                        [type, var, basis_id, data] = int_exp.eval(int_unit, this.mapping_);
+                        % Assembly
+                        this.assembler_.Assembly(type, var, basis_id, data);
+                    end
                 end
+                
+                % Loop constraint
+                for i_const = 1 : this.num_constraint_
+                    % get constraint
+                    const_obj = this.constraint_(i_const);
+                    const_var = const_obj.constraint_var_;
+                    const_basis_id = const_obj.constraint_var_id_;
+                    % constraint data -> 1. dof_id, 2. constraint value
+                    num_basis = length(const_basis_id);
+                    const_data = zeros(num_basis, 2);
+                    for i = 1:num_basis
+                        const_data(i, 1) = const_obj.constraint_data_{1};
+                        const_data(i, 2) = const_obj.constraint_data_{2}();
+                    end
+                    % Assembly
+                    
+                    this.assembler_.Assembly(AssemblyType.Constraint,...
+                                    const_var, const_basis_id, const_data);
+                end
+                
+                % Solve result
+                coef = this.assembler_.lhs_ \ this.assembler_.rhs_;
+                
+                % Result write back
+                all_var_name = this.dof_manager_.var_data_.keys();
+                num_var = this.dof_manager_.num_var_;
+                for i_var = 1 : num_var
+                    var_data = this.dof_manager_.var_data_(all_var_name{i_var});
+                    var = var_data{1};
+                    dof_start = var_data{2};
+                    dof_end = var_data{3};
+                    % data write back
+                    var.data_ = coef(dof_start + 1 : dof_end);
+                end
+                
+                status = true;
+            else
+                disp('Error <FEM Domain>! - solve!');
+                disp('> the domain mapping should be assigned before solve weak formulation system');
+                disp('> this problem can not be solved!');
+                status = false;
+                return;
             end
-            
-            status = true;
         end
     end
     

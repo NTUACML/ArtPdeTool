@@ -4,6 +4,7 @@ classdef AssemblerBase < handle
     
     properties
         dof_manager_
+        num_total_dof_
         lhs_
         rhs_
     end
@@ -11,6 +12,7 @@ classdef AssemblerBase < handle
     methods
         function this = AssemblerBase(dof_manager)
             this.dof_manager_ = dof_manager;
+            this.num_total_dof_ = 0;
         end
         
         function status = generate(this)
@@ -25,8 +27,15 @@ classdef AssemblerBase < handle
         function clear(this)
             this.lhs_ = [];
             this.rhs_ = [];
+            this.num_total_dof_ = 0;
         end
     end
+    
+    methods(Abstract)
+        status = Assembly(this, type, var, basis_id, data);
+    end
+    
+    
     
 end
 
