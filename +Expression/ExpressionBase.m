@@ -9,6 +9,5 @@ classdef ExpressionBase < handle
         function this = ExpressionBase()
         end
     end
-    
 end
 

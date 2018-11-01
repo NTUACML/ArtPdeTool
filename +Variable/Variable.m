@@ -4,6 +4,7 @@ classdef Variable < handle
     properties
         name_           % variable name
         type_           % variable type
+        basis_data_     % basis data
         num_var_ = 0    % number of variable 
         num_dof_ = 0    % number of degree of freedom (DOF) for each variable
         data_           % variable data stored in each dof cell space
@@ -11,9 +12,10 @@ classdef Variable < handle
     
     methods
         % constructor
-        function this = Variable(name, num_var)
+        function this = Variable(name, basis)
             this.name_ = name;
-            this.num_var_ = num_var;
+            this.basis_data_ = basis;
+            this.num_var_ = this.basis_data_.num_basis_;
         end
         
         function status = generate(this, type, type_parameter)
