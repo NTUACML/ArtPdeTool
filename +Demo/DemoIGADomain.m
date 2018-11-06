@@ -44,15 +44,15 @@ import BasisFunction.IGA.QueryUnit
 import Utility.BasicUtility.Region
 
 %% Test query function 
-% query_unit = QueryUnit();
-% xi = {0.1973 0.78229};
-% query_unit.query_protocol_ = {Region.Domain, xi};
-% results = nurbs_basis.query(query_unit);
-% 
-% non_zero_id = results{1};
-% R = results{2};
-% dR_dxi = results{3}(1,:);
-% dR_deta = results{3}(2,:);
+query_unit = QueryUnit();
+xi = {0.1973 0.78229};
+query_unit.query_protocol_ = {Region.Domain, xi};
+results = nurbs_basis.query(query_unit);
+
+non_zero_id = query_unit.non_zero_id_;
+R = query_unit.evaluate_basis_{1};
+dR_dxi = query_unit.evaluate_basis_{2}(1,:);
+dR_deta = query_unit.evaluate_basis_{2}(2,:);
 % 
 % control_point = nurbs_topology.domain_patch_data_.nurbs_data_.control_points_(:,1:3);
 % 
