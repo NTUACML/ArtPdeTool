@@ -20,12 +20,11 @@ classdef Operation < handle
             switch(method)
                 case 'FEM'
                     import Expression.FEM.*
-                    if(this.op_data_ == 'grad_test_dot_grad_var')
+                    if strcmp(this.op_data_,'grad_test_dot_grad_var')
                         % Bilinear form
                         if(~isempty(varargin) || ~(length(varargin{1}) < 2))
-                            var_in = varargin{1};
-                            test = var_in{1};
-                            variable = var_in{2};
+                            test = varargin{1}{1};
+                            variable = varargin{1}{2};
                             expression = BilinearExpression();
                             expression.setTest(test);
                             expression.setVar(variable);
@@ -36,6 +35,23 @@ classdef Operation < handle
                     else
                         expression = Expression();
                     end
+                case 'IGA'
+                    import Expression.IGA.*
+                    if strcmp(this.op_data_,'grad_test_dot_grad_var')
+                        % Bilinear form
+                        if(~isempty(varargin) || ~(length(varargin{1}) < 2))
+                            test = varargin{1}{1};
+                            variable = varargin{1}{2};
+                            expression = BilinearExpression();
+                            expression.setTest(test);
+                            expression.setVar(variable);
+                        else
+                            disp('Error <Operation>! - getExpression!');
+                            disp('> the bilinear form should input test and variable.');
+                        end
+                    else
+                        expression = Expression();
+                    end    
                 otherwise
                     expression = [];
                     disp('Error <Operation>! - getExpression!');

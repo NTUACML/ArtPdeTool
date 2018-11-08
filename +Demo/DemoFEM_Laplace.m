@@ -1,3 +1,4 @@
+function DemoFEM_Laplace
 clc; clear; close all;
 
 %% Include package
@@ -47,3 +48,4 @@ fem_domain.solve('default');
 
 %% Show result
 disp(var_t);
+end
