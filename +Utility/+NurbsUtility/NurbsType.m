@@ -1,6 +1,6 @@
 classdef NurbsType
     enumeration
-        Curve, Surface, Solid
+        Curve, Surface, Plane, Solid
     end
 end
 

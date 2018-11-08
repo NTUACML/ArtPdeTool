@@ -16,10 +16,10 @@ classdef AssemblerBase < handle
         end
         
         function status = generate(this)
-            num_total_dof = this.dof_manager_.num_total_dof_;
+            this.num_total_dof_ = this.dof_manager_.num_total_dof_;
             
-            this.lhs_ = zeros(num_total_dof, num_total_dof);
-            this.rhs_ = zeros(num_total_dof, 1);
+            this.lhs_ = zeros(this.num_total_dof_, this.num_total_dof_);
+            this.rhs_ = zeros(this.num_total_dof_, 1);
             
             status = true;
         end

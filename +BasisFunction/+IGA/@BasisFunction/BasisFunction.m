@@ -21,7 +21,10 @@ classdef BasisFunction < BasisFunction.BasisFunctionBase
         
         function results = query(this, query_unit, query_parameter)
             [ GlobalDof, R, dR_dxi ] = this.Nurbs_basis_function_(query_unit.query_protocol_{2});
-            results = {GlobalDof, R, dR_dxi};
+            query_unit.non_zero_id_ = GlobalDof;
+            query_unit.evaluate_basis_ = {R, dR_dxi};
+            
+            results = true;
         end
     end
  

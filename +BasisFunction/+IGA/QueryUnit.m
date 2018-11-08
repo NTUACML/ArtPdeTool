@@ -4,6 +4,8 @@ classdef QueryUnit < handle
     
     properties
         query_protocol_     % IGA: {region, xi}
+        non_zero_id_ = []
+        evaluate_basis_ = []
     end
     
     methods
