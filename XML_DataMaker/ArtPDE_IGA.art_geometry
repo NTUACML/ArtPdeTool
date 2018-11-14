@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Geometry format="IGA">
+   <Unit format="isoparametric" type="nurbs">
+      <Patch name="domain_1" region="Domain">
+         <NURBS type="Surface">
+            <ControlPoint>
+               <Point>0  0  0  1</Point>
+               <Point>1  0  0  1</Point>
+               <Point>1  1  0  1</Point>
+               <Point>0  1  0  1</Point>
+            </ControlPoint>
+            <Order>2  2</Order>
+            <Knot>
+               <Vector dof="4">0  0  1  1</Vector>
+               <Vector dof="4">0  0  1  1</Vector>
+            </Knot>
+         </NURBS>
+      </Patch>
+      <Patch name="top" region="Boundary">
+         <NURBS type="Surface">
+            <ControlPoint>
+               <Point>0.1         0.2           0           1</Point>
+               <Point>0  1  0  1</Point>
+            </ControlPoint>
+            <Order>1  1</Order>
+            <Knot>
+               <Vector dof="4">0  0  1  1</Vector>
+               <Vector dof="1">1</Vector>
+            </Knot>
+         </NURBS>
+      </Patch>
+   </Unit>
+</Geometry>
