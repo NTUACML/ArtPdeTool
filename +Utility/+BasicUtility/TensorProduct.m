@@ -53,12 +53,7 @@ classdef TensorProduct
                     end
                     
                     local_index{1} = rem;
-                    local_index{2} = quo + 1;
-                    
-%                     temp = mod(global_index, this.num_{1}*this.num_{2});
-%                     local_index{1} = mod(temp, this.num_{1});
-%                     local_index{2} = fix(temp/this.num_{1}) + 1;
-%                     local_index{3} = fix(global_index/(this.num_{1}*this.num_{2})) + 1;            
+                    local_index{2} = quo + 1;           
                 case 2
                     local_index = {0 0};
                     quo = fix(global_index/this.num_{1});
@@ -71,11 +66,8 @@ classdef TensorProduct
                     
                     local_index{1} = rem;
                     local_index{2} = quo + 1;
-
                 case 1
                     local_index{1} = global_index;
-                otherwise
-                    disp('The dimension of input local index is not correct!');
             end
         end
     end
