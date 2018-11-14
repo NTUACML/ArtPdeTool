@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Geometry format="FEM">
+   <Unit format="isoparametric" type="mesh">
+      <Patch name="domain_1" region="Domain">
+         <Node>
+            <Point>0  0  0</Point>
+            <Point>1  0  0</Point>
+            <Point>1  1  0</Point>
+            <Point>0  1  0</Point>
+         </Node>
+         <Element>
+            <Type value="Quad4">1  2  3  4</Type>
+         </Element>
+      </Patch>
+      <Patch name="top" region="Boundary">
+         <Element>
+            <Type neighbor="1" value="Line2">3  4</Type>
+            <Data name="Normal">
+               <Vector dof="3">0  1  0</Vector>
+            </Data>
+         </Element>
+      </Patch>
+   </Unit>
+</Geometry>
