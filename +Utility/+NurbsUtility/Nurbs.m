@@ -38,7 +38,6 @@ classdef Nurbs < handle
             this.control_points_ = control_point_list;
             
             % generate nurbs toolbox object
-            % 
             import Utility.BasicUtility.TensorProduct
             if this.geometry_dimension_ == 1
                 control_pnt = zeros(4,this.basis_number_(1));
