@@ -39,20 +39,25 @@ classdef Nurbs < handle
             
             % generate nurbs toolbox object
             % 
+            import Utility.BasicUtility.TensorProduct
             if this.geometry_dimension_ == 1
                 control_pnt = zeros(4,this.basis_number_(1));
+                TD_1 = TensorProduct({this.basis_number_(1)});
                 for i = 1:this.basis_number_(1)
-                    control_pnt(:,i) = control_point_list(i,:)';
+                    global_id = TD_1.to_global_index({i});
+                    control_pnt(:,i) = control_point_list(global_id,:)';
                     % multiply by weighting
                     control_pnt(1:end-1,i) = control_pnt(1:end-1,i)*control_pnt(end,i);
                 end
                 this.nurbs_tool_object_ = nrbmak(control_pnt, knot_vectors{1});
             elseif this.geometry_dimension_ == 2
-                control_pnt = zeros(4,this.basis_number_(1), this.basis_number_(2));   
+                control_pnt = zeros(4,this.basis_number_(1), this.basis_number_(2));
+                TD_2 = TensorProduct({this.basis_number_(1) this.basis_number_(2)});
                 for j = 1:this.basis_number_(2)
                     for i = 1:this.basis_number_(1)
-                        n = (j-1)*this.basis_number_(1)+i;
-                        control_pnt(:,i,j) = control_point_list(n,:)';
+                        global_id = TD_2.to_global_index({i j});
+%                         n = (j-1)*this.basis_number_(1)+i;
+                        control_pnt(:,i,j) = control_point_list(global_id,:)';
                         % multiply by weighting
                         control_pnt(1:end-1,i,j) = control_pnt(1:end-1,i,j)*control_pnt(end,i,j);
                     end
@@ -115,19 +120,21 @@ classdef Nurbs < handle
         end
         
         function dispControlPoints(this)
+            import Utility.BasicUtility.TensorProduct
             disp('(id) coordinates');
             if this.geometry_dimension_ == 1
-                for i = 1:this.basis_number_(1)
-                    str = ['(',num2str(i),') ',num2str(this.control_points_(i,:))];
+                TD_1 = TensorProduct({this.basis_number_(1)});
+                for i = 1:TD_1.total_num_
+                    local_id = TD_1.to_local_index(i);
+                    str = ['(',num2str(local_id{1}),') ',num2str(this.control_points_(i,:))];
                     disp(str);
                 end
             elseif this.geometry_dimension_ == 2
-                for j = 1:this.basis_number_(2)
-                    for i = 1:this.basis_number_(1)
-                        n = (j-1)*this.basis_number_(1)+i;
-                        str = ['(',num2str(i),', ',num2str(j),') ',num2str(this.control_points_(n,:))];
-                        disp(str);
-                    end
+                TD_2 = TensorProduct({this.basis_number_(1) this.basis_number_(2)});
+                for i = 1:TD_2.total_num_
+                    local_id = TD_2.to_local_index(i);
+                    str = ['(',num2str(local_id{1}),', ',num2str(local_id{2}),') ',num2str(this.control_points_(i,:))];
+                    disp(str);
                 end
             elseif this.geometry_dimension_ == 3
                 disp('Currently not support nurbs solid!');
@@ -153,14 +160,19 @@ classdef Nurbs < handle
                 % Update - control_points
                 temp_point = zeros(prod(this.basis_number_), 4);
                 
+                import Utility.BasicUtility.TensorProduct
                 if this.geometry_dimension_ == 1
+                    TD_1 = TensorProduct({this.basis_number_(1)});
                     for i = 1:this.basis_number_(1)
-                        temp_point(i,:) = this.nurbs_tool_object_.coefs(:,i,:)';
+                        global_id = TD_1.to_global_index({i});
+                        temp_point(global_id,:) = this.nurbs_tool_object_.coefs(:,i,:)';
                     end
                 elseif this.geometry_dimension_ == 2
+                    TD_2 = TensorProduct({this.basis_number_(1) this.basis_number_(2)});
                     for j = 1:this.basis_number_(2)
                         for i = 1:this.basis_number_(1)
-                            temp_point((j-1)*this.basis_number_(1)+i,:) = this.nurbs_tool_object_.coefs(:,i,j)';
+                            global_id = TD_2.to_global_index({i j});
+                            temp_point(global_id,:) = this.nurbs_tool_object_.coefs(:,i,j)';
                         end
                     end
                 elseif this.geometry_dimension_ == 3
