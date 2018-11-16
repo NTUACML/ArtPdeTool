@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Geometry format="IGA">
-   <Unit format="isoparametric" type="nurbs">
+   <Unit format="isoparametric" type="NURBS">
       <Patch name="domain_1" region="Domain">
          <NURBS type="Surface">
             <ControlPoint>
