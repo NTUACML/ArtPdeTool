@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Geometry format="FEM" version="1.0">
-   <Unit format="isoparametric" type="FEM">
+   <Unit dim="2" format="isoparametric" type="FEM">
       <Patch name="domain_1" region="Domain" type="Solid">
          <Node dim="3">
             <Point>0  0  0</Point>

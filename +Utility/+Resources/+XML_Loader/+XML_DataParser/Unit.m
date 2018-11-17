@@ -36,6 +36,10 @@ classdef Unit < handle
             format = char(this.unit_node_.getAttribute('format'));
         end
         
+        function dim = getDim(this)
+            dim = char(this.unit_node_.getAttribute('dim'));
+        end
+        
     end
     
 end

@@ -29,6 +29,7 @@ doc_handle = doc_geo;
 unit_node = DataNodeCreate('Unit', doc_geo_node, doc_handle);
 unit_node.setAttribute('format','isoparametric');
 unit_node.setAttribute('type','FEM');
+unit_node.setAttribute('dim','2');
 
 % /Unit/Patch (Domain)
 patch_node = DataNodeCreate('Patch', unit_node, doc_handle);

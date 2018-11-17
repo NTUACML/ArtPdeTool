@@ -20,6 +20,14 @@ classdef Element < handle
     end
     
     methods(Access = private)
+        function this = generateDim1Element(this, node_id)
+            import Utility.MeshUtility.ElementType
+            this.num_node_ = length(node_id);
+            if(this.num_node_ == 2)
+                this.element_type_ = ElementType.Line2;
+            end
+        end
+        
         function this = generateDim2Element(this, node_id)
             import Utility.MeshUtility.ElementType
             this.num_node_ = length(node_id);

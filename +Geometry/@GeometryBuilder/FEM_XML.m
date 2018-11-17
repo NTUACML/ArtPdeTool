@@ -3,8 +3,6 @@ function geometry = FEM_XML( path )
 %   Detailed explanation goes here
 
     import Geometry.*
-    import Utility.BasicUtility.*
-    import Utility.MeshUtility.*
     import Utility.Resources.XML_Loader.*
 
     % Generate geometry unit
@@ -33,6 +31,17 @@ function geometry = FEM_XML( path )
         geometry = [];
         return
     end  
+    
+    % Generate isoparamtric topology in geometry{1}
+    topo_dim = unit_data{1}.getDim();
+    if(isempty(topo_dim))
+        topo = Topology.MeshTopology(3);
+    else
+        topo = Topology.MeshTopology(str2double(topo_dim));
+    end
+
+    geometry.num_topology_ = 1;
+    geometry.topology_data_ = {topo};
 
     % Get patch
     patch_data = unit_data{1}.getPatchData();
@@ -44,11 +53,6 @@ function geometry = FEM_XML( path )
         geometry = [];
         return
     end
-
-    % Generate isoparamtric topology in geometry{1}
-    topo = Topology.MeshTopology(3);
-    geometry.num_topology_ = 1;
-    geometry.topology_data_ = {topo};
     
     % Loop Patch
     for i = 1 : length(patch_data)
@@ -60,20 +64,69 @@ function geometry = FEM_XML( path )
             FEM_XML_LoadDomainPatch(patch_data{i}, topo);
         elseif(strcmp(region, 'Boundary'))
             FEM_XML_LoadBoundaryPatch(patch_data{i}, topo);
+        else
         end
         
     end
     
-    
-    FEM_XML_LoadDomainPatch()
-    
     disp(path)
 end
 
-function FEM_XML_LoadDomainPatch(patch, topo)
-   disp('hi')
+function FEM_XML_LoadDomainPatch(xml_patch, topo)
+    import Utility.BasicUtility.PointList
+    import Utility.MeshUtility.Element
+	% Get Domain patch
+	domain_patch = topo.getDomainPatch();
+    
+    % Node info
+    node_data = xml_patch.getNodeData();
+    points = node_data{1}.getPointData();
+    topo.point_data_ = PointList(points);
+
+    % element info
+    element_data = xml_patch.getElementData();
+    num_element = element_data{1}.getNumElement();
+    connectivity = element_data{1}.getConnectivity();
+    
+    %> Generate domain element
+    domain_patch.num_element_ = num_element;
+    domain_patch.element_data_ = cell(domain_patch.num_element_, 1);
+    
+    %>> define element
+    for e_i = 1 : num_element
+        domain_patch.element_data_{e_i} = Element(domain_patch.dim_, connectivity{e_i});
+    end
 end
 
-function FEM_XML_LoadBoundaryPatch(patch, topo)
-   disp('hi')
+function FEM_XML_LoadBoundaryPatch(xml_patch, topo)
+	import Utility.BasicUtility.PointList
+    import Utility.MeshUtility.BoundaryElement
+    
+	% Get Domain patch
+	domain_patch = topo.getDomainPatch();
+    
+    % Create Boundary patch
+    name = xml_patch.getName();
+    bc_patch = topo.newBoundayPatch(name);
+    
+    % element info
+    element_data = xml_patch.getElementData();
+    num_element = element_data{1}.getNumElement();
+    connectivity = element_data{1}.getConnectivity();
+    neighbor  = element_data{1}.getNeighbor();
+    
+    %> Generate domain element
+    bc_patch.num_element_ = num_element;
+    bc_patch.element_data_ = cell(bc_patch.num_element_, 1);
+    
+    %>> define element
+    for e_i = 1 : num_element
+        neighbor_element_id = neighbor{e_i};
+        neighbor_element_data = domain_patch.element_data_{neighbor_element_id};
+        bc_patch.element_data_{e_i} = BoundaryElement(bc_patch.dim_, connectivity{e_i},...
+                                        neighbor_element_id, neighbor_element_data);
+    end
+    
 end
+
+
