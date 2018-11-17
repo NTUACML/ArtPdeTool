@@ -14,6 +14,16 @@ classdef GeometryBuilder
                             geometry = Geometry.GeometryBuilder.FEM_UnitCube_1_1_1([]);
                         case 'UnitCube_2_2_2'
                             geometry = Geometry.GeometryBuilder.FEM_UnitCube_2_2_2([]);
+                        case 'XML'
+                            if(~isempty(varargin))
+                                path = varargin{1};
+                                geometry = Geometry.GeometryBuilder.FEM_XML( path );
+                            else
+                                disp('Warning <GeometryBuilder - FEM> - XML');
+                                disp('> The XML file path should be assigned!');
+                                geometry = []; 
+                            end
+                            
                         otherwise
                             disp('Warning <GeometryBuilder>!');
                             disp('> name in FEM type was not exist!');
@@ -54,6 +64,7 @@ classdef GeometryBuilder
     methods(Static, Access = private)
         geometry = FEM_UnitCube_1_1_1(var);
         geometry = FEM_UnitCube_2_2_2(var);
+        geometry = FEM_XML( path );
         
         geometry = IGA_Rectangle(varargin);
         geometry = IGA_CylinderSurface(varargin);
