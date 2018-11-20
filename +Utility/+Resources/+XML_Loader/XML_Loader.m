@@ -27,8 +27,8 @@ classdef XML_Loader < handle
             version = char(this.doc_node_.getAttribute('version'));
         end
         
-        function format = getFormat(this)
-            format = char(this.doc_node_.getAttribute('format'));
+        function dim = getDim(this)
+            dim = char(this.doc_node_.getAttribute('dim'));
         end
     end
     

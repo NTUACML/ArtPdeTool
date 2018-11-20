@@ -45,7 +45,16 @@ classdef GeometryBuilder
                         case 'CylinderSurface'
                             geometry = Geometry.GeometryBuilder.IGA_CylinderSurface(varargin{1});
                         case 'Nurbs_Object'
-                            geometry = Geometry.GeometryBuilder.IGA_Tool_Box(varargin{1});    
+                            geometry = Geometry.GeometryBuilder.IGA_Tool_Box(varargin{1});
+                        case 'XML'
+                            if(~isempty(varargin))
+                                path = varargin{1};
+                                geometry = Geometry.GeometryBuilder.IGA_XML( path );
+                            else
+                                disp('Warning <GeometryBuilder - IGA> - XML');
+                                disp('> The XML file path should be assigned!');
+                                geometry = []; 
+                            end
                         otherwise
                             disp('Warning <GeometryBuilder>!');
                             disp('> name in IGA type was not exist!');
@@ -69,6 +78,7 @@ classdef GeometryBuilder
         geometry = IGA_Rectangle(varargin);
         geometry = IGA_CylinderSurface(varargin);
         geometry = IGA_Tool_Box(varargin);
+        geometry = IGA_XML( path );
     end
 end
 

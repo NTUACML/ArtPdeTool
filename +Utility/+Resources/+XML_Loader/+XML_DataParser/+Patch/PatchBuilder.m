@@ -6,11 +6,13 @@ classdef PatchBuilder
     end
     
     methods(Static)
-        function patch = create(type, patch_node)
+        function patch = create(format, patch_node)
             import Utility.Resources.XML_Loader.XML_DataParser.Patch.*
-            switch type
+            switch format
                 case 'FEM'
                     patch = FEM.Patch(patch_node);
+                case 'NURBS'
+                    patch = NURBS.Patch(patch_node);
                 otherwise  
                 	disp('Error <XML_Loader> - PatchBuilder>! check patch input type!');
                     disp('> empty patch builded!');

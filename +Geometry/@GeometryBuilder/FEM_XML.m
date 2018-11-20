@@ -11,10 +11,10 @@ function geometry = FEM_XML( path )
     % Load XML
     loader = XML_Loader(path);
     xml_version = str2double(loader.getVersion());
-    xml_format = loader.getFormat();
+    geo_dim = loader.getDim();
     
     % XML format check
-    if(~(strcmp(xml_format,'FEM')) || ~(xml_version >= 1.0))
+    if(~(xml_version >= 1.0))
         disp('Error <GeometryBuilder> - FEM_XML');
         disp('> The file format or version is not supported, please check it');
         geometry = [];
@@ -33,12 +33,7 @@ function geometry = FEM_XML( path )
     end  
     
     % Generate isoparamtric topology in geometry{1}
-    topo_dim = unit_data{1}.getDim();
-    if(isempty(topo_dim))
-        topo = Topology.MeshTopology(3);
-    else
-        topo = Topology.MeshTopology(str2double(topo_dim));
-    end
+    topo = Topology.MeshTopology(str2double(geo_dim));
 
     geometry.num_topology_ = 1;
     geometry.topology_data_ = {topo};
