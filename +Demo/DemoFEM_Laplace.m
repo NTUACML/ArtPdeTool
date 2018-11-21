@@ -43,9 +43,13 @@ up_side_patch = iso_topo.getBoundayPatch('Up_Side');
 down_side_patch = iso_topo.getBoundayPatch('Down_Side');
 t_constraint_up = fem_domain.generateConstraint(up_side_patch, var_t, {1, @()1});
 t_constraint_down = fem_domain.generateConstraint(down_side_patch, var_t, {1, @()0});
+
 %% Solve domain equation system
 fem_domain.solve('default');
 
-%% Show result
-disp(var_t);
+%% Data Interpolation
+import Interpolation.FEM.Interpolation;
+t_interpo = Interpolation(var_t);
+[x, data, element] = t_interpo.NodeDataInterpolation();
+% disp(var_t);
 end
