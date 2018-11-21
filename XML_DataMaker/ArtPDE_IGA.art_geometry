@@ -1,33 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Geometry format="IGA">
-   <Unit format="isoparametric" type="nurbs">
+<Geometry dim="2" version="1.1">
+   <Unit format="NURBS">
       <Patch name="domain_1" region="Domain">
-         <NURBS type="Surface">
-            <ControlPoint>
-               <Point>0  0  0  1</Point>
-               <Point>1  0  0  1</Point>
-               <Point>1  1  0  1</Point>
-               <Point>0  1  0  1</Point>
-            </ControlPoint>
-            <Order>2  2</Order>
-            <Knot>
-               <Vector dof="4">0  0  1  1</Vector>
-               <Vector dof="4">0  0  1  1</Vector>
-            </Knot>
-         </NURBS>
+         <ControlPoint dim="3">
+            <Point>0  0  0  1</Point>
+            <Point>1  0  0  1</Point>
+            <Point>1  1  0  1</Point>
+            <Point>0  1  0  1</Point>
+         </ControlPoint>
+         <Order>3  3</Order>
+         <Knot>
+            <Vector dof="8">0  0  0  0  1  1  1  1</Vector>
+            <Vector dof="8">0  0  0  0  1  1  1  1</Vector>
+         </Knot>
       </Patch>
       <Patch name="top" region="Boundary">
-         <NURBS type="Surface">
-            <ControlPoint>
-               <Point>0.1         0.2           0           1</Point>
-               <Point>0  1  0  1</Point>
-            </ControlPoint>
-            <Order>1  1</Order>
-            <Knot>
-               <Vector dof="4">0  0  1  1</Vector>
-               <Vector dof="1">1</Vector>
-            </Knot>
-         </NURBS>
+         <ControlPoint>
+            <Point>0.1         0.2           0           1</Point>
+            <Point>0  1  0  1</Point>
+         </ControlPoint>
+         <Order>1  1</Order>
+         <Knot>
+            <Vector dof="4">0  0  1  1</Vector>
+            <Vector dof="1">1</Vector>
+         </Knot>
       </Patch>
    </Unit>
 </Geometry>
