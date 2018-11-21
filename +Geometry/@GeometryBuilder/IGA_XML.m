@@ -87,7 +87,21 @@ function IGA_XML_LoadDomainPatch(xml_patch, topo)
 end
 
 function IGA_XML_LoadBoundaryPatch(xml_patch, topo)
+    import Utility.BasicUtility.PointList
+    import Utility.NurbsUtility.Nurbs
 
+	% New Boundary patch
+	boundary_patch = topo.newBoundayPatch(xml_patch.getName());
+    
+    % ControlPoint info
+    CT_PT = xml_patch.getControlPoint();
+    
+    order = xml_patch.getOrder();
+    
+    knot_vectors = xml_patch.getKnot();
+    
+    % Generate domain nurbs
+    boundary_patch.nurbs_data_ = Nurbs(knot_vectors, order, PointList(CT_PT));
 end
 
 

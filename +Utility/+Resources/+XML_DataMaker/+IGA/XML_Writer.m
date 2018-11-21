@@ -2,7 +2,8 @@ function XML_Writer
 clear all; clc; home
 %% Generate nurbs object
 import Utility.Resources.XML_DataMaker.IGA.NurbsGenerator
-nurbs = NurbsGenerator('Plane4');
+% nurbs = NurbsGenerator('Plane4');
+nurbs = NurbsGenerator('Plane4_refined');
 
 %% Document setting
 project_name = 'ArtPDE';
@@ -74,11 +75,11 @@ knot_node = DataNodeCreate('Knot', patch_node, doc_handle);
 % /Unit/Patch/Knot/Vector
 knot_data = nurbs.knot_vectors_;
 
-for i = 1 : size(knot_data, 1)
+for i = 1 : size(knot_data, 2)
     vector_node = DataNodeCreate('Vector', knot_node, doc_handle);
     knot_row_str = num2str(knot_data{i});
     vector_node.appendChild(doc_handle.createTextNode(knot_row_str));
-    vector_node.setAttribute('dof',num2str(length(knot_data(i, :))));
+    vector_node.setAttribute('dof',num2str(length(knot_data{i})));
 end
 
 % /Unit/Patch (Boundary)
@@ -93,7 +94,8 @@ switch geo_dim
         
         % /Unit/Patch/ControlPoint
         CTPT_node = DataNodeCreate('ControlPoint', patch_node, doc_handle);
-        
+        CTPT_node.setAttribute('dim','3');
+
         % /Unit/Patch/ControlPoint/Point
         point_data = [0 1 0 1;
                       1 1 0 1];
@@ -127,7 +129,8 @@ switch geo_dim
         
         % /Unit/Patch/ControlPoint
         CTPT_node = DataNodeCreate('ControlPoint', patch_node, doc_handle);
-        
+        CTPT_node.setAttribute('dim','3');
+
         % /Unit/Patch/ControlPoint/Point
         point_data = [0 0 0 1;
                       1 0 0 1];
@@ -161,7 +164,8 @@ switch geo_dim
         
         % /Unit/Patch/ControlPoint
         CTPT_node = DataNodeCreate('ControlPoint', patch_node, doc_handle);
-        
+        CTPT_node.setAttribute('dim','3');
+
         % /Unit/Patch/ControlPoint/Point
         point_data = [0 0 0 1;
                       0 1 0 1];
@@ -191,11 +195,12 @@ switch geo_dim
         % top boundary nurbs patch
         patch_node = DataNodeCreate('Patch', unit_node, doc_handle);
         patch_node.setAttribute('region','Boundary');
-        patch_node.setAttribute('name','top');
+        patch_node.setAttribute('name','right');
         
         % /Unit/Patch/ControlPoint
         CTPT_node = DataNodeCreate('ControlPoint', patch_node, doc_handle);
-        
+        CTPT_node.setAttribute('dim','3');
+
         % /Unit/Patch/ControlPoint/Point
         point_data = [1 0 0 1;
                       1 1 0 1];

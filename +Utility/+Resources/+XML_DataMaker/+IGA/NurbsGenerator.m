@@ -3,7 +3,12 @@ function nurbs_out = NurbsGenerator(nurbs_name)
 switch nurbs_name
     case 'Plane4'
         nurbs = nrb4surf([0.0 0.0 0.0],[1.0 0.0 0.0],[0.0 1.0 0.0],[1.0 1.0 0.0]);
-
+        status = true;
+    case 'Plane4_refined'
+        nurbs = nrb4surf([0.0 0.0 0.0],[1.0 0.0 0.0],[0.0 1.0 0.0],[1.0 1.0 0.0]);
+        nurbs = nrbdegelev(nurbs, [1 1]);
+        t = linspace(0.1, 0.9, 9);
+        nurbs = nrbkntins(nurbs,{t, t});
         status = true;
     otherwise
         str = [nurbs_name, 'does not exist in the current library.'];
