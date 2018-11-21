@@ -1,4 +1,4 @@
-function NurbsGenerator(nurbs_name)
+function nurbs_out = NurbsGenerator(nurbs_name)
 
 switch nurbs_name
     case 'Plane4'
@@ -12,12 +12,12 @@ switch nurbs_name
 end
 
 if status
-    OutPutFiles(nurbs);
+    nurbs_out = OutPutFiles(nurbs);
 end
 
 end
 
-function OutPutFiles(nurbs)
+function nurbs_out= OutPutFiles(nurbs)
 import Utility.BasicUtility.TensorProduct
 
 % nurbs knots
@@ -54,8 +54,11 @@ control_pnt(:,3) = control_pnt(:,3)./control_pnt(:,4);
 % nurbs order
 order = nurbs.order-1;
 
-save('knots.mat', 'knots');
-save('control_pnt.mat', 'control_pnt');
-save('order.mat', 'order');
+import Utility.BasicUtility.PointList
+control_point_list = PointList(control_pnt);
+
+import Utility.NurbsUtility.Nurbs
+nurbs_out = Nurbs(knots, order, control_point_list);
+
 end
 

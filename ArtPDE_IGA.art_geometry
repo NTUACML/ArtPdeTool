@@ -5,24 +5,52 @@
          <ControlPoint dim="3">
             <Point>0  0  0  1</Point>
             <Point>1  0  0  1</Point>
-            <Point>1  1  0  1</Point>
             <Point>0  1  0  1</Point>
+            <Point>1  1  0  1</Point>
          </ControlPoint>
-         <Order>3  3</Order>
+         <Order>1  1</Order>
          <Knot>
-            <Vector dof="8">0  0  0  0  1  1  1  1</Vector>
-            <Vector dof="8">0  0  0  0  1  1  1  1</Vector>
+            <Vector dof="2">0  0  1  1</Vector>
          </Knot>
       </Patch>
       <Patch name="top" region="Boundary">
          <ControlPoint>
-            <Point>0.1         0.2           0           1</Point>
             <Point>0  1  0  1</Point>
+            <Point>1  1  0  1</Point>
          </ControlPoint>
-         <Order>1  1</Order>
+         <Order>1</Order>
          <Knot>
             <Vector dof="4">0  0  1  1</Vector>
-            <Vector dof="1">1</Vector>
+         </Knot>
+      </Patch>
+      <Patch name="bottom" region="Boundary">
+         <ControlPoint>
+            <Point>0  0  0  1</Point>
+            <Point>1  0  0  1</Point>
+         </ControlPoint>
+         <Order>1</Order>
+         <Knot>
+            <Vector dof="4">0  0  1  1</Vector>
+         </Knot>
+      </Patch>
+      <Patch name="left" region="Boundary">
+         <ControlPoint>
+            <Point>0  0  0  1</Point>
+            <Point>0  1  0  1</Point>
+         </ControlPoint>
+         <Order>1</Order>
+         <Knot>
+            <Vector dof="4">0  0  1  1</Vector>
+         </Knot>
+      </Patch>
+      <Patch name="top" region="Boundary">
+         <ControlPoint>
+            <Point>1  0  0  1</Point>
+            <Point>1  1  0  1</Point>
+         </ControlPoint>
+         <Order>1</Order>
+         <Knot>
+            <Vector dof="4">0  0  1  1</Vector>
          </Knot>
       </Patch>
    </Unit>

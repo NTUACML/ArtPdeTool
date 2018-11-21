@@ -1,10 +1,25 @@
 function XML_Writer
 clear all; clc; home
+%% Generate nurbs object
+import Utility.Resources.XML_DataMaker.IGA.NurbsGenerator
+nurbs = NurbsGenerator('Plane4');
+
 %% Document setting
 project_name = 'ArtPDE';
 doc_format = 'IGA';
 version = '1.1';
-geo_dim = '2';
+
+import Utility.NurbsUtility.NurbsType
+switch nurbs.type_
+    case NurbsType.Solid
+        geo_dim = '3';
+    case NurbsType.Plane
+        geo_dim = '2';
+    case NurbsType.Surface
+        geo_dim = '2';
+    case NurbsType.Curve
+        geo_dim = '1';
+end
 
 %% Document create
 doc_geo = com.mathworks.xml.XMLUtils.createDocument('Geometry');
@@ -40,10 +55,8 @@ CTPT_node = DataNodeCreate('ControlPoint', patch_node, doc_handle);
 CTPT_node.setAttribute('dim','3');
 
 % /Unit/Patch/ControlPoint/Point
-point_data = [0.0 0.0 0.0 1.0;
-              1.0 0.0 0.0 1.0;
-              1.0 1.0 0.0 1.0;
-              0.0 1.0 0.0 1.0];
+point_data = nurbs.control_points_(:,:);
+
 for i = 1 : size(point_data, 1)
     point_node = DataNodeCreate('Point', CTPT_node, doc_handle);
     point_row_str = num2str(point_data(i, :));
@@ -52,55 +65,162 @@ end
 
 % /Unit/Patch/Order
 order_node = DataNodeCreate('Order', patch_node, doc_handle);
-order_str = num2str([3 3]);
+order_str = num2str(nurbs.order_);
 order_node.appendChild(doc_handle.createTextNode(order_str));
 
 % /Unit/Patch/Knot
 knot_node = DataNodeCreate('Knot', patch_node, doc_handle);
 
 % /Unit/Patch/Knot/Vector
-knot_data = [0, 0, 0, 0, 1, 1, 1, 1;
-             0, 0, 0, 0, 1, 1, 1, 1];
+knot_data = nurbs.knot_vectors_;
+
 for i = 1 : size(knot_data, 1)
     vector_node = DataNodeCreate('Vector', knot_node, doc_handle);
-    knot_row_str = num2str(knot_data(i, :));
+    knot_row_str = num2str(knot_data{i});
     vector_node.appendChild(doc_handle.createTextNode(knot_row_str));
     vector_node.setAttribute('dof',num2str(length(knot_data(i, :))));
 end
 
 % /Unit/Patch (Boundary)
-patch_node = DataNodeCreate('Patch', unit_node, doc_handle);
-patch_node.setAttribute('region','Boundary');
-patch_node.setAttribute('name','top');
-
-% /Unit/Patch/ControlPoint
-CTPT_node = DataNodeCreate('ControlPoint', patch_node, doc_handle);
-
-% /Unit/Patch/ControlPoint/Point
-point_data = [0.1 0.2 0.0 1.0;
-              0.0 1.0 0.0 1.0;];
-for i = 1 : size(point_data, 1)
-    point_node = DataNodeCreate('Point', CTPT_node, doc_handle);
-    point_row_str = num2str(point_data(i, :));
-    point_node.appendChild(doc_handle.createTextNode(point_row_str));
-end
-
-% /Unit/Patch/Order
-order_node = DataNodeCreate('Order', patch_node, doc_handle);
-order_str = num2str([1 1]);
-order_node.appendChild(doc_handle.createTextNode(order_str));
-
-% /Unit/Patch/Knot
-knot_node = DataNodeCreate('Knot', patch_node, doc_handle);
-
-% /Unit/Patch/Knot/Vector
-knot_data = {[0 0 1 1];
-             [1]};
-for i = 1 : size(knot_data, 1)
-    vector_node = DataNodeCreate('Vector', knot_node, doc_handle);
-    knot_row_str = num2str(knot_data{i});
-    vector_node.appendChild(doc_handle.createTextNode(knot_row_str));
-    vector_node.setAttribute('dof',num2str(length(knot_data{i})));
+switch geo_dim
+    case '3'
+        
+    case '2'
+        % top boundary nurbs patch
+        patch_node = DataNodeCreate('Patch', unit_node, doc_handle);
+        patch_node.setAttribute('region','Boundary');
+        patch_node.setAttribute('name','top');
+        
+        % /Unit/Patch/ControlPoint
+        CTPT_node = DataNodeCreate('ControlPoint', patch_node, doc_handle);
+        
+        % /Unit/Patch/ControlPoint/Point
+        point_data = [0 1 0 1;
+                      1 1 0 1];
+        for i = 1 : size(point_data, 1)
+            point_node = DataNodeCreate('Point', CTPT_node, doc_handle);
+            point_row_str = num2str(point_data(i, :));
+            point_node.appendChild(doc_handle.createTextNode(point_row_str));
+        end
+        
+        % /Unit/Patch/Order
+        order_node = DataNodeCreate('Order', patch_node, doc_handle);
+        order_str = num2str(1);
+        order_node.appendChild(doc_handle.createTextNode(order_str));
+        
+        % /Unit/Patch/Knot
+        knot_node = DataNodeCreate('Knot', patch_node, doc_handle);
+        
+        % /Unit/Patch/Knot/Vector
+        knot_data = {[0 0 1 1]};
+        for i = 1 : size(knot_data, 1)
+            vector_node = DataNodeCreate('Vector', knot_node, doc_handle);
+            knot_row_str = num2str(knot_data{i});
+            vector_node.appendChild(doc_handle.createTextNode(knot_row_str));
+            vector_node.setAttribute('dof',num2str(length(knot_data{i})));
+        end 
+        
+        % bottom boundary nurbs patch
+        patch_node = DataNodeCreate('Patch', unit_node, doc_handle);
+        patch_node.setAttribute('region','Boundary');
+        patch_node.setAttribute('name','bottom');
+        
+        % /Unit/Patch/ControlPoint
+        CTPT_node = DataNodeCreate('ControlPoint', patch_node, doc_handle);
+        
+        % /Unit/Patch/ControlPoint/Point
+        point_data = [0 0 0 1;
+                      1 0 0 1];
+        for i = 1 : size(point_data, 1)
+            point_node = DataNodeCreate('Point', CTPT_node, doc_handle);
+            point_row_str = num2str(point_data(i, :));
+            point_node.appendChild(doc_handle.createTextNode(point_row_str));
+        end
+        
+        % /Unit/Patch/Order
+        order_node = DataNodeCreate('Order', patch_node, doc_handle);
+        order_str = num2str(1);
+        order_node.appendChild(doc_handle.createTextNode(order_str));
+        
+        % /Unit/Patch/Knot
+        knot_node = DataNodeCreate('Knot', patch_node, doc_handle);
+        
+        % /Unit/Patch/Knot/Vector
+        knot_data = {[0 0 1 1]};
+        for i = 1 : size(knot_data, 1)
+            vector_node = DataNodeCreate('Vector', knot_node, doc_handle);
+            knot_row_str = num2str(knot_data{i});
+            vector_node.appendChild(doc_handle.createTextNode(knot_row_str));
+            vector_node.setAttribute('dof',num2str(length(knot_data{i})));
+        end 
+        
+        % top boundary nurbs patch
+        patch_node = DataNodeCreate('Patch', unit_node, doc_handle);
+        patch_node.setAttribute('region','Boundary');
+        patch_node.setAttribute('name','left');
+        
+        % /Unit/Patch/ControlPoint
+        CTPT_node = DataNodeCreate('ControlPoint', patch_node, doc_handle);
+        
+        % /Unit/Patch/ControlPoint/Point
+        point_data = [0 0 0 1;
+                      0 1 0 1];
+        for i = 1 : size(point_data, 1)
+            point_node = DataNodeCreate('Point', CTPT_node, doc_handle);
+            point_row_str = num2str(point_data(i, :));
+            point_node.appendChild(doc_handle.createTextNode(point_row_str));
+        end
+        
+        % /Unit/Patch/Order
+        order_node = DataNodeCreate('Order', patch_node, doc_handle);
+        order_str = num2str(1);
+        order_node.appendChild(doc_handle.createTextNode(order_str));
+        
+        % /Unit/Patch/Knot
+        knot_node = DataNodeCreate('Knot', patch_node, doc_handle);
+        
+        % /Unit/Patch/Knot/Vector
+        knot_data = {[0 0 1 1]};
+        for i = 1 : size(knot_data, 1)
+            vector_node = DataNodeCreate('Vector', knot_node, doc_handle);
+            knot_row_str = num2str(knot_data{i});
+            vector_node.appendChild(doc_handle.createTextNode(knot_row_str));
+            vector_node.setAttribute('dof',num2str(length(knot_data{i})));
+        end 
+        
+        % top boundary nurbs patch
+        patch_node = DataNodeCreate('Patch', unit_node, doc_handle);
+        patch_node.setAttribute('region','Boundary');
+        patch_node.setAttribute('name','top');
+        
+        % /Unit/Patch/ControlPoint
+        CTPT_node = DataNodeCreate('ControlPoint', patch_node, doc_handle);
+        
+        % /Unit/Patch/ControlPoint/Point
+        point_data = [1 0 0 1;
+                      1 1 0 1];
+        for i = 1 : size(point_data, 1)
+            point_node = DataNodeCreate('Point', CTPT_node, doc_handle);
+            point_row_str = num2str(point_data(i, :));
+            point_node.appendChild(doc_handle.createTextNode(point_row_str));
+        end
+        
+        % /Unit/Patch/Order
+        order_node = DataNodeCreate('Order', patch_node, doc_handle);
+        order_str = num2str(1);
+        order_node.appendChild(doc_handle.createTextNode(order_str));
+        
+        % /Unit/Patch/Knot
+        knot_node = DataNodeCreate('Knot', patch_node, doc_handle);
+        
+        % /Unit/Patch/Knot/Vector
+        knot_data = {[0 0 1 1]};
+        for i = 1 : size(knot_data, 1)
+            vector_node = DataNodeCreate('Vector', knot_node, doc_handle);
+            knot_row_str = num2str(knot_data{i});
+            vector_node.appendChild(doc_handle.createTextNode(knot_row_str));
+            vector_node.setAttribute('dof',num2str(length(knot_data{i})));
+        end 
 end
 
 %% Document write
