@@ -38,14 +38,9 @@ node_node = DataNodeCreate('Node', patch_node, doc_handle);
 node_node.setAttribute('dim','3');
 
 % /Unit/Patch/Node/Point
-L = 1;
-D = 1;
-t_1 = linspace(0, L, 4);
-t_2 = linspace(-D/2, D/2, 4);
-    
-[t_2, t_1] = meshgrid(t_2, t_1);
 
-point_data = [t_1(:), t_2(:), zeros(size(t_1(:))), ones(size(t_1(:)))];
+
+point_data = 
 
 for i = 1 : size(point_data, 1)
     point_node = DataNodeCreate('Point', node_node, doc_handle);
