@@ -55,6 +55,11 @@ iga_domain.calIntegral(int_doamin_patch, exp1);
 %% Solve domain equation system
 iga_domain.solve('default');
 
+%% Data Interpolation
+import Interpolation.IGA.Interpolation;
+t_interpo = Interpolation(var_t);
+[x, data, element] = t_interpo.NodeDataInterpolation();
+
 %% Show result
 disp(var_t);
 end
