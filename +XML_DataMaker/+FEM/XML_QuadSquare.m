@@ -179,7 +179,6 @@ end
 % vector_node.setAttribute('dof', '3');
 % vector_node.appendChild(doc_handle.createTextNode(normal));
 
-
 %% Document write
 file_name_geo = [project_name, '_', doc_format ,'.art_geometry'];
 xmlwrite(file_name_geo, doc_geo);
