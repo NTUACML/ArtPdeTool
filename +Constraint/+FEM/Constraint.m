@@ -36,7 +36,7 @@ classdef Constraint < Constraint.ConstraintBase
             num_element = patch.num_element_;
             tmp_id = [];
             for i_element = 1 : num_element
-                element = patch.element_data_{1};
+                element = patch.element_data_{i_element};
                 tmp_id = [tmp_id, element.node_id_];
             end
             unique_tmp_id = unique(tmp_id);
