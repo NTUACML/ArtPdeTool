@@ -1,3 +1,4 @@
+function XML_Writer
 clear all; clc; home
 %% Document setting
 project_name = 'ArtPDE';
@@ -111,6 +112,7 @@ xmlwrite(file_name_init, doc_init);
 
 file_name_mat = [project_name, '_', doc_format,'.art_material'];
 xmlwrite(file_name_mat, doc_mat);
+end
 
 %% Using Function
 function current_node = DataNodeCreate(name, upper_node, doc_handle)
