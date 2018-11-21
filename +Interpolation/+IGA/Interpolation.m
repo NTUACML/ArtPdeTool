@@ -20,9 +20,37 @@ classdef Interpolation < Interpolation.InterpolationBase
         end
         
         function [x, data, element] = NodeDataInterpolation(this)
-            x = this.interpo_topo_.point_data_(:,:);
-            data = this.interpo_data_.getVarData();
-            element = this.interpo_topo_.getDomainPatch().element_data_;
+            % Generate parametric mesh
+            import Utility.Resources.mesh2d
+            mesh = mesh2d(10, 10, 1, 1);
+            
+            element = mesh.connect;
+            x = zeros(size(mesh.xI));
+            data = zeros(mesh.nn, 1);
+            
+            % Get computation information
+            var_coef = this.interpo_data_.getVarData();
+            
+            patch = this.interpo_topo_.getDomainPatch();
+            control_points = patch.nurbs_data_.control_points_(:,1:2);
+
+            basis_function = this.interpo_basis_;
+            
+            % Create query unit
+            import BasisFunction.IGA.QueryUnit
+            import Utility.BasicUtility.Region
+            query_unit = QueryUnit();
+            
+            % Evaluate physical position & variable
+            for i = 1:mesh.nn
+                xi = {mesh.xI(i,1) mesh.xI(i,2)};
+                query_unit.query_protocol_ = {Region.Domain, xi};
+                basis_function.query(query_unit);
+                non_zero_id = query_unit.non_zero_id_;
+                R = query_unit.evaluate_basis_{1};
+                x(i,:) = R*control_points(non_zero_id,:);
+                data(i) = R*var_coef(non_zero_id);
+            end
         end
     end
     

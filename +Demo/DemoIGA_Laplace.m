@@ -60,6 +60,14 @@ import Interpolation.IGA.Interpolation;
 t_interpo = Interpolation(var_t);
 [x, data, element] = t_interpo.NodeDataInterpolation();
 
+%% Show result (Post-Processes)
+fv.vertices = [x, data];
+fv.faces = element;
+fv.facevertexcdata = data;
+patch(fv,'CDataMapping','scaled','EdgeColor',[.7 .7 .7],'FaceColor','interp','FaceAlpha',1);
+grid on;
+title('ArtPDE Laplace problem... (IGA)')
+view([-50 30]);
 %% Show result
-disp(var_t);
+%disp(var_t);
 end
