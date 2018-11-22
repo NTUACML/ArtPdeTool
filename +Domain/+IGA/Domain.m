@@ -212,32 +212,32 @@ classdef Domain < Domain.DomainBase
                 
                 % Cheat here Jeting 11/7 wait for Kavy's support
                 %------------------------------------------------
-                dof_up = linspace(12, 144, 12);
-                dof_bottom = linspace(1, 133, 12);
-                dof_left = 1:12;
-                dof_right = 133:144;
-                
-                this.assembler_.lhs_(dof_up, :) = 0;
-                this.assembler_.lhs_(dof_bottom, :) = 0;
-                this.assembler_.lhs_(dof_left, :) = 0;
-                this.assembler_.lhs_(dof_right, :) = 0;
-                
-                for i = 1:length(dof_up)
-                    this.assembler_.lhs_(dof_up(i), dof_up(i)) = 1;
-                    this.assembler_.rhs_(dof_up(i)) = 1;
-                end
-                
-                for i = 1:length(dof_bottom)
-                    this.assembler_.lhs_(dof_bottom(i), dof_bottom(i)) = 1;
-                end
-                
-                for i = 1:length(dof_left)
-                    this.assembler_.lhs_(dof_left(i), dof_left(i)) = 1;
-                end
-                
-                for i = 1:length(dof_right)
-                    this.assembler_.lhs_(dof_right(i), dof_right(i)) = 1;
-                end
+%                 dof_up = linspace(12, 144, 12);
+%                 dof_bottom = linspace(1, 133, 12);
+%                 dof_left = 1:12;
+%                 dof_right = 133:144;
+%                 
+%                 this.assembler_.lhs_(dof_up, :) = 0;
+%                 this.assembler_.lhs_(dof_bottom, :) = 0;
+%                 this.assembler_.lhs_(dof_left, :) = 0;
+%                 this.assembler_.lhs_(dof_right, :) = 0;
+%                 
+%                 for i = 1:length(dof_up)
+%                     this.assembler_.lhs_(dof_up(i), dof_up(i)) = 1;
+%                     this.assembler_.rhs_(dof_up(i)) = 1;
+%                 end
+%                 
+%                 for i = 1:length(dof_bottom)
+%                     this.assembler_.lhs_(dof_bottom(i), dof_bottom(i)) = 1;
+%                 end
+%                 
+%                 for i = 1:length(dof_left)
+%                     this.assembler_.lhs_(dof_left(i), dof_left(i)) = 1;
+%                 end
+%                 
+%                 for i = 1:length(dof_right)
+%                     this.assembler_.lhs_(dof_right(i), dof_right(i)) = 1;
+%                 end
                 %------------------------------------------------
                 
                 % Solve result
