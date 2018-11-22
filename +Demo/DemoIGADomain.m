@@ -3,41 +3,28 @@ clc; clear; close all;
 
 %% create Geometry
 import Geometry.*
-% create by PDEtool database
-% length = 1;
-% hight = 1;
-% geo = GeometryBuilder.create('IGA', 'Rectangle', {length, hight});
-% nurbs_topology = geo.topology_data_{1};
 
-% height = 3;
-% radius = 1;
-% center = [];
-% start_angle = deg2rad(0);    
-% end_angle = deg2rad(180);  
-% 
-% geo = GeometryBuilder.create('IGA', 'CylinderSurface', {height, radius, center, start_angle, end_angle});
-% nurbs_topology = geo.topology_data_{1};
-% nurbs_data = nurbs_topology.domain_patch_data_.nurbs_data_;
-% nurbs_data.degreeElevation([0 1]);
-% nurbs_data.knotInsertion({[0.9], [0.125 0.375 0.625 0.75]});
-
-% create by object from the nurbs tool box
-% nurbs_cylinder = nrbcylind(3,1,[],deg2rad(0),deg2rad(360));
-% nurbs_cylinder = nrbdegelev(nurbs_cylinder, [0 1]); 
-% nurbs_cylinder = nrbkntins(nurbs_cylinder,{[0.1], [0.125 0.375 0.625 0.875]}); 
-
-nurbs_cylinder = nrb4surf([0.0 0.0 0.0],[0.0 1.0 0.0],[1.0 0.0 0.0],[1.0 1.0 0.0]); 
-nurbs_cylinder = nrbdegelev(nurbs_cylinder, [0 1]); 
-nurbs_cylinder = nrbkntins(nurbs_cylinder,{[0.1], [0.125 0.375 0.625 0.875]}); 
-
-geo = GeometryBuilder.create('IGA', 'Nurbs_Object', nurbs_cylinder);
+xml_path = './ArtPDE_IGA.art_geometry';
+geo = GeometryBuilder.create('IGA', 'XML', xml_path);
 nurbs_topology = geo.topology_data_{1};
 
-% plot nurbs surface
-% figure; hold on; view([130 30]); grid on;
-% nurbs_data.plotNurbsSurface({[24 1] 'plotKnotMesh'});
-% % nurbs_data.plotNurbs([24 2]);
-% hold off;
+
+domain_patch = nurbs_topology.getDomainPatch();
+bdr_patch_1 = nurbs_topology.getBoundayPatch('top');
+bdr_patch_2 = nurbs_topology.getBoundayPatch('bottom');
+bdr_patch_3 = nurbs_topology.getBoundayPatch('left');
+bdr_patch_4 = nurbs_topology.getBoundayPatch('right');
+
+% plot nurbs surface & bounday nurbs
+figure; hold on; view([130 30]); grid on;
+domain_patch.nurbs_data_.plotNurbsSurface({[24 1] 'plotKnotMesh'});
+
+bdr_patch_1.nurbs_data_.plotNurbs(10);
+bdr_patch_2.nurbs_data_.plotNurbs(10);
+bdr_patch_3.nurbs_data_.plotNurbs(10);
+bdr_patch_4.nurbs_data_.plotNurbs(10);
+
+hold off;
 
 %% create Domain
 import Domain.*
