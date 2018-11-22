@@ -12,15 +12,6 @@ xml_path = './ArtPDE_FEM.art_geometry';
 fem_geo = GeometryBuilder.create('FEM', 'XML', xml_path);
 iso_topo = fem_geo.topology_data_{1};
 
-% %% Print
-% disp(iso_topo.point_data_)
-% disp(iso_topo.getDomainPatch())
-% disp(iso_topo.getBoundayPatch('up'))
-% disp(iso_topo.getBoundayPatch('down'))
-% disp(iso_topo.getBoundayPatch('left'))
-% disp(iso_topo.getBoundayPatch('right'))
-% % end
-
 %% Domain create
 fem_domain = DomainBuilder.create('FEM');
 
@@ -55,7 +46,7 @@ left_side_patch = iso_topo.getBoundayPatch('left');
 right_side_patch = iso_topo.getBoundayPatch('right');
 t_constraint_up = fem_domain.generateConstraint(up_side_patch, var_t, {1, @()1});
 t_constraint_down = fem_domain.generateConstraint(down_side_patch, var_t, {1, @()0});
-t_constraint_left = fem_domain.generateConstraint(left_side_patch, var_t, {1, @()0});
+% t_constraint_left = fem_domain.generateConstraint(left_side_patch, var_t, {1, @()0});
 t_constraint_right = fem_domain.generateConstraint(right_side_patch, var_t, {1, @()0});
 %% Solve domain equation system
 fem_domain.solve('default');
@@ -77,3 +68,4 @@ fv.facevertexcdata = data;
 patch(fv,'CDataMapping','scaled','EdgeColor',[.7 .7 .7],'FaceColor','interp','FaceAlpha',1);
 grid on;
 title('ArtPDE Laplace problem... (FEM)')
+view([40 30]);

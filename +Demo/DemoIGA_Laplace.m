@@ -8,15 +8,6 @@ import Domain.*
 import Operation.*
 
 %% Geometry data input
-% create nurbs tool box object
-% srf = nrb4surf([0.0 0.0 0.0],[1.0 0.0 0.0],[0.0 1.0 0.0],[1.0 1.0 0.0]);
-% srf = nrbdegelev(srf, [1 1]); 
-% t = linspace(0.1, 0.9, 9);
-% srf = nrbkntins(srf,{t, t}); 
-
-% create geometry
-% geo = GeometryBuilder.create('IGA', 'Nurbs_Object', srf);
-% nurbs_topology = geo.topology_data_{1};
 
 % create geometry
 xml_path = './ArtPDE_IGA.art_geometry';
