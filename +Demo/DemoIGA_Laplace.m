@@ -47,10 +47,21 @@ exp1 = operation1.getExpression('IGA', {test_t, var_t});
 
 %% Integral variation equations
 % Domain integral
-int_doamin_patch = nurbs_topology.getDomainPatch();
-iga_domain.calIntegral(int_doamin_patch, exp1);
+doamin_patch = nurbs_topology.getDomainPatch();
+iga_domain.calIntegral(doamin_patch, exp1);
 
 %% Constraint (Acquire prescribed D.O.F.)
+bdr_patch = nurbs_topology.getBoundayPatch('bottom');
+iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
+
+bdr_patch = nurbs_topology.getBoundayPatch('left');
+iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
+
+bdr_patch = nurbs_topology.getBoundayPatch('right');
+iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
+
+bdr_patch = nurbs_topology.getBoundayPatch('top');
+iga_domain.generateConstraint(bdr_patch, var_t, {1, @()1});
 
 %% Solve domain equation system
 iga_domain.solve('default');
@@ -58,7 +69,7 @@ iga_domain.solve('default');
 %% Data Interpolation
 import Interpolation.IGA.Interpolation;
 t_interpo = Interpolation(var_t);
-[x, data, element] = t_interpo.NodeDataInterpolation();
+[x, data, element] = t_interpo.DomainDataSampling();
 
 %% Show result (Post-Processes)
 fv.vertices = [x, data];
@@ -67,7 +78,7 @@ fv.facevertexcdata = data;
 patch(fv,'CDataMapping','scaled','EdgeColor',[.7 .7 .7],'FaceColor','interp','FaceAlpha',1);
 grid on;
 title('ArtPDE Laplace problem... (IGA)')
-view([-50 30]);
+view([40 30]);
 %% Show result
 %disp(var_t);
 end

@@ -19,7 +19,7 @@ classdef Interpolation < Interpolation.InterpolationBase
             end
         end
         
-        function [x, data, element] = NodeDataInterpolation(this)
+        function [x, data, element] = DomainDataSampling(this)
             % Generate parametric mesh
             import Utility.Resources.mesh2d
             mesh = mesh2d(10, 10, 1, 1);
