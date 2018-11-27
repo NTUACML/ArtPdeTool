@@ -112,6 +112,7 @@ switch geo_dim
 %         point_data = [0 1 0 1;
 %                       1 1 0 1];
         crv = nrbline([0 1 0]',[1 1 0]');   
+        crv = nrbdegelev(crv, nurbs.order_(1)-(crv.order-1));
         crv = nrbkntins(crv,xi_i);
       
         point_data = crv.coefs';       
@@ -150,7 +151,8 @@ switch geo_dim
         % /Unit/Patch/ControlPoint/Point
 %         point_data = [0 0 0 1;
 %                       1 0 0 1];
-        crv = nrbline([0 0 0]',[1 0 0]');   
+        crv = nrbline([0 0 0]',[1 0 0]');
+        crv = nrbdegelev(crv, nurbs.order_(1)-(crv.order-1));
         crv = nrbkntins(crv,xi_i);
       
         point_data = crv.coefs';                            
@@ -189,7 +191,8 @@ switch geo_dim
         % /Unit/Patch/ControlPoint/Point
 %         point_data = [0 0 0 1;
 %                       0 1 0 1];
-        crv = nrbline([0 0 0]',[0 1 0]');   
+        crv = nrbline([0 0 0]',[0 1 0]');
+        crv = nrbdegelev(crv, nurbs.order_(2)-(crv.order-1));
         crv = nrbkntins(crv,eta_i);
       
         point_data = crv.coefs';                   
@@ -228,7 +231,8 @@ switch geo_dim
         % /Unit/Patch/ControlPoint/Point
 %         point_data = [1 0 0 1;
 %                       1 1 0 1];
-        crv = nrbline([1 0 0]',[1 1 0]');   
+        crv = nrbline([1 0 0]',[1 1 0]');
+        crv = nrbdegelev(crv, nurbs.order_(2)-(crv.order-1));
         crv = nrbkntins(crv,eta_i);
       
         point_data = crv.coefs';

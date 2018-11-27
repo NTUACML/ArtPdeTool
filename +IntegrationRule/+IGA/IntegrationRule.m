@@ -90,7 +90,16 @@ classdef IntegrationRule < IntegrationRule.IntegrationRuleBase
                     GaussQuadrature.MappingNurbsType2GaussQuadrature(...
                     nurbs_data.type_, this.integral_unit_{int_unit_id}.unit_span_, number_quad_pnt);
                 % map to domain nurbs parametric coordinates
-                this.modifiedQuadPoint(integral_unit, nurbs_data);            
+                integral_unit.quadrature_{2} = nurbs_data.evaluateNurbs(integral_unit.quadrature_{2});
+                
+                if length(nurbs_data.knot_vectors_) == 1
+                    integral_unit.quadrature_{2} = integral_unit.quadrature_{2}(:,1:2);
+                end
+                % modify weightings
+                % TODO suuport NURBS solid
+                le = norm(nurbs_data.control_points_(nurbs_data.control_points_.num_rows_,1:3)-nurbs_data.control_points_(1,1:3));
+                integral_unit.quadrature_{3} = integral_unit.quadrature_{3}*le;
+                
             end
             status = true;
         end    

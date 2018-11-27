@@ -77,9 +77,8 @@ end
 hold off;
 
 %% plot integration point in physical space
-figure; hold on; view([130 30]); grid on;
-domain_patch.nurbs_data_.plotNurbsSurface({[24 1] 'plotKnotMesh'});
-bdr_patch_1.nurbs_data_.plotNurbs(10);
+figure; hold on; view([0 90]); grid on; axis equal;
+domain_patch.nurbs_data_.plotNurbsSurface({[20 20] 'plotKnotMesh'});
 
 for i = 1:domain_integration_rule.num_integral_unit_
     position = domain_integration_rule.integral_unit_{i}.quadrature_{2};
@@ -89,14 +88,21 @@ for i = 1:domain_integration_rule.num_integral_unit_
 end
 
 %% boundary integral
-iga_domain.calIntegral(bdr_patch_1, exp1);
-bdr_integration_rule = iga_domain.integration_rule_(2);
 
-for i = 1:bdr_integration_rule.num_integral_unit_
-    position = bdr_integration_rule.integral_unit_{i}.quadrature_{2};
-    position = nurbs_data.evaluateNurbs(position);
+for patch_key = keys(nurbs_topology.boundary_patch_data_)
+    bdr_patch = nurbs_topology.getBoundayPatch(patch_key{1});
+    iga_domain.calIntegral(bdr_patch, exp1);
+end
 
-    plot3(position(:,1), position(:,2), position(:,3), 'ro');
+for rule_key = 2:5
+    bdr_integration_rule = iga_domain.integration_rule_(rule_key);
+    
+    for i = 1:bdr_integration_rule.num_integral_unit_
+        position = bdr_integration_rule.integral_unit_{i}.quadrature_{2};
+        position = domain_patch.nurbs_data_.evaluateNurbs(position);
+        
+        plot3(position(:,1), position(:,2), position(:,3), 'o');
+    end
 end
 hold off;
 

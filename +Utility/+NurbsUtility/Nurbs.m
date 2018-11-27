@@ -71,7 +71,13 @@ classdef Nurbs < handle
         function position = evaluateNurbs(this, xi)
             position = zeros(size(xi,1), 3);
             for i = 1:size(xi,1)
-                [p,w] = nrbeval(this.nurbs_tool_object_,{xi(i,1), xi(i,2)});
+                switch size(xi,2)
+                    case 1
+                        xi_ = xi(i,1);
+                    case 2
+                        xi_ = {xi(i,1), xi(i,2)};
+                end
+                [p,w] = nrbeval(this.nurbs_tool_object_, xi_);
                 position(i,:) = p/w;
             end
         end
