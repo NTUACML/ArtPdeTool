@@ -10,6 +10,11 @@ switch nurbs_name
         t = linspace(0.1, 0.9, 9);
         nurbs = nrbkntins(nurbs,{t, t});
         status = true;
+    case 'Plane_quarter_hole'
+        nurbs = Plane_quarter_hole();
+        t = linspace(0.1, 0.9, 9);
+        nurbs = nrbkntins(nurbs,{t, t});
+        status = true;
     otherwise
         str = [nurbs_name, 'does not exist in the current library.'];
         disp(str);
@@ -67,3 +72,32 @@ nurbs_out = Nurbs(knots, order, control_point_list);
 
 end
 
+
+function nurbs = Plane_quarter_hole
+knots = {[0 0 0 0.5 1 1 1]  [0 0 0 1 1 1]};
+coefs  = [zeros(3,4,3); ones(1,4,3)];
+
+coefs(1:2,1,1) = [-1 0];            coefs(4,1,1) = 1;
+coefs(1:2,2,1) = [-1 sqrt(2)-1];    coefs(4,2,1) = (1+1/sqrt(2))/2;
+coefs(1:2,3,1) = [1-sqrt(2) 1];     coefs(4,3,1) = (1+1/sqrt(2))/2;
+coefs(1:2,4,1) = [0 1];             coefs(4,4,1) = 1;
+
+coefs(1:2,1,2) = [-2.5 0];          coefs(4,1,2) = 1;
+coefs(1:2,2,2) = [-2.5 0.75];       coefs(4,2,2) = 1;
+coefs(1:2,3,2) = [-0.75 2.5];       coefs(4,3,2) = 1;
+coefs(1:2,4,2) = [0 2.5];           coefs(4,4,2) = 1;
+
+coefs(1:2,1,3) = [-4 0];            coefs(4,1,3) = 1;
+coefs(1:2,2,3) = [-4 4];            coefs(4,2,3) = 1;
+coefs(1:2,3,3) = [-4 4];            coefs(4,3,3) = 1;
+coefs(1:2,4,3) = [0 4];             coefs(4,4,3) = 1;
+
+coefs(1,:,:) = -coefs(1,:,:);
+
+for i = 1:3
+    coefs(i,:,:) = coefs(i,:,:).*coefs(4,:,:);
+end
+
+nurbs = nrbmak(coefs,knots);
+
+end
