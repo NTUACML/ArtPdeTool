@@ -8,8 +8,6 @@ import Domain.*
 import Operation.*
 
 %% Geometry data input
-
-% create geometry
 xml_path = './ArtPDE_IGA.art_geometry';
 geo = GeometryBuilder.create('IGA', 'XML', xml_path);
 nurbs_topology = geo.topology_data_{1};
@@ -43,7 +41,7 @@ iga_domain.calIntegral(doamin_patch, exp1);
 
 %% Constraint (Acquire prescribed D.O.F.)
 bdr_patch = nurbs_topology.getBoundayPatch('bottom');
-iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
+iga_domain.generateConstraint(bdr_patch, var_t, {1, @()1});
 
 bdr_patch = nurbs_topology.getBoundayPatch('left');
 iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
@@ -52,7 +50,7 @@ bdr_patch = nurbs_topology.getBoundayPatch('right');
 iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
 
 bdr_patch = nurbs_topology.getBoundayPatch('top');
-iga_domain.generateConstraint(bdr_patch, var_t, {1, @()1});
+iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
 
 %% Solve domain equation system
 iga_domain.solve('default');

@@ -3,41 +3,25 @@ clc; clear; close all;
 
 %% create Geometry
 import Geometry.*
-% create by PDEtool database
-% length = 1;
-% hight = 1;
-% geo = GeometryBuilder.create('IGA', 'Rectangle', {length, hight});
-% nurbs_topology = geo.topology_data_{1};
 
-% height = 3;
-% radius = 1;
-% center = [];
-% start_angle = deg2rad(0);    
-% end_angle = deg2rad(180);  
-% 
-% geo = GeometryBuilder.create('IGA', 'CylinderSurface', {height, radius, center, start_angle, end_angle});
-% nurbs_topology = geo.topology_data_{1};
-% nurbs_data = nurbs_topology.domain_patch_data_.nurbs_data_;
-% nurbs_data.degreeElevation([0 1]);
-% nurbs_data.knotInsertion({[0.9], [0.125 0.375 0.625 0.75]});
-
-% create by object from the nurbs tool box
-% nurbs_cylinder = nrbcylind(3,1,[],deg2rad(0),deg2rad(360));
-% nurbs_cylinder = nrbdegelev(nurbs_cylinder, [0 1]); 
-% nurbs_cylinder = nrbkntins(nurbs_cylinder,{[0.1], [0.125 0.375 0.625 0.875]}); 
-
-nurbs_cylinder = nrb4surf([0.0 0.0 0.0],[0.0 1.0 0.0],[1.0 0.0 0.0],[1.0 1.0 0.0]); 
-nurbs_cylinder = nrbdegelev(nurbs_cylinder, [0 1]); 
-nurbs_cylinder = nrbkntins(nurbs_cylinder,{[0.1], [0.125 0.375 0.625 0.875]}); 
-
-geo = GeometryBuilder.create('IGA', 'Nurbs_Object', nurbs_cylinder);
+xml_path = './ArtPDE_IGA.art_geometry';
+geo = GeometryBuilder.create('IGA', 'XML', xml_path);
 nurbs_topology = geo.topology_data_{1};
 
-% plot nurbs surface
-% figure; hold on; view([130 30]); grid on;
-% nurbs_data.plotNurbsSurface({[24 1] 'plotKnotMesh'});
-% % nurbs_data.plotNurbs([24 2]);
-% hold off;
+domain_patch = nurbs_topology.getDomainPatch();
+
+% plot nurbs surface & bounday nurbs
+figure; hold all; view([0 90]); grid on; axis equal;
+domain_patch.nurbs_data_.plotNurbsSurface({[20 20] 'plotKnotMesh'});
+
+for patch_key = keys(nurbs_topology.boundary_patch_data_)
+    patch = nurbs_topology.getBoundayPatch(patch_key{1});
+    pnt = patch.nurbs_data_.control_points_(:,1:2);
+    
+    position = domain_patch.nurbs_data_.evaluateNurbs(pnt);
+    plot(position(:,1), position(:,2), 'r-');
+end
+hold off;
 
 %% create Domain
 import Domain.*
@@ -52,7 +36,7 @@ import Utility.BasicUtility.Region
 query_unit = QueryUnit();
 xi = {0.1973 0.78229};
 query_unit.query_protocol_ = {Region.Domain, xi};
-results = nurbs_basis.query(query_unit);
+nurbs_basis.query(query_unit);
 
 non_zero_id = query_unit.non_zero_id_;
 R = query_unit.evaluate_basis_{1};
@@ -65,14 +49,10 @@ val = R*control_point(non_zero_id,:);
 dval_dxi = dR_dxi*control_point(non_zero_id,:);
 dval_deta = dR_deta*control_point(non_zero_id,:);
 
-dnurbs_cylinder = nrbderiv(nurbs_cylinder);
-[pnt,jac] = nrbdeval(nurbs_cylinder, dnurbs_cylinder, xi) ;
-
 %% create expression
 exp1 = Expression.ExpressionBase;
 
 %% domain integral
-int_doamin_patch = nurbs_topology.getDomainPatch();
 % integrating the expression over the domain patch, 'int_doamin_patch', by
 % dividing domain patch into sub-domains. 
 % The dividing process is performed according to the user defined stratergies. 
@@ -82,45 +62,53 @@ int_doamin_patch = nurbs_topology.getDomainPatch();
 % parametric coordinate.
 
 % number_quad_pt = [2 2];
-% iga_domain.calIntegral(int_doamin_patch, exp1, {'Default', number_quad_pt});
-iga_domain.calIntegral(int_doamin_patch, exp1);
+% iga_domain.calIntegral(domain_patch, exp1, {'Default', number_quad_pt});
+iga_domain.calIntegral(domain_patch, exp1);
 
-integration_rule = iga_domain.integration_rule_(1);
+domain_integration_rule = iga_domain.integration_rule_(1);
 
 %% plot integration point in parametric space
 figure; hold on;
-nurbs_data.plotParametricMesh();
-for i = 1:integration_rule.num_integral_unit_
-    position = integration_rule.integral_unit_{i}.quadrature_{2};
+domain_patch.nurbs_data_.plotParametricMesh();
+for i = 1:domain_integration_rule.num_integral_unit_
+    position = domain_integration_rule.integral_unit_{i}.quadrature_{2};
     plot(position(:,1), position(:,2), 'r.');
 end
 hold off;
 
 %% plot integration point in physical space
-figure; hold on; view([130 30]); grid on;
-nurbs_data.plotNurbsSurface({[24 1] 'plotKnotMesh'});
+figure; hold on; view([0 90]); grid on; axis equal;
+domain_patch.nurbs_data_.plotNurbsSurface({[20 20] 'plotKnotMesh'});
 
-for i = 1:integration_rule.num_integral_unit_
-    position = integration_rule.integral_unit_{i}.quadrature_{2};
-    position = nurbs_data.evaluateNurbs(position);
+for i = 1:domain_integration_rule.num_integral_unit_
+    position = domain_integration_rule.integral_unit_{i}.quadrature_{2};
+    position = domain_patch.nurbs_data_.evaluateNurbs(position);
 
     plot3(position(:,1), position(:,2), position(:,3), 'r.');
 end
 
-
 %% boundary integral
-int_boundary_patch = nurbs_topology.boundary_patch_data_('Up_Side_Partially');
-% int_boundary_patch.nurbs_data_.knotInsertion([0.25]);
-int_boundary_patch.nurbs_data_.plotNurbs([24]);
 
-iga_domain.calIntegral(int_boundary_patch, exp1);
-bdr_integration_rule = iga_domain.integration_rule_(2);
+for patch_key = keys(nurbs_topology.boundary_patch_data_)
+    bdr_patch = nurbs_topology.getBoundayPatch(patch_key{1});
+    iga_domain.calIntegral(bdr_patch, exp1);
+end
 
-for i = 1:bdr_integration_rule.num_integral_unit_
-    position = bdr_integration_rule.integral_unit_{i}.quadrature_{2};
-    position = nurbs_data.evaluateNurbs(position);
-
-    plot3(position(:,1), position(:,2), position(:,3), 'ro');
+for rule_key = 2:5
+    bdr_integration_rule = iga_domain.integration_rule_(rule_key);
+    
+    for i = 1:bdr_integration_rule.num_integral_unit_
+        position = bdr_integration_rule.integral_unit_{i}.quadrature_{2};
+        position = domain_patch.nurbs_data_.evaluateNurbs(position);
+        
+        plot3(position(:,1), position(:,2), position(:,3), 'o');
+    end
+%     
+%     temp = 0;
+%     for i = 1:bdr_integration_rule.num_integral_unit_
+%         temp = temp + sum(bdr_integration_rule.integral_unit_{i}.quadrature_{3});
+%     end
+    
 end
 hold off;
 
