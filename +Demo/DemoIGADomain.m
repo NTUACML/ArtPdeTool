@@ -103,6 +103,12 @@ for rule_key = 2:5
         
         plot3(position(:,1), position(:,2), position(:,3), 'o');
     end
+%     
+%     temp = 0;
+%     for i = 1:bdr_integration_rule.num_integral_unit_
+%         temp = temp + sum(bdr_integration_rule.integral_unit_{i}.quadrature_{3});
+%     end
+    
 end
 hold off;
 
