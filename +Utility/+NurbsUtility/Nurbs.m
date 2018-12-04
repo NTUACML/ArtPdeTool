@@ -82,6 +82,21 @@ classdef Nurbs < handle
             end
         end
         
+        function [tangent, position] = evaluateTangent(this, xi)
+            for i = 1:size(xi,1)
+                switch size(xi,2)
+                    case 1
+                        xi_ = xi(i,1);
+                    case 2
+                        xi_ = {xi(i,1), xi(i,2)};
+                end
+                
+                dcrv = nrbderiv(this.nurbs_tool_object_); 
+                [position, tangent] = nrbdeval(this.nurbs_tool_object_, dcrv, xi_);
+                tangent = vecnorm(tangent);
+            end
+        end
+        
         function plotNurbsSurface(this, varargin)
             import Utility.NurbsUtility.NurbsType
             if isequal(this.type_, NurbsType.Surface)

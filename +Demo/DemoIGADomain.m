@@ -2,7 +2,7 @@ function DemoIGADomain
 clc; clear; close all;
 
 %% create Geometry
-import Geometry.*
+import Geometry.* 
 
 xml_path = './ArtPDE_IGA.art_geometry';
 geo = GeometryBuilder.create('IGA', 'XML', xml_path);
