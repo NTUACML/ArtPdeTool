@@ -26,7 +26,6 @@ classdef Nurbs < handle
                 this.type_ = NurbsType.Surface;
             elseif this.geometry_dimension_ == 3
                 this.type_ = NurbsType.Solid;
-                disp('Currently not support nurbs solid!');
             end
             
             this.basis_number_ = zeros(1, this.geometry_dimension_);
@@ -63,6 +62,8 @@ classdef Nurbs < handle
                 end
                 this.nurbs_tool_object_ = nrbmak(control_pnt, knot_vectors);
             elseif this.geometry_dimension_ == 3
+                
+                
                 disp('Currently not support nurbs solid!');
             end
 
