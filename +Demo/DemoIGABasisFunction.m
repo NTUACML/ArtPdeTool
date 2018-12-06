@@ -17,9 +17,10 @@ domain_patch.nurbs_data_.plotNurbsSurface({[20 20] 'plotKnotMesh'});
 for patch_key = keys(nurbs_topology.boundary_patch_data_)
     patch = nurbs_topology.getBoundayPatch(patch_key{1});
     pnt = patch.nurbs_data_.control_points_(:,1:2);
+    pnt = [linspace(pnt(1,1), pnt(end,1), 21)' linspace(pnt(1,2), pnt(end,2), 21)'];
     
     position = domain_patch.nurbs_data_.evaluateNurbs(pnt);
-    plot(position(:,1), position(:,2), 'r-');
+    plot3(position(:,1), position(:,2), position(:,3), 'LineWidth', 1.5);
 end
 hold off;
 

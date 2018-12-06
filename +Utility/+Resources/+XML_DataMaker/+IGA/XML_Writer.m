@@ -2,13 +2,14 @@ function XML_Writer
 clear all; clc; home
 %% Generate nurbs object
 import Utility.Resources.XML_DataMaker.IGA.NurbsGenerator
-% nurbs = NurbsGenerator('Plane4');
-% nurbs = NurbsGenerator('Plane4_refined');
-nurbs = NurbsGenerator('Plane_quarter_hole');
+% 'Plane4' 'Plane4_refined' 'Plane_quarter_hole' 
+% 'Lens_top_right' 'Lens_bottom_right' 'Lens_top_left' 'Lens_bottom_left' '3D_Lens'
+case_name = 'Lens_bottom_left';
+nurbs = NurbsGenerator(case_name);
 
 %% Document setting
 project_name = 'ArtPDE';
-doc_format = 'IGA';
+doc_format = ['IGA_', case_name];
 version = '1.1';
 
 import Utility.NurbsUtility.NurbsType
