@@ -47,8 +47,42 @@ classdef Operation < handle
                             expression.setVar(variable);
                         else
                             disp('Error <Operation>! - getExpression!');
-                            disp('> the bilinear form should input test and variable.');
+                            disp('> the stiffness bilinear form should input test and variable.');
                         end
+                    elseif strcmp(this.op_data_,'test_dot_var')
+                        % Bilinear form for mass matrix
+                        if(~isempty(varargin) || ~(length(varargin{1}) < 2))
+                            test = varargin{1}{1};
+                            variable = varargin{1}{2};
+                            penalty_parameter = varargin{1}{3};
+
+                            expression = MassExpression();
+                            expression.setTest(test);
+                            expression.setVar(variable);
+                            if ~isempty(penalty_parameter)
+                                expression.setPenaltyParameter(penalty_parameter);
+                            end
+                        else
+                            disp('Error <Operation>! - getExpression!');
+                            disp('> the mass bilinear form should input test and variable.');
+                        end
+                    elseif strcmp(this.op_data_,'test_dot_f')
+                        % Linear form for source term
+                        if(~isempty(varargin) || ~(length(varargin{1}) < 2))
+                            test = varargin{1}{1};
+                            source_function = varargin{1}{2};
+                            penalty_parameter = varargin{1}{3};
+                            
+                            expression = LinearExpression();
+                            expression.setTest(test);
+                            expression.setSourceFunction(source_function);
+                            if ~isempty(penalty_parameter)
+                                expression.setPenaltyParameter(penalty_parameter);
+                            end
+                        else
+                            disp('Error <Operation>! - getExpression!');
+                            disp('> the linear form should input test and variable.');
+                        end    
                     else
                         expression = Expression();
                     end    

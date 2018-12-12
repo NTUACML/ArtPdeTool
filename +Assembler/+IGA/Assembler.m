@@ -38,14 +38,25 @@ classdef Assembler < Assembler.AssemblerBase
                 this.lhs_(row_id, col_id) = this.lhs_(row_id, col_id) + data;
                 status = true;
             else
-                disp('Error <IGA Assembler>! - FEM_LHS_Assembly!');
-                disp('> LHS assemly error, please check!');
+                disp('Error <IGA Assembler>! - IGA_LHS_Assembly!');
+                disp('> LHS assembling error, please check!');
                 status = false;
             end
         end
         
         function status = IGA_RHS_Assembly(this, var, basis_id, data)
-            status = false;
+            if(length(var) == 1 && length(basis_id) == 1)
+                test = var{1};
+                
+                row_id = this.dof_manager_.getAssemblyId(test.variable_data_, basis_id{1});
+                
+                this.rhs_(row_id) = this.rhs_(row_id) + data;
+                status = true;
+            else
+                disp('Error <IGA Assembler>! - IGA_RHS_Assembly!');
+                disp('> RHS assembling error, please check!');
+                status = false;
+            end
         end
         
         function status = IGA_Constraint_Assembly(this, var, basis_id, data)
