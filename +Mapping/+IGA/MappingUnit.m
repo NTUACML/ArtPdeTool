@@ -20,6 +20,10 @@ classdef MappingUnit < handle
             J = norm(cross(dx_dxi(1,:),dx_dxi(2,:)));
             
         end
+        
+        function x = calPhysicalPosition(this)
+            x = this.eval_basis_{1} * this.local_point_(:,1:end-1);
+        end
     end
     
 end

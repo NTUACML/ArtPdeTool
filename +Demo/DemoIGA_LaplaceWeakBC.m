@@ -1,4 +1,4 @@
-function DemoIGA_Laplace
+function DemoIGA_LaplaceWeakBC
 clc; clear; close all;
 
 %% Include package
@@ -8,7 +8,7 @@ import Domain.*
 import Operation.*
 
 %% Geometry data input
-xml_path = './ArtPDE_IGA_Plane_quarter_hole.art_geometry';
+xml_path = './ArtPDE_IGA_Plane4_refined.art_geometry';
 geo = GeometryBuilder.create('IGA', 'XML', xml_path);
 nurbs_topology = geo.topology_data_{1};
 
@@ -31,26 +31,41 @@ iga_domain.setMapping(nurbs_basis);
 operation1 = Operation();
 operation1.setOperator('grad_test_dot_grad_var');
 
+operation2 = Operation();
+operation2.setOperator('test_dot_var');
+
+operation3 = Operation();
+operation3.setOperator('test_dot_f');
+
 %% Expression acquired
 exp1 = operation1.getExpression('IGA', {test_t, var_t});
 
+beta = 1e6;
+exp2 = operation2.getExpression('IGA', {test_t, var_t, beta});
+
+unit_function = @(x, y) sin(pi*x);
+exp3= operation3.getExpression('IGA', {test_t, unit_function, beta});
 %% Integral variation equations
 % Domain integral
 doamin_patch = nurbs_topology.getDomainPatch();
 iga_domain.calIntegral(doamin_patch, exp1);
 
-%% Constraint (Acquire prescribed D.O.F.)
+% Boundary integral
 bdr_patch = nurbs_topology.getBoundayPatch('bottom');
-iga_domain.generateConstraint(bdr_patch, var_t, {1, @()1});
+iga_domain.calIntegral(bdr_patch, exp2);
 
 bdr_patch = nurbs_topology.getBoundayPatch('left');
-iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
+iga_domain.calIntegral(bdr_patch, exp2);
 
 bdr_patch = nurbs_topology.getBoundayPatch('right');
-iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
+iga_domain.calIntegral(bdr_patch, exp2);
 
 bdr_patch = nurbs_topology.getBoundayPatch('top');
-iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
+iga_domain.calIntegral(bdr_patch, exp2);
+
+bdr_patch = nurbs_topology.getBoundayPatch('top');
+iga_domain.calIntegral(bdr_patch, exp3);
+
 
 %% Solve domain equation system
 iga_domain.solve('default');
