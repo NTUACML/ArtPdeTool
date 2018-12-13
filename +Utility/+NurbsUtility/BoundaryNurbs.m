@@ -3,6 +3,7 @@ classdef BoundaryNurbs < Utility.NurbsUtility.Nurbs
     %   Detailed explanation goes here
     
     properties
+        % the data of corresponding domain nurbs
         domain_nurbs_data_ = []
     end
     
