@@ -126,16 +126,6 @@ classdef Nurbs < handle
             quadplot(m.connect, m.xI(:,1), m.xI(:,2));
         end
         
-        function degreeElevation(this, degree)
-            this.nurbs_tool_object_  = nrbdegelev(this.nurbs_tool_object_, degree);
-            this.DataUpdateByTool();
-        end
-        
-        function knotInsertion(this, knots)
-            this.nurbs_tool_object_ = nrbkntins(this.nurbs_tool_object_, knots); 
-            this.DataUpdateByTool();
-        end
-        
         function debug(this)
             disp(this.nurbs_tool_object_)
         end
@@ -212,6 +202,17 @@ classdef Nurbs < handle
                 this.control_points_ = PointList(temp_point);
             end
         end
+        
+        function degreeElevation(this, degree)
+            this.nurbs_tool_object_  = nrbdegelev(this.nurbs_tool_object_, degree);
+            this.DataUpdateByTool();
+        end
+        
+        function knotInsertion(this, knots)
+            this.nurbs_tool_object_ = nrbkntins(this.nurbs_tool_object_, knots);
+            this.DataUpdateByTool();
+        end
+        
         
         
     end
