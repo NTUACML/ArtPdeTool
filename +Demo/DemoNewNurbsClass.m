@@ -10,6 +10,7 @@ import Operation.*
 %% Geometry data input
 xml_path = './ArtPDE_IGA_3D_Lens.art_geometry';
 % xml_path = './ArtPDE_IGA_Plane4_refined.art_geometry';
+% xml_path = './ArtPDE_IGA_Plane_quarter_hole.art_geometry';
 
 geo = GeometryBuilder.create('IGA', 'XML', xml_path);
 nurbs_data = geo.topology_data_{1}.domain_patch_data_.nurbs_data_;
@@ -32,5 +33,18 @@ figure; hold on; axis equal;
 nurbs_tool.plotParametricMesh();
 hold off;
 
+% Plot nurbs
+figure; hold on; axis equal;
+nurbs_tool.plotNurbs();
+hold off;
+
+% Demo evaluate nurbs & derivatives
+xi = rand(5, 2);
+
+[position] = nurbs_tool.evaluateNurbs(xi, 'position');
+[~, gradient] = nurbs_tool.evaluateNurbs(xi, 'gradient');
+[position, gradient] = nurbs_tool.evaluateNurbs(xi, 'position', 'gradient');
+
+ 
 end
 

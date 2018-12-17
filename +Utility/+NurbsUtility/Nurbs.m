@@ -108,53 +108,53 @@ classdef Nurbs < handle
     end
     
     methods(Access = private)
-        function DataUpdateByTool(this)
-            if(~isempty(this.nurbs_tool_object_))
-                import Utility.BasicUtility.PointList
-                % Update - basis_number
-                this.basis_number_ = this.nurbs_tool_object_.number;
-                % Update - order
-                this.order_ = this.nurbs_tool_object_.order - 1;
-                % Update - knot_vectors
-                if iscell(this.nurbs_tool_object_.knots)
-                    this.knot_vectors_ = this.nurbs_tool_object_.knots;
-                else
-                    this.knot_vectors_ = {this.nurbs_tool_object_.knots};
-                end
-                % Update - control_points
-                temp_point = zeros(prod(this.basis_number_), 4);
-                
-                import Utility.BasicUtility.TensorProduct
-                if this.geometry_dimension_ == 1
-                    TD_1 = TensorProduct({this.basis_number_(1)});
-                    for i = 1:this.basis_number_(1)
-                        global_id = TD_1.to_global_index({i});
-                        temp_point(global_id,:) = this.nurbs_tool_object_.coefs(:,i,:)';
-                    end
-                elseif this.geometry_dimension_ == 2
-                    TD_2 = TensorProduct({this.basis_number_(1) this.basis_number_(2)});
-                    for j = 1:this.basis_number_(2)
-                        for i = 1:this.basis_number_(1)
-                            global_id = TD_2.to_global_index({i j});
-                            temp_point(global_id,:) = this.nurbs_tool_object_.coefs(:,i,j)';
-                        end
-                    end
-                elseif this.geometry_dimension_ == 3
-                    disp('Error <Nurbs>! - DataUpdateByTool');
-                    disp('> Currently not support nurbs solid!');
-                end
-                
-    
-                % the coordinates of control points from nurbs_tool_box containe
-                % weighting, we have to normalize them to obtain the PHYSICAL
-                % coordinates
-                temp_point(:,1) = temp_point(:,1)./temp_point(:,4);
-                temp_point(:,2) = temp_point(:,2)./temp_point(:,4);
-                temp_point(:,3) = temp_point(:,3)./temp_point(:,4);
-
-                this.control_points_ = PointList(temp_point);
-            end
-        end
+%         function DataUpdateByTool(this)
+%             if(~isempty(this.nurbs_tool_object_))
+%                 import Utility.BasicUtility.PointList
+%                 % Update - basis_number
+%                 this.basis_number_ = this.nurbs_tool_object_.number;
+%                 % Update - order
+%                 this.order_ = this.nurbs_tool_object_.order - 1;
+%                 % Update - knot_vectors
+%                 if iscell(this.nurbs_tool_object_.knots)
+%                     this.knot_vectors_ = this.nurbs_tool_object_.knots;
+%                 else
+%                     this.knot_vectors_ = {this.nurbs_tool_object_.knots};
+%                 end
+%                 % Update - control_points
+%                 temp_point = zeros(prod(this.basis_number_), 4);
+%                 
+%                 import Utility.BasicUtility.TensorProduct
+%                 if this.geometry_dimension_ == 1
+%                     TD_1 = TensorProduct({this.basis_number_(1)});
+%                     for i = 1:this.basis_number_(1)
+%                         global_id = TD_1.to_global_index({i});
+%                         temp_point(global_id,:) = this.nurbs_tool_object_.coefs(:,i,:)';
+%                     end
+%                 elseif this.geometry_dimension_ == 2
+%                     TD_2 = TensorProduct({this.basis_number_(1) this.basis_number_(2)});
+%                     for j = 1:this.basis_number_(2)
+%                         for i = 1:this.basis_number_(1)
+%                             global_id = TD_2.to_global_index({i j});
+%                             temp_point(global_id,:) = this.nurbs_tool_object_.coefs(:,i,j)';
+%                         end
+%                     end
+%                 elseif this.geometry_dimension_ == 3
+%                     disp('Error <Nurbs>! - DataUpdateByTool');
+%                     disp('> Currently not support nurbs solid!');
+%                 end
+%                 
+%     
+%                 % the coordinates of control points from nurbs_tool_box containe
+%                 % weighting, we have to normalize them to obtain the PHYSICAL
+%                 % coordinates
+%                 temp_point(:,1) = temp_point(:,1)./temp_point(:,4);
+%                 temp_point(:,2) = temp_point(:,2)./temp_point(:,4);
+%                 temp_point(:,3) = temp_point(:,3)./temp_point(:,4);
+% 
+%                 this.control_points_ = PointList(temp_point);
+%             end
+%         end
         
         % The following interfaces are considered to be moved in the next
         % refactor
@@ -167,40 +167,7 @@ classdef Nurbs < handle
             this.nurbs_tool_object_ = nrbkntins(this.nurbs_tool_object_, knots);
             this.DataUpdateByTool();
         end
-        
-        
-        
-        function [tangent, position] = evaluateTangent(this, xi)
-            for i = 1:size(xi,1)
-                switch size(xi,2)
-                    case 1
-                        xi_ = xi(i,1);
-                    case 2
-                        xi_ = {xi(i,1), xi(i,2)};
-                end
-                
-                dcrv = nrbderiv(this.nurbs_tool_object_); 
-                [position, tangent] = nrbdeval(this.nurbs_tool_object_, dcrv, xi_);
-                tangent = vecnorm(tangent);
-            end
-        end
-        
-        function plotNurbsSurface(this, varargin)
-            import Utility.NurbsUtility.NurbsType
-            if isequal(this.type_, NurbsType.Surface)
-                import Utility.Resources.plotNurbs
-                plotNurbs(this.nurbs_tool_object_, varargin{1});
-            else
-                disp('Input nurbs error!please input a surface nurbs!');
-            end
-        end
-        
-        function plotNurbs(this, number_points)
-            nrbplot(this.nurbs_tool_object_, number_points); 
-        end
-        
-        
-    
+
     end
 end
 
