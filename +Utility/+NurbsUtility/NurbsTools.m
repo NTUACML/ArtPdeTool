@@ -47,6 +47,44 @@ classdef NurbsTools
             
         end
         
+        function position = evaluateNurbs(this, xi)
+            if ~isequal(length(xi), this.nurbs_data_.getGeometryDimension())
+                disp('Input parametric coordinates dimension are mismatched!');
+                return;
+            end
+            
+            position = zeros(size(xi,1), 3);
+            
+            import BasisFunction.IGA.QueryUnit
+            import Utility.BasicUtility.Region
+            
+            query_unit = QueryUnit();
+            
+            sample_pnt = {xi(i) eta(i)};
+            query_unit.query_protocol_ = {Region.Domain, sample_pnt};
+            this.basis_function_.query(query_unit);
+            
+            
+            for i = 1:size(xi,1)
+                switch size(xi,2)
+                    case 1
+                        xi_ = xi(i,1);
+                    case 2
+                        xi_ = {xi(i,1), xi(i,2)};
+                end
+                [p,w] = nrbeval(this.nurbs_tool_object_, xi_);
+                position(i,:) = p/w;
+            end
+        end
+        
+        
+        
+        
+        
+        
+        
+        
+        
         
     end
     

@@ -168,19 +168,7 @@ classdef Nurbs < handle
             this.DataUpdateByTool();
         end
         
-        function position = evaluateNurbs(this, xi)
-            position = zeros(size(xi,1), 3);
-            for i = 1:size(xi,1)
-                switch size(xi,2)
-                    case 1
-                        xi_ = xi(i,1);
-                    case 2
-                        xi_ = {xi(i,1), xi(i,2)};
-                end
-                [p,w] = nrbeval(this.nurbs_tool_object_, xi_);
-                position(i,:) = p/w;
-            end
-        end
+        
         
         function [tangent, position] = evaluateTangent(this, xi)
             for i = 1:size(xi,1)
