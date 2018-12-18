@@ -11,18 +11,18 @@ nurbs_topology = geo.topology_data_{1};
 domain_patch = nurbs_topology.getDomainPatch();
 
 % plot nurbs surface & bounday nurbs
-figure; hold all; view([0 90]); grid on; axis equal;
-domain_patch.nurbs_data_.plotNurbsSurface({[20 20] 'plotKnotMesh'});
-
-for patch_key = keys(nurbs_topology.boundary_patch_data_)
-    patch = nurbs_topology.getBoundayPatch(patch_key{1});
-    pnt = patch.nurbs_data_.control_points_(:,1:2);
-    pnt = [linspace(pnt(1,1), pnt(end,1), 21)' linspace(pnt(1,2), pnt(end,2), 21)'];
-    
-    position = domain_patch.nurbs_data_.evaluateNurbs(pnt);
-    plot3(position(:,1), position(:,2), position(:,3), 'LineWidth', 1.5);
-end
-hold off;
+% figure; hold all; view([0 90]); grid on; axis equal;
+% domain_patch.nurbs_data_.plotNurbsSurface({[20 20] 'plotKnotMesh'});
+% 
+% for patch_key = keys(nurbs_topology.boundary_patch_data_)
+%     patch = nurbs_topology.getBoundayPatch(patch_key{1});
+%     pnt = patch.nurbs_data_.control_points_(:,1:2);
+%     pnt = [linspace(pnt(1,1), pnt(end,1), 21)' linspace(pnt(1,2), pnt(end,2), 21)'];
+%     
+%     position = domain_patch.nurbs_data_.evaluateNurbs(pnt);
+%     plot3(position(:,1), position(:,2), position(:,3), 'LineWidth', 1.5);
+% end
+% hold off;
 
 %% create Domain
 import Domain.*
@@ -46,7 +46,7 @@ xi = xi(:);
 eta = eta(:);
 
 for i = 1:length(xi)
-    sample_pnt = {xi(i) eta(i)};
+    sample_pnt = [xi(i) eta(i)];
     query_unit.query_protocol_ = {Region.Domain, sample_pnt};
     nurbs_basis.query(query_unit);
     

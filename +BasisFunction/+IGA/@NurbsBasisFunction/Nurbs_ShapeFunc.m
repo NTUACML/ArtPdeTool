@@ -4,8 +4,8 @@ function [ GlobalDof, R, dR_dxi ] = Nurbs_ShapeFunc( xi, p, knots, omega )
 import BasisFunction.IGA.NurbsBasisFunction
 
 GlobalShapeFuncId =@(i, j, n) n .* (j-1) + i; 
-[span_id{1},ders{1}] = NurbsBasisFunction.DersBasisFuns(xi{1}, p{1} , knots{1});
-[span_id{2},ders{2}] = NurbsBasisFunction.DersBasisFuns(xi{2}, p{2} , knots{2});
+[span_id{1},ders{1}] = NurbsBasisFunction.DersBasisFuns(xi(:,1), p{1} , knots{1});
+[span_id{2},ders{2}] = NurbsBasisFunction.DersBasisFuns(xi(:,2), p{2} , knots{2});
 
 spanVec{1} = ((span_id{1} - p{1}) + 1 : span_id{1} + 1)';
 spanVec{2} = ((span_id{2} - p{2}) + 1 : span_id{2} + 1)';

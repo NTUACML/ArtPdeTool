@@ -1,11 +1,11 @@
-% function DemoFEM_XMLfile
+function DemoIGA_XMLfile
 clc; clear; close all; home
 
 %% Include package
 import Geometry.*
 
 %% Geometry data input
-xml_path = './ArtPDE_IGA.art_geometry';
+xml_path = './ArtPDE_IGA_Plane_quarter_hole.art_geometry';
 iga_geo = GeometryBuilder.create('IGA', 'XML', xml_path);
 topo = iga_geo.topology_data_{1};
 
@@ -21,4 +21,4 @@ disp(topo.getDomainPatch())
 disp(topo.getBoundayPatch('top'))
 
 
-% end
+end

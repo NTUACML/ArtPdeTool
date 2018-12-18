@@ -3,18 +3,14 @@ classdef BoundaryNurbs < Utility.NurbsUtility.Nurbs
     %   Detailed explanation goes here
     
     properties
-        parametric_mapping_
-        % records the start and end parametric coordinates of a boundary nurbs.
-        % the parametric coordunates are coordinates defined based on the
-        % domain nurbs.
-        % the purpose of this parametric is desighed to map the parametric
-        % coordinates of a boundary nurbs to those of a domain nurbs
+        % the data of corresponding domain nurbs
+        domain_nurbs_data_ = []
     end
     
     methods
-        function this = BoundaryNurbs(knot_vectors, order, control_point_list, parametric_mapping)
+        function this = BoundaryNurbs(knot_vectors, order, control_point_list, domain_nurbs_data)
             this@Utility.NurbsUtility.Nurbs(knot_vectors, order, control_point_list);
-            this.parametric_mapping_ = parametric_mapping;
+            this.domain_nurbs_data_ = domain_nurbs_data;
         end
     end
     

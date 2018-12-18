@@ -40,12 +40,12 @@ classdef GeometryBuilder
                     geometry = [];
                 case 'IGA'
                     switch name
-                        case 'Rectangle'
-                            geometry = Geometry.GeometryBuilder.IGA_Rectangle(varargin{1});
-                        case 'CylinderSurface'
-                            geometry = Geometry.GeometryBuilder.IGA_CylinderSurface(varargin{1});
-                        case 'Nurbs_Object'
-                            geometry = Geometry.GeometryBuilder.IGA_Tool_Box(varargin{1});
+%                         case 'Rectangle'
+%                             geometry = Geometry.GeometryBuilder.IGA_Rectangle(varargin{1});
+%                         case 'CylinderSurface'
+%                             geometry = Geometry.GeometryBuilder.IGA_CylinderSurface(varargin{1});
+%                         case 'Nurbs_Object'
+%                             geometry = Geometry.GeometryBuilder.IGA_Tool_Box(varargin{1});
                         case 'XML'
                             if(~isempty(varargin))
                                 path = varargin{1};
