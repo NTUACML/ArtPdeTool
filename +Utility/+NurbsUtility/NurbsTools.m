@@ -92,21 +92,29 @@ classdef NurbsTools
             end  
         end  
         
-        function plotNurbs(this)
+        function plotNurbs(this, varargin)
             geo_dim = this.nurbs_data_.getGeometryDimension();
-            Np = 10;
 
+            if ~isempty(varargin) 
+                N = varargin{1};
+            else
+                N = 11*ones(1, geo_dim);
+            end
+            
             switch geo_dim
                 case 1
-                    sample_pnt = linspace(0,1,Np)';
-                    position = this. evaluateNurbs(sample_pnt, 'position');
+                    sample_pnt = linspace(0,1,N)';
+                    position = this.evaluateNurbs(sample_pnt, 'position');
                     plot3(position(:,1), position(:,2), position(:,3), 'r-');
                     
                     unique_knot = unique(this.nurbs_data_.knot_vectors{1});
-                    position = this. evaluateNurbs(unique_knot, 'position');
+                    position = this.evaluateNurbs(unique_knot, 'position');
                     plot3(position(:,1), position(:,2), position(:,3), 'k.');
                 case 2
-                    this.plotSurfaceNurbs([Np Np]);
+                    unique_knot_vector{1} = unique(this.nurbs_data_.knot_vectors_{1});
+                    unique_knot_vector{2} = unique(this.nurbs_data_.knot_vectors_{2});
+                    
+                    this.plotSurfaceNurbs(N, unique_knot_vector);
                 case 3
                     % Only surface nurbs are plotted for 3d case
                     unique_knot_1 = unique(this.nurbs_data_.knot_vectors_{1});
@@ -114,17 +122,23 @@ classdef NurbsTools
                     unique_knot_3 = unique(this.nurbs_data_.knot_vectors_{3});
                     
                     % Plot bottom face
-                    this.plotSurfaceNurbs([Np Np Np], unique_knot_1, unique_knot_2, 0);
+                    unique_knot_vector = {unique_knot_1, unique_knot_2, 0};
+                    this.plotSurfaceNurbs(N, unique_knot_vector);
                     % Plot top face
-                    this.plotSurfaceNurbs([Np Np Np], unique_knot_1, unique_knot_2, 1);
+                    unique_knot_vector = {unique_knot_1, unique_knot_2, 1};
+                    this.plotSurfaceNurbs(N, unique_knot_vector);
                     % Plot east face
-                    this.plotSurfaceNurbs([Np Np Np], unique_knot_1, 1, unique_knot_3);
+                    unique_knot_vector = {unique_knot_1, 1, unique_knot_3};
+                    this.plotSurfaceNurbs(N, unique_knot_vector);
                     % Plot west face
-                    this.plotSurfaceNurbs([Np Np Np], unique_knot_1, 0, unique_knot_3);
+                    unique_knot_vector = {unique_knot_1, 0, unique_knot_3};
+                    this.plotSurfaceNurbs(N, unique_knot_vector);
                     % Plot rare face
-                    this.plotSurfaceNurbs([Np Np Np], 0, unique_knot_2, unique_knot_3);
+                    unique_knot_vector = {0, unique_knot_2, unique_knot_3};
+                    this.plotSurfaceNurbs(N, unique_knot_vector);
                     % Plot front face
-                    this.plotSurfaceNurbs([Np Np Np], 1, unique_knot_2, unique_knot_3);
+                    unique_knot_vector = {1, unique_knot_2, unique_knot_3};
+                    this.plotSurfaceNurbs(N, unique_knot_vector);
             end   
         end
         
@@ -158,6 +172,7 @@ classdef NurbsTools
             switch this.nurbs_data_.getGeometryDimension()
                 case 2
                     Np = varargin{1};
+                    unique_knot_vector = varargin{2};
                     
                     % Plot surface nurbs using 2d basis functions
                     mesh = mesh2d(Np(1), Np(2), 1, 1);
@@ -169,21 +184,18 @@ classdef NurbsTools
                     patch(fv,'CDataMapping','scaled','EdgeColor','none','FaceColor','interp','FaceAlpha',0.8);
                     
                     % Plot knot mesh
-                    N_1 = length(unique(this.nurbs_data_.knot_vectors_{1}))-1;
-                    N_2 = length(unique(this.nurbs_data_.knot_vectors_{2}))-1;
+                    direction = {[1 0] [0 1]}; 
                     
-                    mesh = mesh2d(N_1, N_2, 1, 1);
-                    position = this.evaluateNurbs(mesh.xI, 'position');
+                    for knot_p = unique_knot_vector{1}
+                        this.plotKnotLine([knot_p 0], direction{2}, Np(2));
+                    end
                     
-                    fv.vertices = position;
-                    fv.faces = mesh.connect;
-                    fv.facevertexcdata = ones(mesh.nn,1);
-                    patch(fv,'CDataMapping','scaled','EdgeColor','k','FaceColor','none','FaceAlpha',0.8);
+                    for knot_p = unique_knot_vector{2}
+                        this.plotKnotLine([0 knot_p], direction{1}, Np(1));
+                    end
                 case 3
                     Np = varargin{1};
-                    knot_1 = varargin{2};
-                    knot_2 = varargin{3};
-                    knot_3 = varargin{4};
+                    unique_knot_vector = varargin{2};
                     
                     % Plot surface nurbs using 3d basis functions
                     if length(knot_1) == 1
@@ -203,23 +215,77 @@ classdef NurbsTools
                     patch(fv,'CDataMapping','scaled','EdgeColor','none','FaceColor','interp','FaceAlpha',0.8);
                     
                     % Plot knot mesh using 3d basis functions
-                    if length(knot_1) == 1
-                        m = mesh2d(length(knot_2)-1, length(knot_3)-1, 1, 1);
-                        sample_pnt = [knot_1*ones(m.nn,1), m.xI(:,1), m.xI(:,2)];   
-                    elseif length(knot_2) == 1
-                        m = mesh2d(length(knot_1)-1, length(knot_3)-1, 1, 1);
-                        sample_pnt = [m.xI(:,1), knot_2*ones(m.nn,1), m.xI(:,2)];
-                    elseif length(knot_3) == 1
-                        m = mesh2d(length(knot_1)-1, length(knot_2)-1, 1, 1);
-                        sample_pnt = [m.xI(:,1), m.xI(:,2), knot_3*ones(m.nn,1)];
+                    direction = {[1 0 0]
+                                 [0 1 0]
+                                 [0 0 1]};
+                    
+                    % Start from the knot point from knot_1, generate
+                    % sample points along directions (+-)2 & (+-)3
+                    for knot_p = unique_knot_vector{1}
+                        this.plotKnotLine([knot_p 0 0], direction{2}, Np(2));
                     end
                     
-                    fv.vertices = this.evaluateNurbs(sample_pnt, 'position'); 
-                    fv.faces = m.connect;
-                    fv.facevertexcdata = ones(m.nn,1);
-                    patch(fv,'CDataMapping','scaled','EdgeColor','k','FaceColor','none','FaceAlpha',0.8);   
+                    for knot_p = unique_knot_vector{1}
+                        this.plotKnotLine([knot_p 1 1], -direction{2}, Np(2));
+                    end
+                     
+                    for knot_p = unique_knot_vector{1}
+                        this.plotKnotLine([knot_p 0 0], direction{3}, Np(3));
+                    end
+                    
+                    for knot_p = unique_knot_vector{1}
+                        this.plotKnotLine([knot_p 1 1], -direction{3}, Np(3));
+                    end
+                    % Start from the knot point from knot_2, generate
+                    % sample points along directions (+-)1 & (+-)3
+                    for knot_p = unique_knot_vector{2}
+                        this.plotKnotLine([0 knot_p 0], direction{1}, Np(1));
+                    end
+                    
+                    for knot_p = unique_knot_vector{2}
+                        this.plotKnotLine([1 knot_p 1], -direction{1}, Np(1));
+                    end
+                     
+                    for knot_p = unique_knot_vector{2}
+                        this.plotKnotLine([0 knot_p 0], direction{3}, Np(3));
+                    end
+                    
+                    for knot_p = unique_knot_vector{2}
+                        this.plotKnotLine([1 knot_p 1], -direction{3}, Np(3));
+                    end
+                    % Start from the knot point from knot_3, generate
+                    % sample points along directions (+-)1 & (+-)2
+                    for knot_p = unique_knot_vector{3}
+                        this.plotKnotLine([0 0 knot_p], direction{1}, Np(1));
+                    end
+                    
+                    for knot_p = unique_knot_vector{3}
+                        this.plotKnotLine([1 1 knot_p], -direction{1}, Np(1));
+                    end
+                     
+                    for knot_p = unique_knot_vector{3}
+                        this.plotKnotLine([0 0 knot_p], direction{2}, Np(2));
+                    end
+                    
+                    for knot_p = unique_knot_vector{3}
+                        this.plotKnotLine([1 1 knot_p], -direction{2}, Np(2));
+                    end
+         
             end
         end
+        
+        function plotKnotLine(this, pStart, direction, N)
+            t = linspace(0,1,N);
+            sample_pnt = zeros(N, size(pStart, 2));
+            
+            for i = 1:N
+                sample_pnt(i,:) = pStart + t(i)*direction;
+            end
+            
+            position = this.evaluateNurbs(sample_pnt, 'position');
+            plot3(position(:,1), position(:,2), position(:,3), 'k-');
+        end
+        
     end
     
 end

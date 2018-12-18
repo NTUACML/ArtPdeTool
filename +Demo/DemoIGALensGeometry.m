@@ -3,6 +3,8 @@ clc; clear; close all;
 
 %% create Geometry
 import Geometry.* 
+import Domain.*
+import Utility.NurbsUtility.*
 
 geo_container = cell(1,4);
 
@@ -18,27 +20,22 @@ geo_container{3} = GeometryBuilder.create('IGA', 'XML', xml_path);
 xml_path = './ArtPDE_IGA_Lens_top_right.art_geometry';
 geo_container{4} = GeometryBuilder.create('IGA', 'XML', xml_path);
 
+%% Domain create
+iga_domain = DomainBuilder.create('IGA');
+
+
 figure; hold all; view([0 90]); grid on; axis equal;
 for geo = geo_container
     nurbs_topology = geo{1}.topology_data_{1};
-    domain_patch = nurbs_topology.getDomainPatch();
-    nurbs_data = domain_patch.nurbs_data_;
     
-%     t_1 = linspace(0,1,5); t_1 = t_1(2:end-1);
-%     t_2 = t_1; bool = abs(t_2-0.5) < eps; t_2 = t_2(~bool);
-%     nurbs_data.knotInsertion({t_1 t_2});
+    %% Basis create
+    nurbs_basis = iga_domain.generateBasis(nurbs_topology);
     
-    % plot nurbs surface & bounday nurbs 
-    nurbs_data.plotNurbsSurface({[20 20] 'plotKnotMesh'});
-    
-%     for patch_key = keys(nurbs_topology.boundary_patch_data_)
-%         patch = nurbs_topology.getBoundayPatch(patch_key{1});
-%         pnt = patch.nurbs_data_.control_points_(:,1:2);
-%         pnt = [linspace(pnt(1,1), pnt(end,1), 21)' linspace(pnt(1,2), pnt(end,2), 21)'];
-%         
-%         position = domain_patch.nurbs_data_.evaluateNurbs(pnt);
-%         plot3(position(:,1), position(:,2), position(:,3), 'LineWidth', 1.5);
-%     end
+    %% Nurbs tools
+    nurbs_tool = NurbsTools(nurbs_basis);
+   
+    % plot nurbs surface & bounday nurbs
+    nurbs_tool.plotNurbs([20 20]);
 end
 hold off;
 
