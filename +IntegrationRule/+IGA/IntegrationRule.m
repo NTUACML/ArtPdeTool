@@ -89,7 +89,14 @@ classdef IntegrationRule < IntegrationRule.IntegrationRuleBase
                 integral_unit.quadrature_ = ...
                     GaussQuadrature.MappingNurbsType2GaussQuadrature(...
                     nurbs_data.type_, this.integral_unit_{int_unit_id}.unit_span_, number_quad_pnt);
-                % map to domain nurbs parametric coordinates
+                % map to domain domain nurbs parametric coordinates
+                % TODO: The evaluation functin is moved to nurbs_tool now.
+                % Hence we can not use nurbs_data to evaluate directly.
+                % More over, there is no boundary basis functions for
+                % boundary nurbs. In order to modify the problem, the
+                % boundary basis functinos need to be constructed when the
+                % basis functions object is created. The nurbs_tool will
+                % have the function that can compute the boundary nurbs 
                 integral_unit.quadrature_{2} = nurbs_data.evaluateNurbs(integral_unit.quadrature_{2});
                 
                 if length(nurbs_data.knot_vectors_) == 1

@@ -55,7 +55,7 @@ classdef Constraint < Constraint.ConstraintBase
             query_unit = QueryUnit();
             
             % Query at first parametric control point
-            xi = {control_points(1,1) control_points(1,2)};
+            xi = [control_points(1,1) control_points(1,2)];
             query_unit.query_protocol_ = {Region.Domain, xi};
             nurbs_basis.query(query_unit);
             
@@ -75,7 +75,7 @@ classdef Constraint < Constraint.ConstraintBase
             id_diff = non_zero_id(2)-non_zero_id(1);
             
             % Query at last parametric control point
-            xi = {control_points(end,1) control_points(end,2)};
+            xi = [control_points(end,1) control_points(end,2)];
             query_unit.query_protocol_ = {Region.Domain, xi};
             nurbs_basis.query(query_unit);
             

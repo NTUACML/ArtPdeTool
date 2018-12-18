@@ -6,7 +6,6 @@ import Utility.BasicUtility.*
 import Utility.NurbsUtility.*
 import Geometry.*
 import Domain.*
-import Operation.*
 %% Geometry data input
 % xml_path = './ArtPDE_IGA_3D_Lens.art_geometry';
 % xml_path = './ArtPDE_IGA_Plane4_refined.art_geometry';
@@ -25,10 +24,10 @@ iga_domain = DomainBuilder.create('IGA');
 %% Basis create
 nurbs_basis = iga_domain.generateBasis(geo.topology_data_{1});
 
-%% Nurbs tools
+%% Nurbs tools create
 nurbs_tool = NurbsTools(nurbs_basis);
 
-% Plot knot mesh
+% Plot knot mesh in parametric space
 figure; hold on; axis equal;
 nurbs_tool.plotParametricMesh();
 hold off;
@@ -38,7 +37,7 @@ figure; hold on; axis equal;
 nurbs_tool.plotNurbs();
 hold off;
 
-% Demo evaluate nurbs & derivatives
+% Evaluate nurbs & derivatives
 xi = rand(5, 2);
 
 [position] = nurbs_tool.evaluateNurbs(xi, 'position');

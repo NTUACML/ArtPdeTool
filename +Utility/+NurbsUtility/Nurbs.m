@@ -107,7 +107,7 @@ classdef Nurbs < handle
         end
     end
     
-    methods(Access = private)
+%     methods(Access = private)
 %         function DataUpdateByTool(this)
 %             if(~isempty(this.nurbs_tool_object_))
 %                 import Utility.BasicUtility.PointList
@@ -155,19 +155,6 @@ classdef Nurbs < handle
 %                 this.control_points_ = PointList(temp_point);
 %             end
 %         end
-        
-        % The following interfaces are considered to be moved in the next
-        % refactor
-        function degreeElevation(this, degree)
-            this.nurbs_tool_object_  = nrbdegelev(this.nurbs_tool_object_, degree);
-            this.DataUpdateByTool();
-        end
-        
-        function knotInsertion(this, knots)
-            this.nurbs_tool_object_ = nrbkntins(this.nurbs_tool_object_, knots);
-            this.DataUpdateByTool();
-        end
-
-    end
+%     end
 end
 
