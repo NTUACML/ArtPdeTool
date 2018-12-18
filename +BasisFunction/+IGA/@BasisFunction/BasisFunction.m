@@ -15,7 +15,7 @@ classdef BasisFunction < BasisFunction.BasisFunctionBase
             import BasisFunction.IGA.NurbsBasisFunction
             nurbs_data = this.topology_data_.domain_patch_data_.nurbs_data_;
 
-            this.Nurbs_basis_function_ = @(xi) NurbsBasisFunction.Nurbs_ShapeFunc( xi, num2cell(nurbs_data.order_), nurbs_data.knot_vectors_, nurbs_data.control_points_(:,4) );
+            this.Nurbs_basis_function_ = @(xi) NurbsBasisFunction.Nurbs_ShapeFunc( xi, nurbs_data.order_, nurbs_data.knot_vectors_, nurbs_data.control_points_(:,4) );
             status = true;
         end
         

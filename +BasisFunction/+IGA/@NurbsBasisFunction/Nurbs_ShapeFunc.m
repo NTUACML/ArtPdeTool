@@ -1,51 +1,81 @@
-function [ GlobalDof, R, dR_dxi ] = Nurbs_ShapeFunc( xi, p, knots, omega )
+function [ non_zero_id, R, dR_dxi ] = Nurbs_ShapeFunc( xi, order, knot_vectors, weightings )
 %NURBS_SHAPEFUNC Summary of this function goes here
 %   Detailed explanation goes here
+import Utility.BasicUtility.TensorProduct
 import BasisFunction.IGA.NurbsBasisFunction
 
-GlobalShapeFuncId =@(i, j, n) n .* (j-1) + i; 
-[span_id{1},ders{1}] = NurbsBasisFunction.DersBasisFuns(xi(:,1), p{1} , knots{1});
-[span_id{2},ders{2}] = NurbsBasisFunction.DersBasisFuns(xi(:,2), p{2} , knots{2});
-
-spanVec{1} = ((span_id{1} - p{1}) + 1 : span_id{1} + 1)';
-spanVec{2} = ((span_id{2} - p{2}) + 1 : span_id{2} + 1)';
-
-n = p{1} + 1;
-m = p{2} + 1;
-N = (length(knots{1})-1) - p{1};
-Dof = n * m;
-
-R = zeros(1, Dof);
-dR_dxi = zeros(2, Dof);
-GlobalDof = zeros(Dof, 1);
-
-sum_tol = 0;
-sum_xi = 0;
-sum_eta = 0;
-
-for j = 1 : m
-    uDof = GlobalShapeFuncId(spanVec{1}, spanVec{2}(j), N);
-    GlobalDof((j*n)-n+1: (j*n)) = uDof;
-    w_u = omega(uDof);
-    
-    % R
-    temp = (ders{2}(j, 1) .* ders{1}(:, 1)) .* w_u;
-    R(1, n * (j - 1) + 1 :  n * (j - 1) + n) = temp';
-    sum_tol = sum_tol + sum(temp); 
-    
-    % dR/dxi
-    temp = (ders{2}(j, 1) .* ders{1}(:, 2)) .* w_u;
-    dR_dxi(1, n * (j - 1) + 1 :  n * (j - 1) + n) = temp';
-    sum_xi = sum_xi + sum(temp);
-    
-    % dR/deta
-    temp = (ders{2}(j, 2) .* ders{1}(:, 1)) .* w_u;
-    dR_dxi(2, n * (j - 1) + 1 :  n * (j - 1) + n) = temp';
-    sum_eta = sum_eta + sum(temp);
+geoDim = length(knot_vectors);
+basis_number_ = zeros(1, geoDim);
+for i = 1:geoDim
+    basis_number_(i) = length(knot_vectors{i})-order(i)-1;
 end
 
-dR_dxi(1,:) = (dR_dxi(1,:) .* sum_tol - R .* sum_xi) ./ sum_tol.^2;
-dR_dxi(2,:) = (dR_dxi(2,:) .* sum_tol - R .* sum_eta) ./ sum_tol.^2;
+TD = TensorProduct(num2cell(basis_number_));
+
+% Evaluate basisfunction in each direction
+ders = cell(1,geoDim);
+spanVec = cell(1,geoDim);
+for i = 1:geoDim
+    [id, ders{i}] = NurbsBasisFunction.DersBasisFuns(xi(:,i), order(i) , knot_vectors{i});
+    spanVec{i} = ((id - order(1)) + 1 : id + 1)';
+end
+
+num_non_zero_basis = prod(order+1);
+R = zeros(1, num_non_zero_basis);
+dR_dxi = zeros(geoDim, num_non_zero_basis);
+non_zero_id = zeros(num_non_zero_basis, 1);
+
+% Multiply basis functions 
+sum_tol = 0;
+sum_xi = zeros(1, geoDim);
+cnt = 0;
+
+switch geoDim
+    case 1
+        for i = 1:length(spanVec{1})
+            cnt = cnt + 1;
+            
+            global_id = TD.to_global_index({spanVec{1}(i)});
+            non_zero_id(cnt) = global_id;
+            
+            % R
+            R(cnt) = ders{1}(i, 1) * weightings(global_id);
+            sum_tol = sum_tol + R(cnt);
+            
+            % dR/dxi
+            dR_dxi(1, cnt) = ders{1}(i, 2) * weightings(global_id);
+            sum_xi(1) = sum_xi(1) + dR_dxi(1, cnt);
+        end
+    case 2
+        for j = 1:length(spanVec{2})
+            for i = 1:length(spanVec{1})
+                cnt = cnt + 1;
+                
+                global_id = TD.to_global_index({spanVec{1}(i) spanVec{2}(j)});
+                non_zero_id(cnt) = global_id;
+                
+                % R
+                R(cnt) = (ders{1}(i, 1) * ders{2}(j, 1)) * weightings(global_id);
+                sum_tol = sum_tol + R(cnt);
+                
+                % dR/dxi
+                dR_dxi(1, cnt) = (ders{1}(i, 2) * ders{2}(j, 1)) * weightings(global_id);
+                sum_xi(1) = sum_xi(1) + dR_dxi(1, cnt);
+                
+                % dR/deta
+                dR_dxi(2, cnt) = (ders{1}(i, 1) * ders{2}(j, 2)) * weightings(global_id);
+                sum_xi(2) = sum_xi(2) + dR_dxi(2, cnt);
+            end
+        end
+    case 3
+        
+end
+
+
+for i = 1:geoDim
+    dR_dxi(i,:) = (dR_dxi(i,:) .* sum_tol - R .* sum_xi(i)) ./ sum_tol.^2;
+end
+
 R = R ./ sum_tol;
 
 end
