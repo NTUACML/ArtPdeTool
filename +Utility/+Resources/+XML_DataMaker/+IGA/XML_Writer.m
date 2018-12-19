@@ -1,10 +1,12 @@
 function XML_Writer
 clear all; clc; home
-%% Generate nurbs object
+
 import Utility.Resources.XML_DataMaker.IGA.NurbsGenerator
+
+%% Generate nurbs object
 % 'Plane4' 'Plane4_refined' 'Plane_quarter_hole' 
 % 'Lens_top_right' 'Lens_bottom_right' 'Lens_top_left' 'Lens_bottom_left' '3D_Lens_left'
-case_name = '3D_Lens_right';
+case_name = '3D_Lens_left';
 
 nurbs = NurbsGenerator(case_name);
 
@@ -88,6 +90,249 @@ end
 % /Unit/Patch (Boundary)
 switch geo_dim
     case '3'
+        import Utility.BasicUtility.TensorProduct
+        
+        % determine the knots prepared to be inserted into the knot vector
+        xi_i = unique(nurbs.knot_vectors_{1});
+        eta_i = unique(nurbs.knot_vectors_{2});
+        zeta_i = unique(nurbs.knot_vectors_{3});
+        
+        bool = abs(xi_i) < eps | abs(xi_i-1) < eps;
+        xi_i = xi_i(~bool);
+        
+        bool = abs(eta_i) < eps | abs(eta_i-1) < eps;
+        eta_i = eta_i(~bool);
+        
+        bool = abs(zeta_i) < eps | abs(zeta_i-1) < eps;
+        zeta_i = zeta_i(~bool);
+        
+        % CREATE BOUNDARY NURBS PATCH (ZETA = 1)
+        patch_node = DataNodeCreate('Patch', unit_node, doc_handle);
+        patch_node.setAttribute('region','Boundary');
+        patch_node.setAttribute('name','zeta_1');
+        
+        % /Unit/Patch/ControlPoint
+        CTPT_node = DataNodeCreate('ControlPoint', patch_node, doc_handle);
+        CTPT_node.setAttribute('dim','3');
+
+        % /Unit/Patch/ControlPoint/Point
+        surf = nrb4surf([0.0 0.0 1.0],[1.0 0.0 1.0],[0.0 1.0 1.0],[1.0 1.0 1.0]);
+        surf = nrbkntins(surf,{xi_i eta_i});
+      
+        TD = TensorProduct({surf.number(1) surf.number(2)});
+        for id = 1 : TD.total_num_
+            local = TD.to_local_index(id);
+            point_node = DataNodeCreate('Point', CTPT_node, doc_handle);
+            point_row_str = num2str(surf.coefs(:,local{1}, local{2})');
+            point_node.appendChild(doc_handle.createTextNode(point_row_str));
+        end
+        
+        % /Unit/Patch/Order
+        order_node = DataNodeCreate('Order', patch_node, doc_handle);
+        order_str = num2str(surf.order-1);
+        order_node.appendChild(doc_handle.createTextNode(order_str));
+        
+        % /Unit/Patch/Knot
+        knot_node = DataNodeCreate('Knot', patch_node, doc_handle);
+        
+        % /Unit/Patch/Knot/Vector
+        knot_data = surf.knots;
+        for i = 1 : size(knot_data, 2)
+            vector_node = DataNodeCreate('Vector', knot_node, doc_handle);
+            knot_row_str = num2str(knot_data{i});
+            vector_node.appendChild(doc_handle.createTextNode(knot_row_str));
+            vector_node.setAttribute('dof',num2str(length(knot_data{i})));
+        end 
+        
+        % CREATE BOUNDARY NURBS PATCH (ZETA = 0)
+        patch_node = DataNodeCreate('Patch', unit_node, doc_handle);
+        patch_node.setAttribute('region','Boundary');
+        patch_node.setAttribute('name','zeta_0');
+        
+        % /Unit/Patch/ControlPoint
+        CTPT_node = DataNodeCreate('ControlPoint', patch_node, doc_handle);
+        CTPT_node.setAttribute('dim','3');
+
+        % /Unit/Patch/ControlPoint/Point
+        surf = nrb4surf([0.0 0.0 0.0],[1.0 0.0 0.0],[0.0 1.0 0.0],[1.0 1.0 0.0]);
+        surf = nrbkntins(surf,{xi_i eta_i});
+      
+        TD = TensorProduct({surf.number(1) surf.number(2)});
+        for id = 1 : TD.total_num_
+            local = TD.to_local_index(id);
+            point_node = DataNodeCreate('Point', CTPT_node, doc_handle);
+            point_row_str = num2str(surf.coefs(:,local{1}, local{2})');
+            point_node.appendChild(doc_handle.createTextNode(point_row_str));
+        end
+        
+        % /Unit/Patch/Order
+        order_node = DataNodeCreate('Order', patch_node, doc_handle);
+        order_str = num2str(surf.order-1);
+        order_node.appendChild(doc_handle.createTextNode(order_str));
+        
+        % /Unit/Patch/Knot
+        knot_node = DataNodeCreate('Knot', patch_node, doc_handle);
+        
+        % /Unit/Patch/Knot/Vector
+        knot_data = surf.knots;
+        for i = 1 : size(knot_data, 2)
+            vector_node = DataNodeCreate('Vector', knot_node, doc_handle);
+            knot_row_str = num2str(knot_data{i});
+            vector_node.appendChild(doc_handle.createTextNode(knot_row_str));
+            vector_node.setAttribute('dof',num2str(length(knot_data{i})));
+        end 
+        
+        % CREATE BOUNDARY NURBS PATCH (ETA = 1)
+        patch_node = DataNodeCreate('Patch', unit_node, doc_handle);
+        patch_node.setAttribute('region','Boundary');
+        patch_node.setAttribute('name','eta_1');
+        
+        % /Unit/Patch/ControlPoint
+        CTPT_node = DataNodeCreate('ControlPoint', patch_node, doc_handle);
+        CTPT_node.setAttribute('dim','3');
+
+        % /Unit/Patch/ControlPoint/Point
+        surf = nrb4surf([0.0 1.0 0.0],[1.0 1.0 0.0],[0.0 1.0 1.0],[1.0 1.0 1.0]);
+        surf = nrbkntins(surf,{xi_i zeta_i});
+      
+        TD = TensorProduct({surf.number(1) surf.number(2)});
+        for id = 1 : TD.total_num_
+            local = TD.to_local_index(id);
+            point_node = DataNodeCreate('Point', CTPT_node, doc_handle);
+            point_row_str = num2str(surf.coefs(:,local{1}, local{2})');
+            point_node.appendChild(doc_handle.createTextNode(point_row_str));
+        end
+        
+        % /Unit/Patch/Order
+        order_node = DataNodeCreate('Order', patch_node, doc_handle);
+        order_str = num2str(surf.order-1);
+        order_node.appendChild(doc_handle.createTextNode(order_str));
+        
+        % /Unit/Patch/Knot
+        knot_node = DataNodeCreate('Knot', patch_node, doc_handle);
+        
+        % /Unit/Patch/Knot/Vector
+        knot_data = surf.knots;
+        for i = 1 : size(knot_data, 2)
+            vector_node = DataNodeCreate('Vector', knot_node, doc_handle);
+            knot_row_str = num2str(knot_data{i});
+            vector_node.appendChild(doc_handle.createTextNode(knot_row_str));
+            vector_node.setAttribute('dof',num2str(length(knot_data{i})));
+        end 
+        
+        % CREATE BOUNDARY NURBS PATCH (ETA = 0)
+        patch_node = DataNodeCreate('Patch', unit_node, doc_handle);
+        patch_node.setAttribute('region','Boundary');
+        patch_node.setAttribute('name','eta_0');
+        
+        % /Unit/Patch/ControlPoint
+        CTPT_node = DataNodeCreate('ControlPoint', patch_node, doc_handle);
+        CTPT_node.setAttribute('dim','3');
+
+        % /Unit/Patch/ControlPoint/Point
+        surf = nrb4surf([0.0 0.0 0.0],[1.0 0.0 0.0],[0.0 0.0 1.0],[1.0 0.0 1.0]);
+        surf = nrbkntins(surf,{xi_i zeta_i});
+      
+        TD = TensorProduct({surf.number(1) surf.number(2)});
+        for id = 1 : TD.total_num_
+            local = TD.to_local_index(id);
+            point_node = DataNodeCreate('Point', CTPT_node, doc_handle);
+            point_row_str = num2str(surf.coefs(:,local{1}, local{2})');
+            point_node.appendChild(doc_handle.createTextNode(point_row_str));
+        end
+        
+        % /Unit/Patch/Order
+        order_node = DataNodeCreate('Order', patch_node, doc_handle);
+        order_str = num2str(surf.order-1);
+        order_node.appendChild(doc_handle.createTextNode(order_str));
+        
+        % /Unit/Patch/Knot
+        knot_node = DataNodeCreate('Knot', patch_node, doc_handle);
+        
+        % /Unit/Patch/Knot/Vector
+        knot_data = surf.knots;
+        for i = 1 : size(knot_data, 2)
+            vector_node = DataNodeCreate('Vector', knot_node, doc_handle);
+            knot_row_str = num2str(knot_data{i});
+            vector_node.appendChild(doc_handle.createTextNode(knot_row_str));
+            vector_node.setAttribute('dof',num2str(length(knot_data{i})));
+        end 
+        
+        % CREATE BOUNDARY NURBS PATCH (XI = 1)
+        patch_node = DataNodeCreate('Patch', unit_node, doc_handle);
+        patch_node.setAttribute('region','Boundary');
+        patch_node.setAttribute('name','xi_1');
+        
+        % /Unit/Patch/ControlPoint
+        CTPT_node = DataNodeCreate('ControlPoint', patch_node, doc_handle);
+        CTPT_node.setAttribute('dim','3');
+
+        % /Unit/Patch/ControlPoint/Point
+        surf = nrb4surf([1.0 0.0 0.0],[1.0 1.0 0.0],[1.0 0.0 1.0],[1.0 1.0 1.0]);
+        surf = nrbkntins(surf,{eta_i zeta_i});
+      
+        TD = TensorProduct({surf.number(1) surf.number(2)});
+        for id = 1 : TD.total_num_
+            local = TD.to_local_index(id);
+            point_node = DataNodeCreate('Point', CTPT_node, doc_handle);
+            point_row_str = num2str(surf.coefs(:,local{1}, local{2})');
+            point_node.appendChild(doc_handle.createTextNode(point_row_str));
+        end
+        
+        % /Unit/Patch/Order
+        order_node = DataNodeCreate('Order', patch_node, doc_handle);
+        order_str = num2str(surf.order-1);
+        order_node.appendChild(doc_handle.createTextNode(order_str));
+        
+        % /Unit/Patch/Knot
+        knot_node = DataNodeCreate('Knot', patch_node, doc_handle);
+        
+        % /Unit/Patch/Knot/Vector
+        knot_data = surf.knots;
+        for i = 1 : size(knot_data, 2)
+            vector_node = DataNodeCreate('Vector', knot_node, doc_handle);
+            knot_row_str = num2str(knot_data{i});
+            vector_node.appendChild(doc_handle.createTextNode(knot_row_str));
+            vector_node.setAttribute('dof',num2str(length(knot_data{i})));
+        end 
+        
+        % CREATE BOUNDARY NURBS PATCH (XI = 0)
+        patch_node = DataNodeCreate('Patch', unit_node, doc_handle);
+        patch_node.setAttribute('region','Boundary');
+        patch_node.setAttribute('name','xi_0');
+        
+        % /Unit/Patch/ControlPoint
+        CTPT_node = DataNodeCreate('ControlPoint', patch_node, doc_handle);
+        CTPT_node.setAttribute('dim','3');
+
+        % /Unit/Patch/ControlPoint/Point
+        surf = nrb4surf([0.0 0.0 0.0],[0.0 1.0 0.0],[0.0 0.0 1.0],[0.0 1.0 1.0]);
+        surf = nrbkntins(surf,{eta_i zeta_i});
+      
+        TD = TensorProduct({surf.number(1) surf.number(2)});
+        for id = 1 : TD.total_num_
+            local = TD.to_local_index(id);
+            point_node = DataNodeCreate('Point', CTPT_node, doc_handle);
+            point_row_str = num2str(surf.coefs(:,local{1}, local{2})');
+            point_node.appendChild(doc_handle.createTextNode(point_row_str));
+        end
+        
+        % /Unit/Patch/Order
+        order_node = DataNodeCreate('Order', patch_node, doc_handle);
+        order_str = num2str(surf.order-1);
+        order_node.appendChild(doc_handle.createTextNode(order_str));
+        
+        % /Unit/Patch/Knot
+        knot_node = DataNodeCreate('Knot', patch_node, doc_handle);
+        
+        % /Unit/Patch/Knot/Vector
+        knot_data = surf.knots;
+        for i = 1 : size(knot_data, 2)
+            vector_node = DataNodeCreate('Vector', knot_node, doc_handle);
+            knot_row_str = num2str(knot_data{i});
+            vector_node.appendChild(doc_handle.createTextNode(knot_row_str));
+            vector_node.setAttribute('dof',num2str(length(knot_data{i})));
+        end 
         
     case '2'
         % determine the knots prepared to be inserted into the knot vector
@@ -101,7 +346,7 @@ switch geo_dim
         eta_i = eta_i(~bool);
         
         
-        % top boundary nurbs patch
+        % CREATE TOP BOUNDARY NURBS PATCH 
         patch_node = DataNodeCreate('Patch', unit_node, doc_handle);
         patch_node.setAttribute('region','Boundary');
         patch_node.setAttribute('name','top');
@@ -111,10 +356,8 @@ switch geo_dim
         CTPT_node.setAttribute('dim','3');
 
         % /Unit/Patch/ControlPoint/Point
-%         point_data = [0 1 0 1;
-%                       1 1 0 1];
         crv = nrbline([0 1 0]',[1 1 0]');   
-        crv = nrbdegelev(crv, nurbs.order_(1)-(crv.order-1));
+%         crv = nrbdegelev(crv, nurbs.order_(1)-(crv.order-1));
         crv = nrbkntins(crv,xi_i);
       
         point_data = crv.coefs';       
@@ -141,7 +384,7 @@ switch geo_dim
             vector_node.setAttribute('dof',num2str(length(knot_data{i})));
         end 
         
-        % bottom boundary nurbs patch
+        % CREATE BOTTOM BOUNDARY NURBS PATCH
         patch_node = DataNodeCreate('Patch', unit_node, doc_handle);
         patch_node.setAttribute('region','Boundary');
         patch_node.setAttribute('name','bottom');
@@ -151,10 +394,8 @@ switch geo_dim
         CTPT_node.setAttribute('dim','3');
 
         % /Unit/Patch/ControlPoint/Point
-%         point_data = [0 0 0 1;
-%                       1 0 0 1];
         crv = nrbline([0 0 0]',[1 0 0]');
-        crv = nrbdegelev(crv, nurbs.order_(1)-(crv.order-1));
+%         crv = nrbdegelev(crv, nurbs.order_(1)-(crv.order-1));
         crv = nrbkntins(crv,xi_i);
       
         point_data = crv.coefs';                            
@@ -181,7 +422,7 @@ switch geo_dim
             vector_node.setAttribute('dof',num2str(length(knot_data{i})));
         end 
         
-        % top boundary nurbs patch
+        % CREATE LEFT BOUNDARY NURBS PATCH
         patch_node = DataNodeCreate('Patch', unit_node, doc_handle);
         patch_node.setAttribute('region','Boundary');
         patch_node.setAttribute('name','left');
@@ -191,10 +432,8 @@ switch geo_dim
         CTPT_node.setAttribute('dim','3');
 
         % /Unit/Patch/ControlPoint/Point
-%         point_data = [0 0 0 1;
-%                       0 1 0 1];
         crv = nrbline([0 0 0]',[0 1 0]');
-        crv = nrbdegelev(crv, nurbs.order_(2)-(crv.order-1));
+%         crv = nrbdegelev(crv, nurbs.order_(2)-(crv.order-1));
         crv = nrbkntins(crv,eta_i);
       
         point_data = crv.coefs';                   
@@ -221,7 +460,7 @@ switch geo_dim
             vector_node.setAttribute('dof',num2str(length(knot_data{i})));
         end 
         
-        % top boundary nurbs patch
+        % CREATE RIGHT BOUNDARY NURBS PATCH
         patch_node = DataNodeCreate('Patch', unit_node, doc_handle);
         patch_node.setAttribute('region','Boundary');
         patch_node.setAttribute('name','right');
@@ -231,10 +470,8 @@ switch geo_dim
         CTPT_node.setAttribute('dim','3');
 
         % /Unit/Patch/ControlPoint/Point
-%         point_data = [1 0 0 1;
-%                       1 1 0 1];
         crv = nrbline([1 0 0]',[1 1 0]');
-        crv = nrbdegelev(crv, nurbs.order_(2)-(crv.order-1));
+%         crv = nrbdegelev(crv, nurbs.order_(2)-(crv.order-1));
         crv = nrbkntins(crv,eta_i);
       
         point_data = crv.coefs';

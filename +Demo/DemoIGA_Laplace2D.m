@@ -1,4 +1,4 @@
-function DemoIGA_Laplace
+function DemoIGA_Laplace2D
 clc; clear; close all;
 
 %% Include package

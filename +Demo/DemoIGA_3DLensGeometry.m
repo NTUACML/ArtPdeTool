@@ -26,15 +26,10 @@ nurbs_tool{1} = NurbsTools(nurbs_basis{1});
 nurbs_tool{2} = NurbsTools(nurbs_basis{2});
 
 % Plot nurbs
-figure; hold on; axis equal; grid on;
-nurbs_tool{1}.plotNurbs([15 15 15]);
-nurbs_tool{2}.plotNurbs([15 15 15]);
+figure; hold on; axis equal; grid on; view([30 25]);
+nurbs_tool{1}.plotNurbs([21 21 21]);
+nurbs_tool{2}.plotNurbs([21 21 21]);
 hold off;
-
-
-
-
-
 
 end
 
