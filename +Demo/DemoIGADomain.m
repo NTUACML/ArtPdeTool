@@ -29,7 +29,7 @@ query_unit = QueryUnit();
 for i = 1:5
     % Query basis function point by point
     xi = rand(1,2);
-    query_unit.query_protocol_ = {Region.Domain, xi};
+    query_unit.query_protocol_ = {Region.Domain, xi, 1};
     nurbs_basis.query(query_unit);
     
     non_zero_id = query_unit.non_zero_id_;

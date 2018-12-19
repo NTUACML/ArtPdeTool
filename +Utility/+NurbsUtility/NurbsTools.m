@@ -70,17 +70,20 @@ classdef NurbsTools
             end
             
             for i = 1:size(xi,1)
-                query_unit.query_protocol_ = {Region.Domain, xi(i,:)};
-                this.basis_function_.query(query_unit);
-                
-                non_zero_id = query_unit.non_zero_id_;
-                
                 for case_name = varargin
                     switch case_name{1}
                         case 'position'
+                            query_unit.query_protocol_ = {Region.Domain, xi(i,:), 0};
+                            this.basis_function_.query(query_unit);
+                            
+                            non_zero_id = query_unit.non_zero_id_;
                             R = query_unit.evaluate_basis_{1};
                             position(i,:) = R * this.nurbs_data_.control_points_(non_zero_id,1:3);
                         case 'gradient'
+                            query_unit.query_protocol_ = {Region.Domain, xi(i,:), 1};
+                            this.basis_function_.query(query_unit);
+                            
+                            non_zero_id = query_unit.non_zero_id_;
                             for dim_i = 1:geo_dim
                                 temp = query_unit.evaluate_basis_{2}(dim_i,:);
                                 gradient{dim_i}(i,:) = temp * this.nurbs_data_.control_points_(non_zero_id,1:3);

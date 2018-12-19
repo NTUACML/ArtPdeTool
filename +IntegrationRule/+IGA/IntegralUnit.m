@@ -15,7 +15,7 @@ classdef IntegralUnit < BasisFunction.IGA.QueryUnit
             this@BasisFunction.IGA.QueryUnit();
             this.int_region_ = region;
             this.unit_span_ = unit_span;
-            this.query_protocol_ = {this.int_region_, this.xi_};
+            this.query_protocol_{1} = this.int_region_; 
             if this.int_region_ == Region.Boundary
                 this.modifyQueryProtocol();
             end
