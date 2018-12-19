@@ -17,7 +17,7 @@ ders = cell(1,geoDim);
 spanVec = cell(1,geoDim);
 for i = 1:geoDim
     [id, ders{i}] = NurbsBasisFunction.DersBasisFuns(xi(:,i), order(i) , knot_vectors{i}, content);
-    spanVec{i} = ((id - order(1)) + 1 : id + 1)';
+    spanVec{i} = ((id - order(i)) + 1 : id + 1)';
 end
 
 num_non_zero_basis = prod(order+1);
