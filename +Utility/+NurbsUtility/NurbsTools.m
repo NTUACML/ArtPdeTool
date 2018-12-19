@@ -70,17 +70,20 @@ classdef NurbsTools
             end
             
             for i = 1:size(xi,1)
-                query_unit.query_protocol_ = {Region.Domain, xi(i,:)};
-                this.basis_function_.query(query_unit);
-                
-                non_zero_id = query_unit.non_zero_id_;
-                
                 for case_name = varargin
                     switch case_name{1}
                         case 'position'
+                            query_unit.query_protocol_ = {Region.Domain, xi(i,:), 0};
+                            this.basis_function_.query(query_unit);
+                            
+                            non_zero_id = query_unit.non_zero_id_;
                             R = query_unit.evaluate_basis_{1};
                             position(i,:) = R * this.nurbs_data_.control_points_(non_zero_id,1:3);
                         case 'gradient'
+                            query_unit.query_protocol_ = {Region.Domain, xi(i,:), 1};
+                            this.basis_function_.query(query_unit);
+                            
+                            non_zero_id = query_unit.non_zero_id_;
                             for dim_i = 1:geo_dim
                                 temp = query_unit.evaluate_basis_{2}(dim_i,:);
                                 gradient{dim_i}(i,:) = temp * this.nurbs_data_.control_points_(non_zero_id,1:3);
@@ -139,6 +142,64 @@ classdef NurbsTools
                     % Plot front face
                     unique_knot_vector = {1, unique_knot_2, unique_knot_3};
                     this.plotSurfaceNurbs(N, unique_knot_vector);
+                    
+                    % Plot knot mesh using 3d basis functions
+                    direction = {[1 0 0]
+                        [0 1 0]
+                        [0 0 1]};
+                    
+                    % Start from the knot point from knot_1, generate
+                    % sample points along directions (+-)2 & (+-)3
+                    for knot_p = unique_knot_vector{1}
+                        this.plotKnotLine([knot_p 0 0], direction{2}, N(2));
+                    end
+                    
+                    for knot_p = unique_knot_vector{1}
+                        this.plotKnotLine([knot_p 1 1], -direction{2}, N(2));
+                    end
+                    
+                    for knot_p = unique_knot_vector{1}
+                        this.plotKnotLine([knot_p 0 0], direction{3}, N(3));
+                    end
+                    
+                    for knot_p = unique_knot_vector{1}
+                        this.plotKnotLine([knot_p 1 1], -direction{3}, N(3));
+                    end
+                    % Start from the knot point from knot_2, generate
+                    % sample points along directions (+-)1 & (+-)3
+                    for knot_p = unique_knot_vector{2}
+                        this.plotKnotLine([0 knot_p 0], direction{1}, N(1));
+                    end
+                    
+                    for knot_p = unique_knot_vector{2}
+                        this.plotKnotLine([1 knot_p 1], -direction{1}, N(1));
+                    end
+                    
+                    for knot_p = unique_knot_vector{2}
+                        this.plotKnotLine([0 knot_p 0], direction{3}, N(3));
+                    end
+                    
+                    for knot_p = unique_knot_vector{2}
+                        this.plotKnotLine([1 knot_p 1], -direction{3}, N(3));
+                    end
+                    % Start from the knot point from knot_3, generate
+                    % sample points along directions (+-)1 & (+-)2
+                    for knot_p = unique_knot_vector{3}
+                        this.plotKnotLine([0 0 knot_p], direction{1}, N(1));
+                    end
+                    
+                    for knot_p = unique_knot_vector{3}
+                        this.plotKnotLine([1 1 knot_p], -direction{1}, N(1));
+                    end
+                    
+                    for knot_p = unique_knot_vector{3}
+                        this.plotKnotLine([0 0 knot_p], direction{2}, N(2));
+                    end
+                    
+                    for knot_p = unique_knot_vector{3}
+                        this.plotKnotLine([1 1 knot_p], -direction{2}, N(2));
+                    end
+                    
             end
         end
  
@@ -204,79 +265,21 @@ classdef NurbsTools
                     unique_knot_vector = varargin{2};
                     
                     % Plot surface nurbs using 3d basis functions
-                    if length(knot_1) == 1
+                    if length(unique_knot_vector{1}) == 1
                         m = mesh2d(Np(2), Np(3), 1, 1);
-                        sample_pnt = [knot_1*ones(m.nn,1), m.xI(:,1), m.xI(:,2)];
-                    elseif length(knot_2) == 1
+                        sample_pnt = [unique_knot_vector{1}*ones(m.nn,1), m.xI(:,1), m.xI(:,2)];
+                    elseif length(unique_knot_vector{2}) == 1
                         m = mesh2d(Np(1), Np(3), 1, 1);
-                        sample_pnt = [m.xI(:,1), knot_2*ones(m.nn,1), m.xI(:,2)];
-                    elseif length(knot_3) == 1
+                        sample_pnt = [m.xI(:,1), unique_knot_vector{2}*ones(m.nn,1), m.xI(:,2)];
+                    elseif length(unique_knot_vector{3}) == 1
                         m = mesh2d(Np(1), Np(2), 1, 1);
-                        sample_pnt = [m.xI(:,1), m.xI(:,2), knot_3*ones(m.nn,1)];
+                        sample_pnt = [m.xI(:,1), m.xI(:,2), unique_knot_vector{3}*ones(m.nn,1)];
                     end
                     
                     fv.vertices = this.evaluateNurbs(sample_pnt, 'position');
                     fv.faces = m.connect;
                     fv.facevertexcdata = ones(m.nn,1);
                     patch(fv,'CDataMapping','scaled','EdgeColor','none','FaceColor','interp','FaceAlpha',0.8);
-                    
-                    % Plot knot mesh using 3d basis functions
-                    direction = {[1 0 0]
-                        [0 1 0]
-                        [0 0 1]};
-                    
-                    % Start from the knot point from knot_1, generate
-                    % sample points along directions (+-)2 & (+-)3
-                    for knot_p = unique_knot_vector{1}
-                        this.plotKnotLine([knot_p 0 0], direction{2}, Np(2));
-                    end
-                    
-                    for knot_p = unique_knot_vector{1}
-                        this.plotKnotLine([knot_p 1 1], -direction{2}, Np(2));
-                    end
-                    
-                    for knot_p = unique_knot_vector{1}
-                        this.plotKnotLine([knot_p 0 0], direction{3}, Np(3));
-                    end
-                    
-                    for knot_p = unique_knot_vector{1}
-                        this.plotKnotLine([knot_p 1 1], -direction{3}, Np(3));
-                    end
-                    % Start from the knot point from knot_2, generate
-                    % sample points along directions (+-)1 & (+-)3
-                    for knot_p = unique_knot_vector{2}
-                        this.plotKnotLine([0 knot_p 0], direction{1}, Np(1));
-                    end
-                    
-                    for knot_p = unique_knot_vector{2}
-                        this.plotKnotLine([1 knot_p 1], -direction{1}, Np(1));
-                    end
-                    
-                    for knot_p = unique_knot_vector{2}
-                        this.plotKnotLine([0 knot_p 0], direction{3}, Np(3));
-                    end
-                    
-                    for knot_p = unique_knot_vector{2}
-                        this.plotKnotLine([1 knot_p 1], -direction{3}, Np(3));
-                    end
-                    % Start from the knot point from knot_3, generate
-                    % sample points along directions (+-)1 & (+-)2
-                    for knot_p = unique_knot_vector{3}
-                        this.plotKnotLine([0 0 knot_p], direction{1}, Np(1));
-                    end
-                    
-                    for knot_p = unique_knot_vector{3}
-                        this.plotKnotLine([1 1 knot_p], -direction{1}, Np(1));
-                    end
-                    
-                    for knot_p = unique_knot_vector{3}
-                        this.plotKnotLine([0 0 knot_p], direction{2}, Np(2));
-                    end
-                    
-                    for knot_p = unique_knot_vector{3}
-                        this.plotKnotLine([1 1 knot_p], -direction{2}, Np(2));
-                    end
-                    
             end
         end
         

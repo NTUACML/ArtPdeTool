@@ -14,6 +14,12 @@ classdef BilinearExpression < Expression.IGA.Expression
             import Utility.BasicUtility.AssemblyType
             type = AssemblyType.Matrix;
             var = {this.test_; this.var_};
+            
+            % TODO:In bilinear form consisting of multiplication of derivatives
+            % of shape & test, first order derivatives are necessary. Try
+            % to improve this process, make it automatic.
+            query_unit.query_protocol_{3} = 1;
+            
             % Get quadrature
             num_q = query_unit.quadrature_{1};
             qx = query_unit.quadrature_{2};
