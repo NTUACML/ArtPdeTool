@@ -6,7 +6,7 @@ import Utility.Resources.XML_DataMaker.IGA.NurbsGenerator
 %% Generate nurbs object
 % 'Plane4' 'Plane4_refined' 'Plane_quarter_hole' 
 % 'Lens_top_right' 'Lens_bottom_right' 'Lens_top_left' 'Lens_bottom_left' '3D_Lens_left'
-case_name = '3D_Lens_left';
+case_name = 'Plane4_refined';
 
 nurbs = NurbsGenerator(case_name);
 
@@ -346,10 +346,10 @@ switch geo_dim
         eta_i = eta_i(~bool);
         
         
-        % CREATE TOP BOUNDARY NURBS PATCH 
+        % CREATE BOUNDARY NURBS PATCH (ETA = 1)
         patch_node = DataNodeCreate('Patch', unit_node, doc_handle);
         patch_node.setAttribute('region','Boundary');
-        patch_node.setAttribute('name','top');
+        patch_node.setAttribute('name','eta_1');
         
         % /Unit/Patch/ControlPoint
         CTPT_node = DataNodeCreate('ControlPoint', patch_node, doc_handle);
@@ -357,7 +357,6 @@ switch geo_dim
 
         % /Unit/Patch/ControlPoint/Point
         crv = nrbline([0 1 0]',[1 1 0]');   
-%         crv = nrbdegelev(crv, nurbs.order_(1)-(crv.order-1));
         crv = nrbkntins(crv,xi_i);
       
         point_data = crv.coefs';       
@@ -384,10 +383,10 @@ switch geo_dim
             vector_node.setAttribute('dof',num2str(length(knot_data{i})));
         end 
         
-        % CREATE BOTTOM BOUNDARY NURBS PATCH
+        % CREATE BOUNDARY NURBS PATCH (ETA = 0)
         patch_node = DataNodeCreate('Patch', unit_node, doc_handle);
         patch_node.setAttribute('region','Boundary');
-        patch_node.setAttribute('name','bottom');
+        patch_node.setAttribute('name','eta_0');
         
         % /Unit/Patch/ControlPoint
         CTPT_node = DataNodeCreate('ControlPoint', patch_node, doc_handle);
@@ -395,7 +394,6 @@ switch geo_dim
 
         % /Unit/Patch/ControlPoint/Point
         crv = nrbline([0 0 0]',[1 0 0]');
-%         crv = nrbdegelev(crv, nurbs.order_(1)-(crv.order-1));
         crv = nrbkntins(crv,xi_i);
       
         point_data = crv.coefs';                            
@@ -422,10 +420,10 @@ switch geo_dim
             vector_node.setAttribute('dof',num2str(length(knot_data{i})));
         end 
         
-        % CREATE LEFT BOUNDARY NURBS PATCH
+        % CREATE BOUNDARY NURBS PATCH (XI = 0)
         patch_node = DataNodeCreate('Patch', unit_node, doc_handle);
         patch_node.setAttribute('region','Boundary');
-        patch_node.setAttribute('name','left');
+        patch_node.setAttribute('name','xi_0');
         
         % /Unit/Patch/ControlPoint
         CTPT_node = DataNodeCreate('ControlPoint', patch_node, doc_handle);
@@ -433,7 +431,6 @@ switch geo_dim
 
         % /Unit/Patch/ControlPoint/Point
         crv = nrbline([0 0 0]',[0 1 0]');
-%         crv = nrbdegelev(crv, nurbs.order_(2)-(crv.order-1));
         crv = nrbkntins(crv,eta_i);
       
         point_data = crv.coefs';                   
@@ -460,10 +457,10 @@ switch geo_dim
             vector_node.setAttribute('dof',num2str(length(knot_data{i})));
         end 
         
-        % CREATE RIGHT BOUNDARY NURBS PATCH
+        % CREATE RIGHT BOUNDARY NURBS PATCH (XI = 1)
         patch_node = DataNodeCreate('Patch', unit_node, doc_handle);
         patch_node.setAttribute('region','Boundary');
-        patch_node.setAttribute('name','right');
+        patch_node.setAttribute('name','xi_1');
         
         % /Unit/Patch/ControlPoint
         CTPT_node = DataNodeCreate('ControlPoint', patch_node, doc_handle);
@@ -471,7 +468,6 @@ switch geo_dim
 
         % /Unit/Patch/ControlPoint/Point
         crv = nrbline([1 0 0]',[1 1 0]');
-%         crv = nrbdegelev(crv, nurbs.order_(2)-(crv.order-1));
         crv = nrbkntins(crv,eta_i);
       
         point_data = crv.coefs';

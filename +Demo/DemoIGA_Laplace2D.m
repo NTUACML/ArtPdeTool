@@ -41,18 +41,22 @@ doamin_patch = nurbs_topology.getDomainPatch();
 iga_domain.calIntegral(doamin_patch, exp1);
 
 %% Constraint (Acquire prescribed D.O.F.)
-bdr_patch = nurbs_topology.getBoundayPatch('bottom');
+bdr_patch = nurbs_topology.getBoundayPatch('xi_0');
 iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
 
-bdr_patch = nurbs_topology.getBoundayPatch('left');
+bdr_patch = nurbs_topology.getBoundayPatch('xi_1');
 iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
 
-bdr_patch = nurbs_topology.getBoundayPatch('right');
+bdr_patch = nurbs_topology.getBoundayPatch('eta_0');
 iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
 
-bdr_patch = nurbs_topology.getBoundayPatch('top');
+bdr_patch = nurbs_topology.getBoundayPatch('eta_1');
 iga_domain.generateConstraint(bdr_patch, var_t, {1, @()1});
 
+for key = keys(iga_domain.constraint_)
+    constraint = iga_domain.constraint_(key{1});
+    constraint.debugMode();
+end
 %% Solve domain equation system
 iga_domain.solve('default');
 
@@ -68,7 +72,7 @@ fv.facevertexcdata = data;
 patch(fv,'CDataMapping','scaled','EdgeColor',[.7 .7 .7],'FaceColor','interp','FaceAlpha',1);
 grid on;
 title('ArtPDE Laplace problem... (IGA)')
-view([40 30]);
+view([0 90]);
 %% Show result
 %disp(var_t);
 end
