@@ -34,37 +34,6 @@ classdef Nurbs < handle
             
             import Utility.BasicUtility.PointList
             this.control_points_ = control_point_list;
-            
-%             % generate nurbs toolbox object
-%             import Utility.BasicUtility.TensorProduct
-%             if this.geometry_dimension_ == 1
-%                 control_pnt = zeros(4,this.basis_number_(1));
-%                 TD_1 = TensorProduct({this.basis_number_(1)});
-%                 for i = 1:this.basis_number_(1)
-%                     global_id = TD_1.to_global_index({i});
-%                     control_pnt(:,i) = control_point_list(global_id,:)';
-%                     % multiply by weighting
-%                     control_pnt(1:end-1,i) = control_pnt(1:end-1,i)*control_pnt(end,i);
-%                 end
-%                 this.nurbs_tool_object_ = nrbmak(control_pnt, knot_vectors{1});
-%             elseif this.geometry_dimension_ == 2
-%                 control_pnt = zeros(4,this.basis_number_(1), this.basis_number_(2));
-%                 TD_2 = TensorProduct({this.basis_number_(1) this.basis_number_(2)});
-%                 for j = 1:this.basis_number_(2)
-%                     for i = 1:this.basis_number_(1)
-%                         global_id = TD_2.to_global_index({i j});
-% %                         n = (j-1)*this.basis_number_(1)+i;
-%                         control_pnt(:,i,j) = control_point_list(global_id,:)';
-%                         % multiply by weighting
-%                         control_pnt(1:end-1,i,j) = control_pnt(1:end-1,i,j)*control_pnt(end,i,j);
-%                     end
-%                 end
-%                 this.nurbs_tool_object_ = nrbmak(control_pnt, knot_vectors);
-%             elseif this.geometry_dimension_ == 3
-%                 
-%                 
-%                 disp('Currently not support nurbs solid!');
-%             end
         end
         
         function dim = getGeometryDimension(this)
@@ -106,55 +75,5 @@ classdef Nurbs < handle
             end
         end
     end
-    
-%     methods(Access = private)
-%         function DataUpdateByTool(this)
-%             if(~isempty(this.nurbs_tool_object_))
-%                 import Utility.BasicUtility.PointList
-%                 % Update - basis_number
-%                 this.basis_number_ = this.nurbs_tool_object_.number;
-%                 % Update - order
-%                 this.order_ = this.nurbs_tool_object_.order - 1;
-%                 % Update - knot_vectors
-%                 if iscell(this.nurbs_tool_object_.knots)
-%                     this.knot_vectors_ = this.nurbs_tool_object_.knots;
-%                 else
-%                     this.knot_vectors_ = {this.nurbs_tool_object_.knots};
-%                 end
-%                 % Update - control_points
-%                 temp_point = zeros(prod(this.basis_number_), 4);
-%                 
-%                 import Utility.BasicUtility.TensorProduct
-%                 if this.geometry_dimension_ == 1
-%                     TD_1 = TensorProduct({this.basis_number_(1)});
-%                     for i = 1:this.basis_number_(1)
-%                         global_id = TD_1.to_global_index({i});
-%                         temp_point(global_id,:) = this.nurbs_tool_object_.coefs(:,i,:)';
-%                     end
-%                 elseif this.geometry_dimension_ == 2
-%                     TD_2 = TensorProduct({this.basis_number_(1) this.basis_number_(2)});
-%                     for j = 1:this.basis_number_(2)
-%                         for i = 1:this.basis_number_(1)
-%                             global_id = TD_2.to_global_index({i j});
-%                             temp_point(global_id,:) = this.nurbs_tool_object_.coefs(:,i,j)';
-%                         end
-%                     end
-%                 elseif this.geometry_dimension_ == 3
-%                     disp('Error <Nurbs>! - DataUpdateByTool');
-%                     disp('> Currently not support nurbs solid!');
-%                 end
-%                 
-%     
-%                 % the coordinates of control points from nurbs_tool_box containe
-%                 % weighting, we have to normalize them to obtain the PHYSICAL
-%                 % coordinates
-%                 temp_point(:,1) = temp_point(:,1)./temp_point(:,4);
-%                 temp_point(:,2) = temp_point(:,2)./temp_point(:,4);
-%                 temp_point(:,3) = temp_point(:,3)./temp_point(:,4);
-% 
-%                 this.control_points_ = PointList(temp_point);
-%             end
-%         end
-%     end
 end
 

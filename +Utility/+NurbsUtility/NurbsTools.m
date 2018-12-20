@@ -1,7 +1,4 @@
 classdef NurbsTools
-    %NURBSTOOLS Summary of this class goes here
-    %   Detailed explanation goes here
-    
     properties(Access = private)
         basis_function_
         nurbs_data_
@@ -202,10 +199,36 @@ classdef NurbsTools
                     
             end
         end
- 
-    end
-    
-    methods(Access = private)
+        
+        function plotControlMesh(this)
+            geo_dim = this.nurbs_data_.getGeometryDimension();
+            
+            switch geo_dim
+                case 1
+                    plot3(this.nurbs_data_.control_points_(:,1), this.nurbs_data_.control_points_(:,2), this.nurbs_data_.control_points_(:,3), '--ro');
+                case 2
+                    plot3(this.nurbs_data_.control_points_(:,1), this.nurbs_data_.control_points_(:,2), this.nurbs_data_.control_points_(:,3), 'ro');
+                    
+                    import Utility.Resources.mesh2d
+                    mesh = mesh2d(this.nurbs_data_.basis_number_(1)-1, this.nurbs_data_.basis_number_(2)-1, 1, 1);
+                    
+                    import Utility.Resources.quadplot
+                    quadplot(mesh.connect, this.nurbs_data_.control_points_(:,1), this.nurbs_data_.control_points_(:,2), this.nurbs_data_.control_points_(:,3));
+                case 3
+%                     TODO: problem with 3D plotting knot mesh
+%                     plot3(this.nurbs_data_.control_points_(:,1), this.nurbs_data_.control_points_(:,2), this.nurbs_data_.control_points_(:,3), 'ro');
+%                     
+%                     import Utility.Resources.mesh3d
+%                     mesh = mesh3d(this.nurbs_data_.basis_number_(1)-1, this.nurbs_data_.basis_number_(2)-1, this.nurbs_data_.basis_number_(3)-1, 1, 1, 1);
+%                     
+%                     import Utility.Resources.hexaplot
+%                     hexaplot(mesh.connect, this.nurbs_data_.control_points_(:,1), this.nurbs_data_.control_points_(:,2), this.nurbs_data_.control_points_(:,3));
+            end
+            
+            
+        end
+        
+        % TODO: finish these functions
         function degreeElevation(this, degree)
             disp('Under development');
         end
@@ -213,23 +236,26 @@ classdef NurbsTools
         function knotInsertion(this, knots)
             disp('Under development');
         end
-        
+ 
+    end
+    
+    methods(Access = private)
         function plotMeshPatch(~, knot_1, knot_2, knot_3)
             import Utility.Resources.mesh2d
             
             if length(knot_1) == 1
                 m = mesh2d(length(knot_2)-1, length(knot_3)-1, 1, 1);
-                fv.vertices = [knot_1*ones(m.nn,1), m.xI(:,1), m.xI(:,2)];
+                fv.vertices = [knot_1*ones(m.node_number,1), m.node(:,1), m.node(:,2)];
             elseif length(knot_2) == 1
                 m = mesh2d(length(knot_1)-1, length(knot_3)-1, 1, 1);
-                fv.vertices = [m.xI(:,1), knot_2*ones(m.nn,1), m.xI(:,2)];
+                fv.vertices = [m.node(:,1), knot_2*ones(m.node_number,1), m.node(:,2)];
             elseif length(knot_3) == 1
                 m = mesh2d(length(knot_1)-1, length(knot_2)-1, 1, 1);
-                fv.vertices = [m.xI(:,1), m.xI(:,2), knot_3*ones(m.nn,1)];
+                fv.vertices = [m.node(:,1), m.node(:,2), knot_3*ones(m.node_number,1)];
             end
             
             fv.faces = m.connect;
-            fv.facevertexcdata = ones(m.nn,1);
+            fv.facevertexcdata = ones(m.node_number,1);
             patch(fv,'CDataMapping','scaled','EdgeColor','k','FaceColor','interp','FaceAlpha',0.8);
         end
         
@@ -267,18 +293,18 @@ classdef NurbsTools
                     % Plot surface nurbs using 3d basis functions
                     if length(unique_knot_vector{1}) == 1
                         m = mesh2d(Np(2), Np(3), 1, 1);
-                        sample_pnt = [unique_knot_vector{1}*ones(m.nn,1), m.xI(:,1), m.xI(:,2)];
+                        sample_pnt = [unique_knot_vector{1}*ones(m.node_number,1), m.node(:,1), m.node(:,2)];
                     elseif length(unique_knot_vector{2}) == 1
                         m = mesh2d(Np(1), Np(3), 1, 1);
-                        sample_pnt = [m.xI(:,1), unique_knot_vector{2}*ones(m.nn,1), m.xI(:,2)];
+                        sample_pnt = [m.node(:,1), unique_knot_vector{2}*ones(m.node_number,1), m.node(:,2)];
                     elseif length(unique_knot_vector{3}) == 1
                         m = mesh2d(Np(1), Np(2), 1, 1);
-                        sample_pnt = [m.xI(:,1), m.xI(:,2), unique_knot_vector{3}*ones(m.nn,1)];
+                        sample_pnt = [m.node(:,1), m.node(:,2), unique_knot_vector{3}*ones(m.node_number,1)];
                     end
                     
                     fv.vertices = this.evaluateNurbs(sample_pnt, 'position');
                     fv.faces = m.connect;
-                    fv.facevertexcdata = ones(m.nn,1);
+                    fv.facevertexcdata = ones(m.node_number,1);
                     patch(fv,'CDataMapping','scaled','EdgeColor','none','FaceColor','interp','FaceAlpha',0.8);
             end
         end

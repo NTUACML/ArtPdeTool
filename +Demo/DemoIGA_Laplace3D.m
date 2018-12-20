@@ -3,6 +3,7 @@ clc; clear; close all;
 
 %% Include package
 import Utility.BasicUtility.*
+import Utility.NurbsUtility.*
 import Geometry.*
 import Domain.*
 import Operation.*
@@ -18,6 +19,12 @@ iga_domain = DomainBuilder.create('IGA');
 %% Basis create
 nurbs_basis = iga_domain.generateBasis(nurbs_topology);
 
+%% Nurbs tools create & plot nurbs
+nurbs_tool = NurbsTools(nurbs_basis);
+
+figure; hold on; axis equal; grid on;
+nurbs_tool.plotNurbs();
+hold off;
 %% Variable define   
 var_t = iga_domain.generateVariable('temperature', nurbs_basis,...
                                     VariableType.Scalar, 1);      
@@ -56,7 +63,13 @@ bdr_patch = nurbs_topology.getBoundayPatch('zeta_0');
 iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
 
 bdr_patch = nurbs_topology.getBoundayPatch('zeta_1');
-iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
+iga_domain.generateConstraint(bdr_patch, var_t, {1, @()1});
+
+
+for key = keys(iga_domain.constraint_)
+    constraint = iga_domain.constraint_(key{1});
+    constraint.debugMode();
+end
 
 %% Solve domain equation system
 iga_domain.solve('default');
