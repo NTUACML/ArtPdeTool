@@ -9,38 +9,35 @@ inc_w = nny;
 
 node_pattern=[ 1 2 nnx+2 nnx+1 nny+1 nny+2 nny+nnx+2 nny+nnx+1 ]; 
 
-mesh.connect = make_elem(node_pattern,ex,ey,ez,inc_u,inc_v,inc_w,nnx);
+mesh.connect = make_elem(node_pattern,ex,ey,ez,inc_u,inc_v,inc_w);
 
 x=0:1/(ex):lx; 
 y=0:1/(ey):ly; 
 z=0:1/(ez):lz; 
 
-[X,Y,Z] = meshgrid(x,y,z); 
+% The sequence of x y is correct, since we have different sequence in our
+% code.
+[Y,X,Z] = meshgrid(y,x,z); 
+mesh.node = [X(:) Y(:) Z(:)];
 
-X1=reshape(X,length(x)*length(y)*length(z),1); 
-Y1=reshape(Y,length(x)*length(y)*length(z),1); 
-Z1=reshape(Z,length(x)*length(y)*length(z),1);
-
-mesh.node=[X1 Y1 Z1];
+mesh.node_number = size(mesh.node,1);
+mesh.element_number = size(mesh.connect,1);
 
 end
 
-function element = make_elem(node_pattern,num_u,num_v,num_w,inc_u,inc_v,inc_w,nnx)
+function element = make_elem(node_pattern,num_u,num_v,num_w,inc_u,inc_v,inc_w)
 
-inc = zeros(1,size(node_pattern,2));
-e=1;
-element=zeros(num_u*num_v*num_w,size(node_pattern,2));
-for row=1:num_v*num_u
-    for col=1:num_w
-        element(e,:)=node_pattern+inc;
-        inc=inc+inc_u;
-        e=e+1;
-    end
-    
-    inc = row*inc_v;
-    if mod(e-1,num_u*num_v)==0
-        node_pattern =    node_pattern + nnx;
+element = zeros(num_u*num_v*num_w,size(node_pattern,2));
+
+cnt = 0;
+for k = 1:num_w
+    for j = 1:num_v
+        for i = 1:num_u
+            cnt = cnt+1;
+            inc = (i-1)*inc_u + (j-1)*inc_v + (k-1)*inc_w;
+            element(cnt,:) = node_pattern + inc;
+        end
     end
 end
-end
 
+end

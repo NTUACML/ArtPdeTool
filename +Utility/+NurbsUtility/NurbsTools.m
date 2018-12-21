@@ -215,14 +215,13 @@ classdef NurbsTools
                     import Utility.Resources.quadplot
                     quadplot(mesh.connect, this.nurbs_data_.control_points_(:,1), this.nurbs_data_.control_points_(:,2), this.nurbs_data_.control_points_(:,3));
                 case 3
-%                     TODO: problem with 3D plotting knot mesh
-%                     plot3(this.nurbs_data_.control_points_(:,1), this.nurbs_data_.control_points_(:,2), this.nurbs_data_.control_points_(:,3), 'ro');
-%                     
-%                     import Utility.Resources.mesh3d
-%                     mesh = mesh3d(this.nurbs_data_.basis_number_(1)-1, this.nurbs_data_.basis_number_(2)-1, this.nurbs_data_.basis_number_(3)-1, 1, 1, 1);
-%                     
-%                     import Utility.Resources.hexaplot
-%                     hexaplot(mesh.connect, this.nurbs_data_.control_points_(:,1), this.nurbs_data_.control_points_(:,2), this.nurbs_data_.control_points_(:,3));
+                    plot3(this.nurbs_data_.control_points_(:,1), this.nurbs_data_.control_points_(:,2), this.nurbs_data_.control_points_(:,3), 'ro');
+                    
+                    import Utility.Resources.mesh3d
+                    mesh = mesh3d(this.nurbs_data_.basis_number_(1)-1, this.nurbs_data_.basis_number_(2)-1, this.nurbs_data_.basis_number_(3)-1, 1, 1, 1);
+                    
+                    import Utility.Resources.hexaplot
+                    hexaplot(mesh.connect, this.nurbs_data_.control_points_(:,1), this.nurbs_data_.control_points_(:,2), this.nurbs_data_.control_points_(:,3));
             end
             
             
@@ -269,11 +268,11 @@ classdef NurbsTools
                     
                     % Plot surface nurbs using 2d basis functions
                     mesh = mesh2d(Np(1), Np(2), 1, 1);
-                    position = this.evaluateNurbs(mesh.xI, 'position');
+                    position = this.evaluateNurbs(mesh.node, 'position');
                     
                     fv.vertices = position;
                     fv.faces = mesh.connect;
-                    fv.facevertexcdata = ones(mesh.nn,1);
+                    fv.facevertexcdata = ones(mesh.node_number,1);
                     patch(fv,'CDataMapping','scaled','EdgeColor','none','FaceColor','interp','FaceAlpha',0.8);
                     
                     % Plot knot mesh
