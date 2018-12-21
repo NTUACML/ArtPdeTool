@@ -317,7 +317,7 @@ classdef NurbsTools
             end
             
             position = this.evaluateNurbs(sample_pnt, 'position');
-            plot3(position(:,1), position(:,2), position(:,3), 'k-');
+            plot3(position(:,1), position(:,2), position(:,3), 'k-', 'LineWidth', 1.5);
         end
         
     end

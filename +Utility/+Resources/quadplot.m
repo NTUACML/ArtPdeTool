@@ -12,9 +12,9 @@ d = quad(:,[1 2 3 4 1])';
 
 switch nargin-1
     case 2
-        plot(x(d), y(d), 'r--');
+        plot(x(d), y(d), 'r-');
     case 3
-        plot3(x(d), y(d), z(d), 'r--');
+        plot3(x(d), y(d), z(d), 'r-');
 end    
 
 end

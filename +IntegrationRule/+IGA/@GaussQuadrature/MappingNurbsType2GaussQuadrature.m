@@ -23,7 +23,7 @@ switch nurbs_type
         [num_quadrature, position, weighting] = GaussQuadrature.Hexa8();
         lu = unit_span{1}(2)-unit_span{1}(1);
         lv = unit_span{2}(2)-unit_span{2}(1);
-        lw = unit_span{2}(2)-unit_span{2}(1);
+        lw = unit_span{3}(2)-unit_span{3}(1);
         position(:,1) = 0.5*(position(:,1)+1)*lu + unit_span{1}(1);
         position(:,2) = 0.5*(position(:,2)+1)*lv + unit_span{2}(1);
         position(:,3) = 0.5*(position(:,3)+1)*lw + unit_span{3}(1);
