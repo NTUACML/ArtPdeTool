@@ -9,8 +9,8 @@ classdef Mapping < Mapping.MappingBase
     methods
         function this = Mapping(basis)
             this@Mapping.MappingBase(basis);
-%             dim = this.basis_.topology_data_.dim_;
-            this.points_ = this.basis_.topology_data_.point_data_;%(:,1:dim,:);
+            dim = this.basis_.topology_data_.dim_;
+            this.points_ = this.basis_.topology_data_.point_data_(:,1:dim,:);
         end
         
         function mapping_unit = queryLocalMapping(this, query_unit)

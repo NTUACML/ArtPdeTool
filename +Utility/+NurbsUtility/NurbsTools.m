@@ -5,13 +5,14 @@ classdef NurbsTools
     end
     
     methods
+        % Constructor
         function this = NurbsTools(basis_function)
             this.basis_function_ = basis_function;
             
             nurbs_patch = basis_function.topology_data_.getDomainPatch();
             this.nurbs_data_ = nurbs_patch.nurbs_data_;
         end
-        
+        % Plot parametric mesh formed by uniqued knot vectors
         function plotParametricMesh(this)
             switch this.nurbs_data_.getGeometryDimension()
                 case 1
@@ -43,7 +44,7 @@ classdef NurbsTools
             end
             
         end
-        
+        % Evaluate nurbs or its derivatives or its hassian matrix at xi
         function [position, gradient, hassian] = evaluateNurbs(this, xi, varargin)
             if ~isequal(size(xi,2), this.nurbs_data_.getGeometryDimension())
                 disp('Input parametric coordinates dimension are mismatched!');
@@ -91,7 +92,7 @@ classdef NurbsTools
                 end
             end
         end
-        
+        % Plot nurbs geometry
         function plotNurbs(this, varargin)
             geo_dim = this.nurbs_data_.getGeometryDimension();
             
@@ -199,7 +200,7 @@ classdef NurbsTools
                     
             end
         end
-        
+        % Plot mesh formed by control points 
         function plotControlMesh(this)
             geo_dim = this.nurbs_data_.getGeometryDimension();
             

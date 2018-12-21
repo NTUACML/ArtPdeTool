@@ -12,13 +12,20 @@ classdef MappingUnit < handle
             this.local_point_ = local_point;
             this.eval_basis_ = eval_basis;
         end
-        % TODO The mapping for 3d surface is special. In general, we cannot obtain the jacobian by direct inverse dx/dxi!
-        % 11/6 Jeting
+        
         function [dx_dxi, J] = calJacobian(this)
-            dx_dxi = this.eval_basis_{2} * this.local_point_(:,1:end-1);
-            % TODO currently for 3d surface 1106 Jeting
-            J = norm(cross(dx_dxi(1,:),dx_dxi(2,:)));
-            
+            dx_dxi = this.eval_basis_{2} * this.local_point_;
+            % dx_dxi = [dx/dxi dy/dxi; dx/deta dy/deta] in 2D
+            % dx_dxi = [dx/dxi dy/dxi dz/dxi; dx/deta dy/deta dz/deta; dx/dzeta dy/dzeta dz/dzeta] in 3D
+            J = det(dx_dxi);
+        end
+        
+        % For surface in 3d space, one have to use the following formula to compute the Jacobian
+        function [dx_dxi, J] = calSurfaceJacobian(this)
+            dx_dxi = this.eval_basis_{2} * this.local_point_;
+            % dx_dxi = [dx/dxi dy/dxi; dx/deta dy/deta] in 2D
+            % dx_dxi = [dx/dxi dy/dxi dz/dxi; dx/deta dy/deta dz/deta; dx/dzeta dy/dzeta dz/dzeta] in 3D           
+            J = norm(cross(dx_dxi(1,:),dx_dxi(2,:)));  
         end
         
         function x = calPhysicalPosition(this)
