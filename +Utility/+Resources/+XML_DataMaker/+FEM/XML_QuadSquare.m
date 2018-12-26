@@ -1,7 +1,8 @@
 clear all; clc; home
 %% Mesh gen
+import Utility.Resources.*
 [xn,idx,~,~,~,~,~,~,xb,neighbor_b,~] = rectanGeomMesh(11,11,0,1,0,1,1.0,1.0);
-quadplot(idx, xn(:,1), xn(:,2), '-k')
+quadplot(idx, xn(:,1), xn(:,2))
 
 eps = 1e-5;
 ig_xn_down = abs(xn(:,2) - 0) < eps;

@@ -51,9 +51,8 @@ classdef BilinearExpression < Expression.IGA.Expression
                 F = mapping.queryLocalMapping(query_unit);
 
                 [dx_dxi, J] = F.calJacobian();
-                % TODO This is NOT GOOD........ dx_dxi should be a square
-                % matrix....
-                dxi_dx = inv(dx_dxi(:,1:2));
+                
+                dxi_dx = inv(dx_dxi);
                 
                 % eval basis derivative with x
                 d_test_dx = dxi_dx * test_eval{2};

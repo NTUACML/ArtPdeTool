@@ -51,9 +51,18 @@ exp1 = operation1.getExpression('FEM', {test_t, var_t});
 int_doamin_patch = iso_topo.getDomainPatch();
 fem_domain.calIntegral(int_doamin_patch, exp1);
 
-% % Boundary integral
-% int_right_patch = iso_topo.getBoundayPatch('Down_Side');
-% fem_domain.calIntegral(int_right_patch, exp2);
+% Boundary integral
+int_right_patch = iso_topo.getBoundayPatch('Down_Side');
+fem_domain.calIntegral(int_right_patch, exp1);
+
+integration_rule = fem_domain.integration_rule_(2);
+[a, b, c] = integration_rule.integral_unit_{1}.quadrature_();
+
+figure;
+plot();
+
+
+
 
 %% Constraint (Acquire prescribed D.O.F.)
 up_side_patch = iso_topo.getBoundayPatch('Up_Side');

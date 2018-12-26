@@ -22,8 +22,9 @@ nurbs_basis = iga_domain.generateBasis(nurbs_topology);
 %% Nurbs tools create & plot nurbs
 nurbs_tool = NurbsTools(nurbs_basis);
 
-figure; hold on; axis equal; grid on;
+figure; hold on; grid on; view([140 30]); %axis equal; 
 nurbs_tool.plotNurbs();
+nurbs_tool.plotControlMesh();
 hold off;
 %% Variable define   
 var_t = iga_domain.generateVariable('temperature', nurbs_basis,...
@@ -64,12 +65,6 @@ iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
 
 bdr_patch = nurbs_topology.getBoundayPatch('zeta_1');
 iga_domain.generateConstraint(bdr_patch, var_t, {1, @()1});
-
-
-for key = keys(iga_domain.constraint_)
-    constraint = iga_domain.constraint_(key{1});
-    constraint.debugMode();
-end
 
 %% Solve domain equation system
 iga_domain.solve('default');
