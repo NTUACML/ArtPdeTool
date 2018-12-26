@@ -81,96 +81,44 @@ classdef Constraint < Constraint.ConstraintBase
                         id_step = 1;
                         id_end = id_start + id_step*(domain_nurbs.basis_number_(1)-1);
                     end 
+                    prescribed_var_id = id_start:id_step:id_end;
                 case 3
-                    
+                    if ~isempty(boundary_indicator{1}) % xi = 0 or xi = 1
+                        switch boundary_indicator{1}
+                            case 0 % xi = 0
+                                id_start = 1;
+                            case 1 % xi = 1
+                                id_start = domain_nurbs.basis_number_(1);
+                        end
+                        id_step = domain_nurbs.basis_number_(1);
+                        id_end = id_start + id_step*(domain_nurbs.basis_number_(2)*domain_nurbs.basis_number_(3)-1);
+                        prescribed_var_id = id_start:id_step:id_end;
+                    elseif ~isempty(boundary_indicator{2}) % eta = 0 or eta = 1
+                        switch boundary_indicator{2}
+                            case 0 % eta = 0
+                                id_start = 1:domain_nurbs.basis_number_(1);
+                            case 1 % eta = 1
+                                id_start = (1:domain_nurbs.basis_number_(1)) + domain_nurbs.basis_number_(1)*(domain_nurbs.basis_number_(2)-1);
+                        end
+                        id_step = domain_nurbs.basis_number_(1)*domain_nurbs.basis_number_(2);
+                        prescribed_var_id = zeros(1,domain_nurbs.basis_number_(3)*domain_nurbs.basis_number_(1));
+                        for i = 1:domain_nurbs.basis_number_(3)
+                            shift = (i-1)*domain_nurbs.basis_number_(1);
+                            prescribed_var_id(shift+1:shift+domain_nurbs.basis_number_(1)) = id_start + (i-1)*id_step;
+                        end                        
+                    elseif ~isempty(boundary_indicator{3}) % zeta = 0 or zeta = 1
+                        switch boundary_indicator{3}
+                            case 0 % zeta = 0
+                                id_start = 1;
+                            case 1 % zeta = 1
+                                id_start = 1 + domain_nurbs.basis_number_(1)*domain_nurbs.basis_number_(2)*(domain_nurbs.basis_number_(3)-1);
+                        end
+                        id_step = 1;
+                        id_end = id_start + id_step*(domain_nurbs.basis_number_(1)*domain_nurbs.basis_number_(2)-1); 
+                        prescribed_var_id = id_start:id_step:id_end;
+                    end
             end
-            
-            prescribed_var_id = id_start:id_step:id_end;
-            
-%             prescribed_var_id = [];
-%             query_unit = QueryUnit();
-%                         
-%             for i = 1:size(sample_pnt,1)
-%                 xi = sample_pnt(i,:);
-%                 query_unit.query_protocol_ = {Region.Domain, xi, 0};
-%                 domain_basis.query(query_unit);
-%                 
-%                 bool = (abs(query_unit.evaluate_basis_{1}) > eps);
-%                 prescribed_var_id = [prescribed_var_id, query_unit.non_zero_id_(bool)'];
-%             end            
-%             
-%             prescribed_var_id = unique(prescribed_var_id);
-            
-            
-%             TD = TensorProduct(num2cell(domain_patch.nurbs_data_.basis_number_));
-%             
-%             
-%             control_points = patch.nurbs_data_.control_points_(:,1:domain_patch.dim_);
-%             
-%             plane_indicator.driection = abs(control_points(1,:)-control_points(end,:)) < eps;
-%             plane_indicator.value = control_points(plane_indicator.driection);
-%              
-%             
-%             for i = 1:TD.num_()
-%             end
-                                  
-%             boundaryDim = patch.dim_;
-%             
-%             switch boundaryDim
-%                 case 2
-%                     
-%                 case 3
-%                     
-%             end
-%             control_points = patch.nurbs_data_.control_points_(:,1:domain_patch.dim_);
-%             bool = (control_points(1,:) == control_points(end,:));
-%             if abs(control_points(1, bool) - 1) < eps
-%                 isoline_id =  domain_patch.nurbs_data_.basis_number_(bool);
-%             else
-%                 isoline_id = 1;
-%             end
-%             
-%             query_unit = QueryUnit();
-%             
-%             % Query at first parametric control point
-%             xi = control_points(1,:);
-%             query_unit.query_protocol_ = {Region.Domain, xi, 0};
-%             nurbs_basis.query(query_unit);
-%             
-%             non_zero_id = query_unit.non_zero_id_;
-%             is_bdr_basis = false(size(non_zero_id));
-%             
-%             for i = 1:length(non_zero_id)
-%                 local_id = TD.to_local_index(non_zero_id(i));
-%                 if local_id{bool} == isoline_id
-%                     is_bdr_basis(i) = true;
-%                 end
-%             end
-%             
-%             non_zero_id = non_zero_id(is_bdr_basis);
-%             
-%             id_start = non_zero_id(1);
-%             id_diff = non_zero_id(2)-non_zero_id(1);
-%             
-%             % Query at last parametric control point
-%             xi = control_points(end,:);
-%             query_unit.query_protocol_ = {Region.Domain, xi, 0};
-%             nurbs_basis.query(query_unit);
-%             
-%             non_zero_id = query_unit.non_zero_id_;
-%             is_bdr_basis = false(size(non_zero_id));
-%             
-%             for i = 1:length(non_zero_id)
-%                 local_id = TD.to_local_index(non_zero_id(i));
-%                 if local_id{bool} == isoline_id
-%                     is_bdr_basis(i) = true;
-%                 end
-%             end
-%             
-%             non_zero_id = non_zero_id(is_bdr_basis);
-%             id_end = non_zero_id(end);
-%             
-%             prescribed_var_id = id_start:id_diff:id_end;
+
         end
         
     end
