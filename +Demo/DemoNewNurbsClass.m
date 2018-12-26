@@ -33,8 +33,9 @@ nurbs_tool.plotParametricMesh();
 hold off;
 
 % Plot nurbs
-figure; hold on; axis equal; grid on;
-nurbs_tool.plotNurbs([15 15 15]);
+figure; hold on; grid on; %axis equal;
+nurbs_tool.plotNurbs([21 21 21]);
+nurbs_tool.plotControlMesh();
 hold off;
 
 % Evaluate nurbs & derivatives

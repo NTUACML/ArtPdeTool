@@ -52,4 +52,18 @@ import Interpolation.FEM.Interpolation;
 t_interpo = Interpolation(var_t);
 [x, data, element] = t_interpo.NodeDataInterpolation();
 % disp(var_t);
+
+%% Show result (Post-Processes)
+num_element = size(element, 1);
+connectivity = zeros(num_element, 4);
+for i = 1 : num_element
+    connectivity(i, :) = element{i}.node_id_;
+end
+fv.vertices = [x, data];
+fv.faces = connectivity;
+fv.facevertexcdata = data;
+patch(fv,'CDataMapping','scaled','EdgeColor',[.7 .7 .7],'FaceColor','interp','FaceAlpha',1);
+grid on;
+title('ArtPDE Laplace problem... (FEM)')
+view([40 30]);
 end

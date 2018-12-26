@@ -25,8 +25,8 @@ classdef Interpolation < Interpolation.InterpolationBase
             mesh = mesh2d(10, 10, 1, 1);
             
             element = mesh.connect;
-            x = zeros(size(mesh.xI));
-            data = zeros(mesh.nn, 1);
+            x = zeros(size(mesh.node));
+            data = zeros(mesh.node_number, 1);
             
             % Get computation information
             var_coef = this.interpo_data_.getVarData();
@@ -42,9 +42,9 @@ classdef Interpolation < Interpolation.InterpolationBase
             query_unit = QueryUnit();
             
             % Evaluate physical position & variable
-            for i = 1:mesh.nn
+            for i = 1:mesh.node_number
                 query_unit.query_protocol_{1} = Region.Domain;
-                query_unit.query_protocol_{2} = mesh.xI(i,:);
+                query_unit.query_protocol_{2} = mesh.node(i,:);
                 basis_function.query(query_unit);
                 non_zero_id = query_unit.non_zero_id_;
                 R = query_unit.evaluate_basis_{1};

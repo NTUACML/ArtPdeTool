@@ -7,7 +7,9 @@ import Domain.*
 import Utility.BasicUtility.*
 import Utility.NurbsUtility.* 
 
-xml_path = './ArtPDE_IGA_Plane_quarter_hole.art_geometry';
+% xml_path = './ArtPDE_IGA_Plane_quarter_hole.art_geometry';
+xml_path = './ArtPDE_IGA_3D_Lens_left.art_geometry';
+
 geo = GeometryBuilder.create('IGA', 'XML', xml_path);
 nurbs_topology = geo.topology_data_{1};
 
@@ -28,7 +30,7 @@ query_unit = QueryUnit();
 
 for i = 1:5
     % Query basis function point by point
-    xi = rand(1,2);
+    xi = rand(1,domain_patch.dim_);
     query_unit.query_protocol_ = {Region.Domain, xi, 1};
     nurbs_basis.query(query_unit);
     
@@ -74,7 +76,7 @@ iga_domain.calIntegral(domain_patch, exp1);
 domain_integration_rule = iga_domain.integration_rule_(1);
 
 %% Plot domain integration points in parametric space
-figure; hold on; axis equal;
+figure; hold on; grid on; axis equal;
 nurbs_tool.plotParametricMesh();
 
 for i = 1:domain_integration_rule.num_integral_unit_
@@ -83,20 +85,20 @@ for i = 1:domain_integration_rule.num_integral_unit_
         case 2
             plot(position(:,1), position(:,2), 'r.');
         case 3
-            plot3(position(:,1), position(:,2), position(:,3), 'r.');
+            plot3(position(:,1), position(:,2), position(:,3), 'k.', 'MarkerSize', 10);
     end
 end
 hold off;
 
 %% Plot domain integration points in physical space
-figure; hold on; axis equal;
+figure; hold on; grid on; %axis equal;
 nurbs_tool.plotNurbs();
 
 for i = 1:domain_integration_rule.num_integral_unit_
     position = domain_integration_rule.integral_unit_{i}.quadrature_{2};
     position = nurbs_tool.evaluateNurbs(position, 'position');
 
-    plot3(position(:,1), position(:,2), position(:,3), 'r.');
+    plot3(position(:,1), position(:,2), position(:,3), 'k.', 'MarkerSize', 10);
 end
 hold off;
 
