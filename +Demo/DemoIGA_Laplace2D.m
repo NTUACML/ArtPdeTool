@@ -41,17 +41,17 @@ doamin_patch = nurbs_topology.getDomainPatch();
 iga_domain.calIntegral(doamin_patch, exp1);
 
 %% Constraint (Acquire prescribed D.O.F.)
-bdr_patch = nurbs_topology.getBoundayPatch('xi_0');
-iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
-
 bdr_patch = nurbs_topology.getBoundayPatch('xi_1');
-iga_domain.generateConstraint(bdr_patch, var_t, {1, @()1});
+iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
 
 bdr_patch = nurbs_topology.getBoundayPatch('eta_0');
 iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
 
 bdr_patch = nurbs_topology.getBoundayPatch('eta_1');
 iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
+
+bdr_patch = nurbs_topology.getBoundayPatch('xi_0');
+iga_domain.generateConstraint(bdr_patch, var_t, {1, @()1});
 
 %% Nurbs tools create & plot nurbs
 import Utility.NurbsUtility.NurbsTools
@@ -70,9 +70,6 @@ hold off;
 
 %% Solve domain equation system
 iga_domain.solve('default');
-
-lhs = iga_domain.assembler_.lhs_;
-disp(lhs);
 
 %% Data Interpolation
 import Interpolation.IGA.Interpolation;

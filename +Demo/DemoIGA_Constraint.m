@@ -10,7 +10,7 @@ import Operation.*
 %% Geometry data input
 % xml_path = './ArtPDE_IGA_Plane4_refined.art_geometry';
 % xml_path = './ArtPDE_IGA_Plane_quarter_hole.art_geometry'; ArtPDE_IGA_Lens_top_left
-xml_path = './ArtPDE_IGA_Lens_bottom_left.art_geometry';
+xml_path = './ArtPDE_IGA_3D_Lens_left.art_geometry';
 
 geo = GeometryBuilder.create('IGA', 'XML', xml_path);
 nurbs_topology = geo.topology_data_{1};
@@ -36,6 +36,12 @@ bdr_patch = nurbs_topology.getBoundayPatch('eta_0');
 iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
 
 bdr_patch = nurbs_topology.getBoundayPatch('eta_1');
+iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
+
+bdr_patch = nurbs_topology.getBoundayPatch('zeta_0');
+iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
+
+bdr_patch = nurbs_topology.getBoundayPatch('zeta_1');
 iga_domain.generateConstraint(bdr_patch, var_t, {1, @()1});
 
 doamin_patch = nurbs_topology.getDomainPatch();
