@@ -41,6 +41,9 @@ doamin_patch = nurbs_topology.getDomainPatch();
 iga_domain.calIntegral(doamin_patch, exp1);
 
 %% Constraint (Acquire prescribed D.O.F.)
+bdr_patch = nurbs_topology.getBoundayPatch('xi_0');
+iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
+
 bdr_patch = nurbs_topology.getBoundayPatch('xi_1');
 iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
 
@@ -48,9 +51,6 @@ bdr_patch = nurbs_topology.getBoundayPatch('eta_0');
 iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
 
 bdr_patch = nurbs_topology.getBoundayPatch('eta_1');
-iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
-
-bdr_patch = nurbs_topology.getBoundayPatch('xi_0');
 iga_domain.generateConstraint(bdr_patch, var_t, {1, @()1});
 
 %% Nurbs tools create & plot nurbs
@@ -66,8 +66,8 @@ xlabel('x'); ylabel('y'); zlabel('z');
 for i = 1:size(control_point,1)
     text(control_point(i,1), control_point(i,2), control_point(i,3), num2str(i), 'FontSize',14);
 end
-hold off;
 
+hold off;
 %% Solve domain equation system
 iga_domain.solve('default');
 

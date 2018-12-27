@@ -158,7 +158,6 @@ switch geoDim
         
 end
 
-R = R ./ sum_tol;
 
 if content ~= 0
     for i = 1:geoDim
@@ -166,6 +165,7 @@ if content ~= 0
     end
 end
 
+R = R ./ sum_tol;
 
 end
 
