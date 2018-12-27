@@ -46,7 +46,7 @@ if nurbs_topology.dim_ == 3
     iga_domain.generateConstraint(bdr_patch, var_t, {1, @()1});
 end
 
-doamin_patch = nurbs_topology.getDomainPatch();
+domain_patch = nurbs_topology.getDomainPatch();
 
 %% Nurbs tools create & plot nurbs
 import Utility.NurbsUtility.NurbsTools
@@ -56,7 +56,7 @@ figure; hold on; grid on; axis equal;
 nurbs_tool.plotNurbs([21 21]);
 nurbs_tool.plotControlMesh();
 
-control_point = doamin_patch.nurbs_data_.control_points_(:,1:3);
+control_point = domain_patch.nurbs_data_.control_points_(:,1:3);
 xlabel('x'); ylabel('y'); zlabel('z'); 
 for i = 1:size(control_point,1)
     text(control_point(i,1), control_point(i,2), control_point(i,3), num2str(i), 'FontSize',14);

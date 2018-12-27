@@ -5,4 +5,5 @@
 *.art_geometry
 *.art_initial
 *.art_material
+*.vtk
 

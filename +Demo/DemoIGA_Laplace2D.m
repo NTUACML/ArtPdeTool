@@ -77,7 +77,7 @@ t_interpo = Interpolation(var_t);
 [x, data, element] = t_interpo.DomainDataSampling();
 
 %% Show result (Post-Processes)
-fv.vertices = [x, data];
+fv.vertices = [x(:,1:2), data];
 fv.faces = element;
 fv.facevertexcdata = data;
 
@@ -87,5 +87,5 @@ title('ArtPDE Laplace problem... (IGA)')
 view([0 90]);
 hold off;
 %% Show result
-%disp(var_t);
+disp(var_t);
 end
