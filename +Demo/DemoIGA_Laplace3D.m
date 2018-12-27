@@ -48,8 +48,7 @@ doamin_patch = nurbs_topology.getDomainPatch();
 iga_domain.calIntegral(doamin_patch, exp1);
 
 %% Constraint (Acquire prescribed D.O.F.)
-bdr_patch = nurbs_topology.getBoundayPatch('xi_0');
-iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
+
 
 bdr_patch = nurbs_topology.getBoundayPatch('xi_1');
 iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
@@ -64,6 +63,9 @@ bdr_patch = nurbs_topology.getBoundayPatch('zeta_0');
 iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
 
 bdr_patch = nurbs_topology.getBoundayPatch('zeta_1');
+iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
+
+bdr_patch = nurbs_topology.getBoundayPatch('xi_0');
 iga_domain.generateConstraint(bdr_patch, var_t, {1, @()1});
 
 %% Solve domain equation system
@@ -75,13 +77,24 @@ t_interpo = Interpolation(var_t);
 [x, data, element] = t_interpo.DomainDataSampling();
 
 %% Show result (Post-Processes)
-fv.vertices = [x, data];
-fv.faces = element;
-fv.facevertexcdata = data;
-patch(fv,'CDataMapping','scaled','EdgeColor',[.7 .7 .7],'FaceColor','interp','FaceAlpha',1);
-grid on;
-title('ArtPDE Laplace problem... (IGA)')
-view([40 30]);
+import Utility.Resources.vtkwrite
+import Utility.BasicUtility.TensorProduct
+
+TP = TensorProduct({11 11 11});
+xx = zeros(cell2mat(TP.num_));
+yy = zeros(cell2mat(TP.num_));
+zz = zeros(cell2mat(TP.num_));
+tt = zeros(cell2mat(TP.num_));
+
+for i = 1: TP.total_num_
+    local_id = TP.to_local_index(i);
+    xx(local_id{1}, local_id{2}, local_id{3}) = x(i, 1);
+    yy(local_id{1}, local_id{2}, local_id{3}) = x(i, 2);
+    zz(local_id{1}, local_id{2}, local_id{3}) = x(i, 3);
+    tt(local_id{1}, local_id{2}, local_id{3}) = data(i);
+end
+
+vtkwrite('laplace_for_3d_lens.vtk', 'structured_grid', xx, yy, zz, 'scalars', 'temperature', data);
 %% Show result
 %disp(var_t);
 end
