@@ -66,8 +66,8 @@ xlabel('x'); ylabel('y'); zlabel('z');
 for i = 1:size(control_point,1)
     text(control_point(i,1), control_point(i,2), control_point(i,3), num2str(i), 'FontSize',14);
 end
-hold off;
 
+hold off;
 %% Solve domain equation system
 iga_domain.solve('default');
 
