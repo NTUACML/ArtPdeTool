@@ -41,6 +41,9 @@ doamin_patch = nurbs_topology.getDomainPatch();
 iga_domain.calIntegral(doamin_patch, exp1);
 
 %% Constraint (Acquire prescribed D.O.F.)
+bdr_patch = nurbs_topology.getBoundayPatch('xi_0');
+iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
+
 bdr_patch = nurbs_topology.getBoundayPatch('xi_1');
 iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
 
@@ -48,9 +51,6 @@ bdr_patch = nurbs_topology.getBoundayPatch('eta_0');
 iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
 
 bdr_patch = nurbs_topology.getBoundayPatch('eta_1');
-iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
-
-bdr_patch = nurbs_topology.getBoundayPatch('xi_0');
 iga_domain.generateConstraint(bdr_patch, var_t, {1, @()1});
 
 %% Nurbs tools create & plot nurbs
