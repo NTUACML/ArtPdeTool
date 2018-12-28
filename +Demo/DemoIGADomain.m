@@ -8,7 +8,8 @@ import Utility.BasicUtility.*
 import Utility.NurbsUtility.* 
 
 % xml_path = './ArtPDE_IGA_Plane_quarter_hole.art_geometry';
-xml_path = './ArtPDE_IGA_3D_Lens_left.art_geometry';
+% ArtPDE_IGA_3D_Lens_left;
+xml_path = './ArtPDE_IGA_Plane_quarter_hole.art_geometry';
 
 geo = GeometryBuilder.create('IGA', 'XML', xml_path);
 nurbs_topology = geo.topology_data_{1};
@@ -47,7 +48,7 @@ for i = 1:5
     dval_deta = dR_deta*control_point(non_zero_id,:);
     
     % Evaluate nurbs & derivatives using nurbs tool directly
-    [position, gradient] = nurbs_tool.evaluateNurbs(xi, 'position', 'gradient');
+    [position, gradient] = nurbs_tool.evaluateNurbs(xi, 'gradient');
     
     % Compare results
     str = '(%10.3f%10.3f%10.3f) (%10.3f%10.3f%10.3f)\n';
