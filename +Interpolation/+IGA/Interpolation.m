@@ -19,16 +19,20 @@ classdef Interpolation < Interpolation.InterpolationBase
             end
         end
         
-        function [x, data, element] = DomainDataSampling(this)
+        function [x, data, element] = DomainDataSampling(this, varargin)
             import Utility.Resources.*
             geoDim = this.interpo_topo_.dim_;
+            
+            if isempty(varargin)
+                varargin{1} = 10*ones(1,geoDim);
+            end
             
             % Generate parametric mesh
             switch geoDim
                 case 2
-                    mesh = mesh2d(10, 10, 1, 1);
+                    mesh = mesh2d(varargin{1}(1)-1, varargin{1}(2)-1, 1, 1);
                 case 3
-                    mesh = mesh3d(10, 10, 10, 1, 1, 1);
+                    mesh = mesh3d(varargin{1}(1)-1, varargin{1}(2)-1, varargin{1}(3)-1, 1, 1, 1);
             end
             
             element = mesh.connect;
