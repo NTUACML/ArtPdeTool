@@ -58,8 +58,8 @@ geometry.D = 12.0;
 geometry.L = 48.0;
 geometry.p = 1000.0;
 
-material.E = 3e7;
-material.nu = 0.3;
+material.E = E;
+material.nu = nu;
 
 outVal = 'displacement';
 u_x = @(position) u_ana_x(position(:,1), position(:,2), material, geometry, outVal);
@@ -105,17 +105,25 @@ t_interpo = Interpolation(var_u);
 [x, data, element] = t_interpo.DomainDataSampling();
 
 %% Show result (Post-Processes)
-fv.vertices = [x(:,1:2), data];
+fv.vertices = [x(:,1:2), data(:,1)];
 fv.faces = element;
-fv.facevertexcdata = data;
+fv.facevertexcdata = data(:,1);
 
-figure; hold on; grid on; axis equal;
+figure; hold on; grid on; 
 patch(fv,'CDataMapping','scaled','EdgeColor',[.7 .7 .7],'FaceColor','interp','FaceAlpha',1);
-title('ArtPDE Laplace problem... (IGA)')
+title('IGA Cantilever Beam x-displacement')
 view([0 90]);
 hold off;
 
+fv.vertices = [x(:,1:2), data(:,2)];
+fv.faces = element;
+fv.facevertexcdata = data(:,2);
 
+figure; hold on; grid on; 
+patch(fv,'CDataMapping','scaled','EdgeColor',[.7 .7 .7],'FaceColor','interp','FaceAlpha',1);
+title('IGA Cantilever Beam y-displacement')
+view([0 90]);
+hold off;
 
 
 

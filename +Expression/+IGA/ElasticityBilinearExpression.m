@@ -61,12 +61,25 @@ classdef ElasticityBilinearExpression < Expression.IGA.Expression
                 d_var_dx = dxi_dx * var_eval{2};
                 
                 % eval bilinear form
-                B_test = [d_test_dx(1,:)              zeros(size(d_test_dx(1,:)));
-                          zeros(size(d_test_dx(1,:))) d_test_dx(2,:)             ;
-                          d_test_dx(1,:)              d_test_dx(2,:)             ];
-                B_var = [d_var_dx(1,:)              zeros(size(d_var_dx(1,:)));
-                         zeros(size(d_var_dx(1,:))) d_var_dx(2,:)             ;
-                         d_var_dx(1,:)              d_var_dx(2,:)             ];
+                B_test = zeros(3, 2*length(test_non_zero_id));
+                B_var = zeros(3, 2*length(var_non_zero_id));
+                
+                odd = 1:2:2*length(test_non_zero_id);
+                even = 2:2:2*length(var_non_zero_id);
+                
+                B_test(1, odd) = d_test_dx(1,:);
+                
+                B_test(2, even) = d_test_dx(2,:);
+                
+                B_test(3, odd) = d_test_dx(2,:);
+                B_test(3, even) = d_test_dx(1,:);
+                      
+                B_var(1, odd) = d_var_dx(1,:);
+                
+                B_var(2, even) = d_var_dx(2,:);
+                
+                B_var(3, odd) = d_var_dx(2,:);
+                B_var(3, even) = d_var_dx(1,:);
                 
                 % add to local matrix
                 local_matrix{i} = (B_test' * this.constitutive_law_ * B_var).* qw(i) * J; 

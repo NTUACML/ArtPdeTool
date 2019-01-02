@@ -37,7 +37,7 @@ classdef Interpolation < Interpolation.InterpolationBase
             
             element = mesh.connect;
             x = zeros(mesh.node_number, 3);
-            data = zeros(mesh.node_number, 1);
+            data = zeros(mesh.node_number, this.interpo_data_.num_dof_);
             
             % Get computation information
             var_coef = this.interpo_data_.getVarData();
@@ -60,7 +60,7 @@ classdef Interpolation < Interpolation.InterpolationBase
                 non_zero_id = query_unit.non_zero_id_;
                 R = query_unit.evaluate_basis_{1};
                 x(i,:) = R*control_points(non_zero_id,:);
-                data(i) = R*var_coef(non_zero_id);
+                data(i,:) = R*var_coef(non_zero_id,:);
             end
         end
     end
