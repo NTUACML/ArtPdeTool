@@ -4,9 +4,9 @@ clear all; clc; home
 import Utility.Resources.XML_DataMaker.IGA.NurbsGenerator
 
 %% Generate nurbs object
-% 'Plane4' 'Plane4_refined' 'Plane_quarter_hole' 
+% 'Plane4' 'Plane4_refined' 'Plane_quarter_hole' 'Beam_refined'
 % 'Lens_top_right' 'Lens_bottom_right' 'Lens_top_left' 'Lens_bottom_left' '3D_Lens_left'
-case_name = 'Lens_bottom_left';
+case_name = 'Beam_refined';
 
 nurbs = NurbsGenerator(case_name);
 

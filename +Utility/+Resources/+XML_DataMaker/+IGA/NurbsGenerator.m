@@ -10,6 +10,15 @@ switch nurbs_name
         t = linspace(0.1, 0.9, 9);
         nurbs = nrbkntins(nurbs,{t, t});
         status = true;
+    case 'Beam_refined'
+        D = 12;
+        L = 48;
+        nurbs = nrb4surf([0.0 -D/2 0.0],[L -D/2 0.0],[0.0 D/2 0.0],[L D/2 0.0]);
+        nurbs = nrbdegelev(nurbs, [1 1]);
+        t_1 = linspace(0.1, 0.9, 9);
+        t_2 = linspace(0.25, 0.75, 3);
+        nurbs = nrbkntins(nurbs,{t_1, t_2});       
+        status = true;
     case 'Plane_quarter_hole'
         nurbs = Plane_quarter_hole();
         t = linspace(0.1, 0.9, 9);
