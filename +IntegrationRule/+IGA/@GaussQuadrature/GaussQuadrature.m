@@ -6,6 +6,7 @@ classdef GaussQuadrature
         [num_quadrature, position, weighting] = Hexa8()
         [num_quadrature, position, weighting] = Line2()
         [num_quadrature, position, weighting] = Quad4()
+        [num_quadrature, position, weighting] = Quad9()
         [gauss_quadrature] = MappingNurbsType2GaussQuadrature( this, element_type, unit_span, number_quad_pnt )
     end
     

@@ -2,7 +2,9 @@ classdef Constraint < Constraint.ConstraintBase
     %CONSTRAINT Summary of this class goes here
     %   Detailed explanation goes here
     
-    properties
+    properties     
+        type_ % type_ = 'assign', 'collocation', default = 'collocation'
+        basis_function_ = [] % use only for collocation
     end
     
     methods
@@ -15,6 +17,13 @@ classdef Constraint < Constraint.ConstraintBase
             this.constraint_var_ = variable;
             % get constraint_var_id 
             this.constraint_var_id_ = this.getPatchPrescribedVarId();
+            
+            if isempty(genetrate_parameter)
+                this.type_ = 'assign';
+            else
+                this.type_ = genetrate_parameter{1};
+                this.basis_function_ = genetrate_parameter{2};
+            end
             
             if(length(constraint_data) <= 2 ...
                && constraint_data{1} <= variable.num_dof_)

@@ -32,7 +32,7 @@ classdef IntegrationRule < IntegrationRule.IntegrationRuleBase
                 number_quad_pnt = ceil((nurbs_data.order_ + 1)*0.5);  
             else
                 dividing_method = generate_parameter{1};
-                number_quad_pnt = generate_parameter{2};
+                number_quad_pnt = generate_parameter{2}*ones(size(nurbs_data.order_));
             end
             
             % IntUnit number
@@ -63,11 +63,28 @@ classdef IntegrationRule < IntegrationRule.IntegrationRuleBase
             nurbs_data = this.integral_patch_.nurbs_data_;  
             if isempty(generate_parameter)
                 dividing_method = 'Default';
-                number_quad_pnt = ceil((nurbs_data.order_ + 1)*0.5);  
+                number_quad_pnt = ceil((nurbs_data.domain_nurbs_data_.order_ + 1)*0.5);  
             else
                 dividing_method = generate_parameter{1};
                 number_quad_pnt = generate_parameter{2};
             end
+            
+            % Find the plane where the control points located. e.g. xi = 0,
+            % eta = 1, etc, ...
+            domain_dim = length(nurbs_data.domain_nurbs_data_.order_);
+            sample_pnt = nurbs_data.control_points_(:,1:domain_dim);
+            bool = false(1,size(sample_pnt,2));
+            for i = 1:size(sample_pnt,2)
+                temp = unique(sample_pnt(:,i));
+                if length(temp) == 1
+                    bool(i) = true;
+                end
+            end
+            
+            boundary_indicator = cell(1, domain_dim);
+            boundary_indicator{bool} = sample_pnt(1, bool);
+            
+            number_quad_pnt = number_quad_pnt(~bool);
             
             % IntUnit number
             switch dividing_method

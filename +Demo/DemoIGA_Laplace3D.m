@@ -74,13 +74,15 @@ iga_domain.solve('default');
 %% Data Interpolation
 import Interpolation.IGA.Interpolation;
 t_interpo = Interpolation(var_t);
-[x, data, element] = t_interpo.DomainDataSampling();
 
-%% Show result (Post-Processes)
+num_sample_pnt = [11 11 11];
+[x, data, element] = t_interpo.DomainDataSampling(num_sample_pnt);
+
+%% Show result through Paraview (Post-Processes)
 import Utility.Resources.vtkwrite
 import Utility.BasicUtility.TensorProduct
 
-TP = TensorProduct({11 11 11});
+TP = TensorProduct(num2cell(num_sample_pnt));
 xx = zeros(cell2mat(TP.num_));
 yy = zeros(cell2mat(TP.num_));
 zz = zeros(cell2mat(TP.num_));

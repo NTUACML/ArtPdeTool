@@ -59,24 +59,38 @@ classdef Assembler < Assembler.AssemblerBase
             end
         end
         
-        function status = IGA_Constraint_Assembly(this, var, basis_id, data)
-            if(size(data, 2) == 2)
-                dof_id = data(:,1);
-                const_value = data(:,2);
-                row_id = this.dof_manager_.getAssemblyId_by_DofId(var, basis_id, dof_id);
-                % erase lhs row value
-                this.lhs_(row_id, :) = 0;
-                % put constraint value
-                for i = 1:length(basis_id)
-                    this.lhs_(row_id(i), row_id(i)) = 1;
-                    this.rhs_(row_id(i)) = const_value(i);
+        function status = IGA_Constraint_Assembly(this, var, basis_id, data)       
+            for i = 1:length(basis_id)
+                if strcmp(data{i}.type, 'collocation')
+                    dof_id = data{i}.dof;
+                    
+                    row_id = this.dof_manager_.getAssemblyId_by_DofId(var, basis_id(i), dof_id);
+                    col_id = this.dof_manager_.getAssemblyId_by_DofId(var, data{i}.non_zero_id, dof_id);
+                    
+                    % erase lhs row value
+                    this.lhs_(row_id, :) = 0;
+                    this.lhs_(row_id, col_id) = data{i}.coefficient;
+                    % put constraint value
+                    this.rhs_(row_id) = data{i}.constraint_value;
+                    status = true;
+                elseif strcmp(data{i}.type, 'assign')
+                    dof_id = data{i}.dof;
+                    
+                    row_id = this.dof_manager_.getAssemblyId_by_DofId(var, basis_id(i), dof_id);
+                    
+                    % erase lhs row value
+                    this.lhs_(row_id, :) = 0;
+                    this.lhs_(row_id, row_id) = 1;
+                    % put constraint value
+                    this.rhs_(row_id) = data{i}.constraint_value;
+                    status = true;
+                else
+                    disp('Error <IGA Assembler>! - IGA_Constraint_Assembly!');
+                    disp('> Constraint data format error, please check!');
+                    status = false;
                 end
-                status = true;
-            else
-                disp('Error <IGA Assembler>! - FEM_Constraint_Assembly!');
-                disp('> Constraint data format error, please check!');
-                status = false;
             end
+
         end
     end
 end

@@ -82,7 +82,21 @@ classdef Operation < handle
                         else
                             disp('Error <Operation>! - getExpression!');
                             disp('> the linear form should input test and variable.');
-                        end    
+                        end 
+                    elseif strcmp(this.op_data_,'delta_epsilon_dot_sigma')
+                        % Bilinear form for linear elasticity
+                        if(~isempty(varargin) || ~(length(varargin{1}) < 2))
+                            test = varargin{1}{1};
+                            variable = varargin{1}{2};
+                            constitutive_law = varargin{1}{3};
+                                                   
+                            expression = ElasticityBilinearExpression(constitutive_law);
+                            expression.setTest(test);
+                            expression.setVar(variable);
+                        else
+                            disp('Error <Operation>! - getExpression!');
+                            disp('> the stiffness bilinear form should input test and variable.');
+                        end   
                     else
                         expression = Expression();
                     end    
