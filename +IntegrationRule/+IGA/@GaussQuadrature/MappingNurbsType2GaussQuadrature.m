@@ -12,7 +12,12 @@ switch nurbs_type
         weighting = weighting/2*lu;
         gauss_quadrature = {num_quadrature, position, weighting};
     case NurbsType.Surface
-        [num_quadrature, position, weighting] = GaussQuadrature.Quad4();
+        switch number_quad_pnt(1)
+            case 2
+                [num_quadrature, position, weighting] = GaussQuadrature.Quad4();
+            case 3
+                [num_quadrature, position, weighting] = GaussQuadrature.Quad9();
+        end
         lu = unit_span{1}(2)-unit_span{1}(1);
         lv = unit_span{2}(2)-unit_span{2}(1);
         position(:,1) = 0.5*(position(:,1)+1)*lu + unit_span{1}(1);
