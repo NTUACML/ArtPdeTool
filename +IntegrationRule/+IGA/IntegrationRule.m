@@ -32,7 +32,7 @@ classdef IntegrationRule < IntegrationRule.IntegrationRuleBase
                 number_quad_pnt = ceil((nurbs_data.order_ + 1)*0.5);  
             else
                 dividing_method = generate_parameter{1};
-                number_quad_pnt = generate_parameter{2};
+                number_quad_pnt = generate_parameter{2}*ones(size(nurbs_data.order_));
             end
             
             % IntUnit number
