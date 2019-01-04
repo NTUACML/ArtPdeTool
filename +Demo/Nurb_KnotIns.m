@@ -1,11 +1,11 @@
-function [new_xi,new_knots] = Nurb_KnotIns( p, xi, knots, u)
+function [new_points,new_knots] = Nurb_KnotIns( p, points, knots, u)
 
-Dim=length(xi);
+Dim=length(knots);
        
 for j=1:Dim
     if ~isempty(u{j}) ~=0
-        local_p=p{j};
-        Qw = xi{j};
+        local_p=p(j);
+        Qw = points{j};
         UQ = knots{j};
         uni = unique(u{j});
         n = histc(u{j},uni);
@@ -14,10 +14,10 @@ for j=1:Dim
             r = n(i);
             [Qw, UQ] = KnotIns(local_p, Qw, UQ, local_u,r);
         end
-        new_xi{j} = Qw;
+        new_points{j} = Qw;
         new_knots{j} = UQ;  
     else
-        new_xi{j} = xi{j};
+        new_points{j} = points{j};
         new_knots{j} = knots{j};
     end
 end
