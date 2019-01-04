@@ -1,26 +1,48 @@
 %function [new_xi,new_knots] = Nurb_KnotIns( p, xi, knots, u)
 clc;clear;
-p={2 2 2}
+p={[2] [2] [2]};
 knots{1}=[0,0,0,0.25,0.5,0.75,0.75,1,1,1];
 knots{2}=[0,0,0,0.25,0.5,0.75,0.75,1,1,1];
 knots{3}=[0,0,0,0.25,0.5,0.75,0.75,1,1,1];
-u=[0.375 0.5 0.5 0.75];
-xi=[0.500000000000000,1.50000000000000,4.50000000000000,3,7.50000000000000,6,8.50000000000000];
+u={[0.375 0.5 0.5 0.75] [] [[0.375 0.5 0.5 0.75]]};
+xi{1}=[0.500000000000000,1.50000000000000,4.50000000000000,3,7.50000000000000,6,8.50000000000000];
+xi{2}=[3,5.50000000000000,5.50000000000000,1.50000000000000,1.50000000000000,4,4.50000000000000];
+xi{3}=[0,0,0,0,0,0,0];
 
+Dim=length(xi);
 
-
-
-Qw = xi;
-UQ = knots;
-uni = unique(u);
-n = histc(u,uni);
-for i = 1:length(uni)
-    u = uni(i);
-    r = n(i);
- %  [Qw, UQ] = KnotIns(p, Qw, UQ, u,r);
+       
+for j=1:Dim
+    if ~isempty(u{j}) ~=0
+        local_p=p{j};
+        Qw = xi{j};
+        UQ = knots{j};
+        uni = unique(u{j});
+        n = histc(u{j},uni);
+        for i = 1:length(uni)
+            local_u = uni(i);
+            r = n(i);
+            [Qw, UQ] = KnotIns(local_p, Qw, UQ, local_u,r);
+        end
+        new_xi{j} = Qw;
+        new_knots{j} = UQ;  
+    else
+        new_xi{j} = xi{j};
+        new_knots{j} = knots{j};
+    end
 end
-new_xi = Qw
-new_knots = UQ
+        
+% Qw = xi;
+% UQ = knots;
+% uni = unique(u);
+% n = histc(u,uni);
+% for i = 1:length(uni)
+%     u = uni(i);
+%     r = n(i);
+%    %[Qw, UQ] = KnotIns(p, Qw, UQ, u,r);
+% end
+% new_xi = Qw
+% new_knots = UQ
 
 %end
 
@@ -37,12 +59,12 @@ nq = np + r;
 
 for i = 1:k UQ(i) = UP(i);end
 for i = 1:r UQ(k + i) = u;end                             %for i = 1 : r+s UQ(k + i) = u;end
-for i = (k + 1):(mp + 1) UQ(i + r) = UP(i);end            %for i = (k + 1) : (mp + 1) UQ(i + r+s) = UP(i);end
+for i = (k + 1):(mp + 1)    UQ(i + r) = UP(i);end            %for i = (k + 1) : (mp + 1) UQ(i + r+s) = UP(i);end
 
-for i = 1:(k - p) Qw(i) = Pw(i);end                       %for i = 1 : (k - p+s) Qw(i) = Pw(i);end
-for i = k:(np + 1) Qw(i + r) = Pw(i);end                  %for i = (k - s) : (np + 1-s) Qw(i + r+s) = Pw(i+s);end      
+for i = 1:(k - p)   Qw(i) = Pw(i);end                       %for i = 1 : (k - p+s) Qw(i) = Pw(i);end
+for i = k:(np + 1)  Qw(i + r) = Pw(i);end                  %for i = (k - s) : (np + 1-s) Qw(i + r+s) = Pw(i+s);end      
 
-for i = 1:(p + 1) Rw(i) = Pw(k - p + i - 1) ;end          %for i = 1 : (p - s + 1) Rw(i) = Pw(k - p + i-1+s) ;end
+for i = 1:(p + 1)   Rw(i) = Pw(k - p + i - 1) ;end          %for i = 1 : (p - s + 1) Rw(i) = Pw(k - p + i-1+s) ;end
 
 for j = 1:r
    L = k - p + j;                                           %L = k - p + j+s;
@@ -54,6 +76,6 @@ for j = 1:r
     Qw(k + r - j) = Rw(p - j + 1);                          %Qw(k + r - j) = Rw(p - j - s + 1);
 end 
 
-for i = (L + 1):k Qw(i) = Rw(i - L + 1);end               %for i = L + 1 : (k - s)    
+for i = (L + 1):k  Qw(i) = Rw(i - L + 1);end               %for i = L + 1 : (k - s)    
 
 end
