@@ -1,16 +1,6 @@
-%function [new_xi,new_knots] = Nurb_KnotIns( p, xi, knots, u)
-clc;clear;
-p={[2] [2] [2]};
-knots{1}=[0,0,0,0.25,0.5,0.75,0.75,1,1,1];
-knots{2}=[0,0,0,0.25,0.5,0.75,0.75,1,1,1];
-knots{3}=[0,0,0,0.25,0.5,0.75,0.75,1,1,1];
-u={[0.375 0.5 0.5 0.75] [] [[0.375 0.5 0.5 0.75]]};
-xi{1}=[0.500000000000000,1.50000000000000,4.50000000000000,3,7.50000000000000,6,8.50000000000000];
-xi{2}=[3,5.50000000000000,5.50000000000000,1.50000000000000,1.50000000000000,4,4.50000000000000];
-xi{3}=[0,0,0,0,0,0,0];
+function [new_xi,new_knots] = Nurb_KnotIns( p, xi, knots, u)
 
 Dim=length(xi);
-
        
 for j=1:Dim
     if ~isempty(u{j}) ~=0
@@ -31,20 +21,7 @@ for j=1:Dim
         new_knots{j} = knots{j};
     end
 end
-        
-% Qw = xi;
-% UQ = knots;
-% uni = unique(u);
-% n = histc(u,uni);
-% for i = 1:length(uni)
-%     u = uni(i);
-%     r = n(i);
-%    %[Qw, UQ] = KnotIns(p, Qw, UQ, u,r);
-% end
-% new_xi = Qw
-% new_knots = UQ
-
-%end
+end
 
 
 function [Qw, UQ] = KnotIns(p, Pw, UP, u, r)
@@ -77,5 +54,4 @@ for j = 1:r
 end 
 
 for i = (L + 1):k  Qw(i) = Rw(i - L + 1);end               %for i = L + 1 : (k - s)    
-
 end
