@@ -1,57 +1,75 @@
-function [new_points,new_knots] = Nurb_KnotIns( p, points, knots, u)
+%function [new_points,new_knots] = Nurb_KnotIns( p, points, knots, u)
+clear;clc
+import BasisFunction.IGA.NurbsBasisFunction
+import Utility.BasicUtility.TensorProduct
 
-Dim=length(knots);
-       
-for j=1:Dim
-    if ~isempty(u{j}) ~=0
-        local_p=p(j);
-        Qw = points{j};
-        UQ = knots{j};
-        uni = unique(u{j});
-        n = histc(u{j},uni);
-        for i = 1:length(uni)
-            local_u = uni(i);
-            r = n(i);
-            [Qw, UQ] = KnotIns(local_p, Qw, UQ, local_u,r);
+srf = nrb4surf([0 0 0 1],[0 1 0 1],[1 0 0 1],[1 1 0 1]) ;
+test=nrbkntins(srf,{[] [0.25]});
+p=[1];
+point=[0 0 0 1;1 0 0 1;0 1 0 1;1 1 0 1];
+
+TD_2 = TensorProduct({2 2});
+
+for k=1:4
+pos=TD_2.to_local_index(k)
+Pw(pos{1},pos{2})={point(k,:)}
+end
+
+knots{1}=[0 0 1 1];
+knots{2}=[0 0 1 1];
+UP=knots{1};
+VP=knots{2};
+u=[0.25];
+r=1;
+
+testP=permute(Pw,[2 1])
+
+testB=Demo.KnotIns(p, testP, UP, u, r)
+
+B=permute(testB,[2 1])
+
+[N_i N_j N_k]=size(B);
+TD_3 = TensorProduct({N_i N_j N_k}); %%%%%%
+
+for k=1:N_k
+    for j=1:N_j %%%%%
+        for i=1:N_i %%%%%
+            global_index = TD_3.to_global_index({i j k});
+            Final_Q(global_index,:)=B{i,j,k};
         end
-        new_points{j} = Qw;
-        new_knots{j} = UQ;  
-    else
-        new_points{j} = points{j};
-        new_knots{j} = knots{j};
     end
 end
-end
+Final_Q
 
 
-function [Qw, UQ] = KnotIns(p, Pw, UP, u, r)
-% Input: p, UP, Pw, u, r, 
-% Output: UQ, Qw
-import BasisFunction.IGA.NurbsBasisFunction
-np = length(UP) - p - 2;
-k = NurbsBasisFunction.FindSpan(np, p, u, UP);
-k = k+1;
-mp = np + p + 1;
-nq = np + r;
-
-for i = 1:k UQ(i) = UP(i);end
-for i = 1:r UQ(k + i) = u;end                             %for i = 1 : r+s UQ(k + i) = u;end
-for i = (k + 1):(mp + 1)    UQ(i + r) = UP(i);end            %for i = (k + 1) : (mp + 1) UQ(i + r+s) = UP(i);end
-
-for i = 1:(k - p)   Qw(i) = Pw(i);end                       %for i = 1 : (k - p+s) Qw(i) = Pw(i);end
-for i = k:(np + 1)  Qw(i + r) = Pw(i);end                  %for i = (k - s) : (np + 1-s) Qw(i + r+s) = Pw(i+s);end      
-
-for i = 1:(p + 1)   Rw(i) = Pw(k - p + i - 1) ;end          %for i = 1 : (p - s + 1) Rw(i) = Pw(k - p + i-1+s) ;end
-
-for j = 1:r
-   L = k - p + j;                                           %L = k - p + j+s;
-   for i = 1:(p - j + 1)                                  %for i = 1 : (p - j - s + 1)
-       alpha = (u - UP(L + i - 1))/(UP(i + k) - UP(L + i - 1));
-       Rw(i) = alpha * Rw(i + 1) + (1.0 - alpha) * Rw(i);
-   end
-    Qw(L) = Rw(1);
-    Qw(k + r - j) = Rw(p - j + 1);                          %Qw(k + r - j) = Rw(p - j - s + 1);
-end 
-
-for i = (L + 1):k  Qw(i) = Rw(i - L + 1);end               %for i = L + 1 : (k - s)    
-end
+% p=[2,2]
+% points{1}=[0.5,1.5,4.5,3,7.5,6,8.5];
+% points{2}=[3,5.5,5.5,1.5,1.5,4,4.5];
+% knots{1}=[0,0,0,0.25,0.5,0.75,0.75,1,1,1];
+% knots{2}=[0,0,0,0.25,0.5,0.75,0.75,1,1,1];
+% u={[0.125] [0]}    
+%     Dim=length(knots);
+%        
+% for j=1:Dim
+%     if ~isempty(u{j}) ~=0
+%         local_p=p(j);
+%         Qw = points{j};
+%         UQ = knots{j};
+%         uni = unique(u{j});
+%         n = histc(u{j},uni);
+%         for i = 1:length(uni)
+%             local_u = uni(i);
+%             r = n(i);
+%             [Qw, UQ] = Demo.KnotIns(local_p, Qw, UQ, local_u,r); %%%%%%%%%%%%%%
+%         end
+%         new_points{j} = Qw;
+%         new_knots{j} = UQ;  
+%     else
+%         new_points{j} = points{j}
+%         new_knots{j} = knots{j}
+%     end
+% end
+% new_points
+% end
+% 
+% 
