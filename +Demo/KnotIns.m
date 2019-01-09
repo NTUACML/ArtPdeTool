@@ -36,25 +36,25 @@ for q = 1:N_q
         for m = 1:N_m  
             Local_Pw(m,:) = [Pw{m,n,q}];
         end 
-        for row = 0:mp
+        for row = 1:(length(Local_Pw))
             for i=0:(k - p - 1)
-                Local_Qw(i + 1,row + 1) = Local_Pw(i + 1,row + 1);
+                Local_Qw(i + 1,row) = Local_Pw(i + 1,row);              
             end
             for i = k:(np+1)  %%%%%+1
-                Local_Qw(i + r,row + 1) = Local_Pw(i,row + 1);
+                Local_Qw(i + r,row) = Local_Pw(i,row);
             end
             for i=0:p
-                Rw(i + 1) = Local_Pw(k - p + i ,row + 1); %-1
+                Rw(i + 1) = Local_Pw(k - p + i ,row); %-1
             end
             for j = 1:r
                 L = k - p + j;                                          
                 for i = 0:(p - j)                                  
                     Rw(i + 1) = alpha(i + 1,j) * Rw(i + 2) + (1.0 - alpha(i + 1,j)) * Rw(i + 1);
-                    Local_Qw(L,row + 1) = Rw(1);
-                    Local_Qw(k + r - j,row + 1) = Rw(p - j + 1);
+                    Local_Qw(L,row) = Rw(1);
+                    Local_Qw(k + r - j,row) = Rw(p - j + 1);
                 end
                 for i = (L + 1):k
-                    Local_Qw(i,row + 1) = Rw(i - L + 1);
+                    Local_Qw(i,row) = Rw(i - L + 1);
                 end
             end
         end
@@ -64,8 +64,6 @@ for q = 1:N_q
         end
     end
 end
-%UQ
-
 end
 
 
