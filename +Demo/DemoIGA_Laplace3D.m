@@ -76,7 +76,7 @@ import Interpolation.IGA.Interpolation;
 t_interpo = Interpolation(var_t);
 
 num_sample_pnt = [11 11 11];
-[x, data, element] = t_interpo.DomainDataSampling(num_sample_pnt);
+[x, data, element] = t_interpo.DomainDataSampling(num_sample_pnt, 'value');
 
 %% Show result through Paraview (Post-Processes)
 import Utility.Resources.vtkwrite
@@ -93,10 +93,10 @@ for i = 1: TP.total_num_
     xx(local_id{1}, local_id{2}, local_id{3}) = x(i, 1);
     yy(local_id{1}, local_id{2}, local_id{3}) = x(i, 2);
     zz(local_id{1}, local_id{2}, local_id{3}) = x(i, 3);
-    tt(local_id{1}, local_id{2}, local_id{3}) = data(i);
+    tt(local_id{1}, local_id{2}, local_id{3}) = data.value{1}(i);
 end
 
-vtkwrite('laplace_for_3d_lens.vtk', 'structured_grid', xx, yy, zz, 'scalars', 'temperature', data);
+vtkwrite('laplace_for_3d_lens.vtk', 'structured_grid', xx, yy, zz, 'scalars', 'temperature', data.value{1});
 %% Show result
 %disp(var_t);
 end
