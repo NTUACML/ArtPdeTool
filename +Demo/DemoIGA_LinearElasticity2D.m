@@ -89,7 +89,7 @@ iga_domain.generateConstraint(bdr_patch, var_u, {2, u_y}, {'collocation', nurbs_
 %% Nurbs tools create & plot nurbs
 nurbs_tool = NurbsTools(nurbs_basis);
 
-figure; hold on; grid on; axis equal;
+figure; hold on; grid on; 
 nurbs_tool.plotNurbs();
 nurbs_tool.plotControlMesh();
 
@@ -113,10 +113,10 @@ fv.vertices = [x(:,1:2), data.value{1}];
 fv.faces = element;
 fv.facevertexcdata = data.value{1};
 
-figure; hold on; grid on; 
+figure; hold on; grid on; view([20 30]);
 patch(fv,'CDataMapping','scaled','EdgeColor',[.7 .7 .7],'FaceColor','interp','FaceAlpha',1);
 title('IGA Cantilever Beam x-displacement')
-view([0 90]);
+view([20 30]);
 
 plot3(x(:,1), x(:,2), u_x(x(:,1:2)), 'r.');
 
@@ -127,10 +127,10 @@ fv.vertices = [x(:,1:2), data.value{2}];
 fv.faces = element;
 fv.facevertexcdata = data.value{2};
 
-figure; hold on; grid on; 
+figure; hold on; grid on; view([20 30]);
 patch(fv,'CDataMapping','scaled','EdgeColor',[.7 .7 .7],'FaceColor','interp','FaceAlpha',1);
 title('IGA Cantilever Beam y-displacement')
-view([0 90]);
+view([20 30]);
 
 plot3(x(:,1), x(:,2), u_y(x(:,1:2)), 'r.');
 
@@ -153,10 +153,10 @@ fv.vertices = [x(:,1:2), s_x];
 fv.faces = element;
 fv.facevertexcdata = s_x;
 
-figure; hold on; grid on; 
+figure; hold on; grid on; view([20 30]);
 patch(fv,'CDataMapping','scaled','EdgeColor',[.7 .7 .7],'FaceColor','interp','FaceAlpha',1);
 title('IGA Cantilever Beam \sigma_x')
-view([0 90]);
+view([20 30]);
 
 plot3(x(:,1), x(:,2), sigma_x(x(:,1:2)), 'r.');
 
@@ -169,10 +169,10 @@ fv.vertices = [x(:,1:2), s_y];
 fv.faces = element;
 fv.facevertexcdata = s_y;
 
-figure; hold on; grid on; 
+figure; hold on; grid on; view([20 30]);
 patch(fv,'CDataMapping','scaled','EdgeColor',[.7 .7 .7],'FaceColor','interp','FaceAlpha',1);
 title('IGA Cantilever Beam \sigma_y')
-view([0 90]);
+view([20 30]);
 
 plot3(x(:,1), x(:,2), sigma_y(x(:,1:2)), 'r.');
 
@@ -188,7 +188,7 @@ fv.facevertexcdata = s_xy;
 figure; hold on; grid on; 
 patch(fv,'CDataMapping','scaled','EdgeColor',[.7 .7 .7],'FaceColor','interp','FaceAlpha',1);
 title('IGA Cantilever Beam \sigma_{xy}')
-view([0 90]);
+view([20 30]);
 
 plot3(x(:,1), x(:,2), sigma_xy(x(:,1:2)), 'r.');
 

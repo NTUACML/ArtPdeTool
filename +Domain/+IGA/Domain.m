@@ -235,7 +235,7 @@ classdef Domain < Domain.DomainBase
                     else
                         for i = 1:num_basis
                             constraint_data{i}.dof = constraint_obj.constraint_data_{1};
-                            constraint_data{i}.constraint_value = constraint_obj.constraint_data_{2};
+                            constraint_data{i}.constraint_value = constraint_obj.constraint_data_{2}();
                             constraint_data{i}.type = constraint_obj.type_;
                         end
                     end
