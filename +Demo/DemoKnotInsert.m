@@ -16,25 +16,35 @@ nurbs_topology = geo.topology_data_{1};
 
 domain_patch = nurbs_topology.getDomainPatch();
 nurbs_data = domain_patch.nurbs_data_;
+Surf=nurbs_data;
 
-knots=nurbs_data.knot_vectors_
-p=nurbs_data.order_
-point=nurbs_data.control_points_(:,:)
-u={[0.25 0.7 0.9] [0.5 0.5 0.6]};
-basis_num={nurbs_data.basis_number_(1) nurbs_data.basis_number_(2)}
+%linear demo
+Line.order_=[2];
+Line.knot_vectors_={[0,0,0,0.25,0.5,0.75,0.75,1,1,1]};
+Line.control_points_=[0.5,1.5,4.5,3,7.5,6,8.5;3,5.5,5.5,1.5,1.5,4,4.5;0,0,0,0,0,0,0;1,1,1,1,1,1,1]';
+Line.basis_number_=[7];
+
+%3D Test
+Test3D.knot_vectors_{1}=[0 0 0 1 1 1];
+Test3D.knot_vectors_{2}=[0 0 0 0.5 0.5 1 1 1];
+Test3D.knot_vectors_{3}=[0 0 0 0 1 1 1 1];
+Test3D.control_points_=[1];
+Test3D.order_=[2,2,3];
+Test3D.basis_number_=[3,5];
 
 
-% knots{1}=[0 0 0 1 1 1];
-% knots{2}=[0 0 0 0.5 0.5 1 1 1];
-% knots{3}=[0 0 0 0 1 1 1 1];
-% point=[114.798929	0	-6.879260917	1;108.5685671	0	-8.01
-% 0.995973632;102.2364285	0	-8.01	1;114.798929	-12.56250047	-6.879260917	0.707106781;108.5685671	-6.332138626	-8.01	0.704259709;102.2364285	0	-8.01	0.707106781;102.2364285	-12.56250047	-6.879260917	1;102.2364285	-6.332138626	-8.01	0.995973632;102.2364285	0	-8.01	1;89.67392803	-12.56250047	-6.879260917	0.707106781;5.90428987	-6.332138626	-8.01	0.704259709;102.2364285	0	-8.01	0.707106781;89.67392803	0	-6.879260917	1;95.90428987	0	-8.01	0.995973632;102.2364285	0	-8.01	1];
-% p=[2,2,3]
-% u={[0.5] [] []};
+[new_point,new_knots]=Demo.Nurb_KnotIns(Surf,{[0.375 0.5] [0.6 0.6]}) 
 
-[new_points,new_knots]=Demo.Nurb_KnotIns( p, point, knots, u, basis_num) 
+crv = nrbtestcrv; 
+icrv = nrbkntins(crv,[0.375 0.5]);
 
 
 srf = nrb4surf([0 0 0 1],[0 1 0 1],[1 0 0 1],[1 1 0 1]) ;
-test = nrbkntins(srf,{[0.5 0.5 0.6] [0.25 0.7 0.9]});
+isrf = nrbkntins(srf,{[0.375 0.5] [0.6 0.6]});
+
+% iga_domain = DomainBuilder.create('IGA');
+% nurbs_basis = iga_domain.generateBasis(geo.topology_data_{1})
+% nurbs_tool = NurbsTools(nurbs_basis)
+% nurbs_tool.plotControlMesh();
+
 %end
