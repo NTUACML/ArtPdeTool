@@ -25,19 +25,19 @@ Line.control_points_=[0.5,1.5,4.5,3,7.5,6,8.5;3,5.5,5.5,1.5,1.5,4,4.5;0,0,0,0,0,
 Line.basis_number_=[7];
 
 %3D Test
-Test3D.knot_vectors_{1}=[0 0 0 1 1 1];
-Test3D.knot_vectors_{2}=[0 0 0 0.5 0.5 1 1 1];
-Test3D.knot_vectors_{3}=[0 0 0 0 1 1 1 1];
-Test3D.control_points_=[1];
-Test3D.order_=[2,2,3];
-Test3D.basis_number_=[3,5];
+Test3D.knot_vectors_{1}=[0 0 1 1];
+Test3D.knot_vectors_{2}=[0 0 1 1];
+Test3D.knot_vectors_{3}=[0 0 1 1];
+Test3D.control_points_=[0 0 0 1;1 0 0 1;0 1 0 1;1 1 0 1;0 0 1 1;1 0 1 1;0 1 1 1;1 1 1 1];
+Test3D.order_=[1,1,1];
+Test3D.basis_number_=[2,2,2];
 
+%Line / Surf / Test3D
+[new_point,new_knots]=Demo.Nurb_KnotIns(Test3D,{[0.25] [0.6] [0.8 0.8]}) 
 
-[new_point,new_knots]=Demo.Nurb_KnotIns(Surf,{[0.375 0.5] [0.6 0.6]}) 
-
+%Example
 crv = nrbtestcrv; 
 icrv = nrbkntins(crv,[0.375 0.5]);
-
 
 srf = nrb4surf([0 0 0 1],[0 1 0 1],[1 0 0 1],[1 1 0 1]) ;
 isrf = nrbkntins(srf,{[0.375 0.5] [0.6 0.6]});

@@ -33,14 +33,14 @@ for q = 1:N_q
     for n = 1:N_n  
         Local_Pw = [];
         for m = 1:N_m  
-            Local_Pw(m, :) = [Pw{m, n, q}]
+            Local_Pw(m, :) = [Pw{m, n, q}];
         end 
-        [row_n, col_n] = size(Local_Pw)
+        [row_n, col_n] = size(Local_Pw);
         for col = 1:col_n
             for i = 0:(k-p-1)
                 Local_Qw(i+1, col) = Local_Pw(i+1, col);              
             end
-            for i = k:(np+1)  
+            for i = k:(np+1)
                 Local_Qw(i+r, col) = Local_Pw(i, col);
             end
             for i = 0:p
