@@ -271,6 +271,11 @@ classdef NurbsTools < handle
             [new_points, new_knots, new_basis_number] = this.Nurb_KnotIns(knots);
             import Utility.BasicUtility.PointList  
             
+            % transform to Cartesian coordinates
+            for i = 1:size(new_points, 1)
+                new_points(i,1:3) = new_points(i,1:3)/new_points(i,4);
+            end
+            
             this.nurbs_data_.knot_vectors_ = new_knots;
             this.nurbs_data_.basis_number_ = new_basis_number;
             this.nurbs_data_.control_points_ = PointList(new_points);
@@ -440,6 +445,12 @@ classdef NurbsTools < handle
             knots = this.nurbs_data_.knot_vectors_;
             p = this.nurbs_data_.order_;
             point = this.nurbs_data_.control_points_(:,:);
+            
+            % transform to homogeneous coordinates
+            for i = 1:size(point,1)
+                point(i,1:3) = point(i,1:3)*point(i,4);
+            end
+                        
             basis_n = this.nurbs_data_.basis_number_;
             
             while length(basis_n) < 3

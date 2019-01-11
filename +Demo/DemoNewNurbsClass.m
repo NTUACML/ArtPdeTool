@@ -27,14 +27,21 @@ nurbs_basis = iga_domain.generateBasis(geo.topology_data_{1});
 %% Nurbs tools create
 nurbs_tool = NurbsTools(nurbs_basis);
 
+% generate 5 random parametric point
+xi = rand(5, geo_dim);
+
 % Plot nurbs
 figure; hold on; grid on; axis equal;
 nurbs_tool.plotNurbs([21 21 21]);
 nurbs_tool.plotControlMesh();
 hold off;
 
-% Knot insert
-nurbs_tool.knotInsertion({[0.1 0.5 0.2 0.93] [0.7 0.4 0.2]});
+% Evaluate nurbs & derivatives
+[position_org, gradient_org] = nurbs_tool.evaluateNurbs(xi, 'position', 'gradient');
+
+%% Knot insert
+nurbs_tool.knotInsertion({[0.12 0.45 0.93] [0.28 0.84 0.55 0.6]});
+
 nurbs_data.dispControlPoints();
 nurbs_data.dispKnotVectors();
 
@@ -50,11 +57,12 @@ nurbs_tool.plotControlMesh();
 hold off;
 
 % Evaluate nurbs & derivatives
-xi = rand(5, geo_dim);
+[position_new, gradient_new] = nurbs_tool.evaluateNurbs(xi, 'position', 'gradient');
 
-[position] = nurbs_tool.evaluateNurbs(xi, 'position');
-[~, gradient] = nurbs_tool.evaluateNurbs(xi, 'gradient');
-[position, gradient] = nurbs_tool.evaluateNurbs(xi, 'position', 'gradient');
+
+% [position] = nurbs_tool.evaluateNurbs(xi, 'position');
+% [~, gradient] = nurbs_tool.evaluateNurbs(xi, 'gradient');
+% [position, gradient] = nurbs_tool.evaluateNurbs(xi, 'position', 'gradient');
 
  
 end
