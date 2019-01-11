@@ -15,6 +15,7 @@ geo = GeometryBuilder.create('IGA', 'XML', xml_path);
 nurbs_topology = geo.topology_data_{1};
 
 domain_patch = nurbs_topology.getDomainPatch();
+nurbs_data = domain_patch.nurbs_data_;
 
 %% Create Domain
 iga_domain = DomainBuilder.create('IGA');
