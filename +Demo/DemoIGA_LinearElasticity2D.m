@@ -118,8 +118,10 @@ patch(fv,'CDataMapping','scaled','EdgeColor',[.7 .7 .7],'FaceColor','interp','Fa
 title('IGA Cantilever Beam x-displacement')
 view([20 30]);
 
-plot3(x(:,1), x(:,2), u_x(x(:,1:2)), 'r.');
-
+ana = u_x(x(:,1:2));
+plot3(x(:,1), x(:,2), ana, 'r.');
+rms_ = rms(data.value{1}-ana);
+disp(rms_);
 hold off;
 
 % plot y-displacement
@@ -132,8 +134,10 @@ patch(fv,'CDataMapping','scaled','EdgeColor',[.7 .7 .7],'FaceColor','interp','Fa
 title('IGA Cantilever Beam y-displacement')
 view([20 30]);
 
-plot3(x(:,1), x(:,2), u_y(x(:,1:2)), 'r.');
-
+ana = u_y(x(:,1:2));
+plot3(x(:,1), x(:,2), ana, 'r.');
+rms_ = rms(data.value{2}-ana);
+disp(rms_);
 hold off;
 
 % plot deformed mesh
@@ -158,8 +162,10 @@ patch(fv,'CDataMapping','scaled','EdgeColor',[.7 .7 .7],'FaceColor','interp','Fa
 title('IGA Cantilever Beam \sigma_x')
 view([20 30]);
 
-plot3(x(:,1), x(:,2), sigma_x(x(:,1:2)), 'r.');
-
+ana = sigma_x(x(:,1:2));
+plot3(x(:,1), x(:,2), ana, 'r.');
+rms_ = rms(s_x-ana);
+disp(rms_);
 hold off;
 
 % plot sigma_y
@@ -174,8 +180,10 @@ patch(fv,'CDataMapping','scaled','EdgeColor',[.7 .7 .7],'FaceColor','interp','Fa
 title('IGA Cantilever Beam \sigma_y')
 view([20 30]);
 
-plot3(x(:,1), x(:,2), sigma_y(x(:,1:2)), 'r.');
-
+ana = sigma_y(x(:,1:2));
+plot3(x(:,1), x(:,2), ana, 'r.');
+rms_ = rms(s_y-ana);
+disp(rms_);
 hold off;
 
 % plot sigma_xy
@@ -190,8 +198,10 @@ patch(fv,'CDataMapping','scaled','EdgeColor',[.7 .7 .7],'FaceColor','interp','Fa
 title('IGA Cantilever Beam \sigma_{xy}')
 view([20 30]);
 
-plot3(x(:,1), x(:,2), sigma_xy(x(:,1:2)), 'r.');
-
+ana = sigma_xy(x(:,1:2));
+plot3(x(:,1), x(:,2), ana, 'r.');
+rms_ = rms(s_xy-ana);
+disp(rms_);
 hold off;
 
 %% Show result
