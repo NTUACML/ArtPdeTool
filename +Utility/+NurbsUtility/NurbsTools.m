@@ -18,29 +18,36 @@ classdef NurbsTools < handle
                 case 1
                     unique_knot = unique(this.nurbs_data_.knot_vectors_{1});
                     plot(unique_knot, unique_knot*0, 'ko');
+                    xlabel('\xi');
                 case 2
                     unique_knot_1 = unique(this.nurbs_data_.knot_vectors_{1});
                     unique_knot_2 = unique(this.nurbs_data_.knot_vectors_{2});
                     unique_knot_3 = 0;
                     
                     this.plotMeshPatch(unique_knot_1, unique_knot_2, unique_knot_3);
+                    xlabel('\xi');
+                    ylabel('\eta');
                 case 3
                     unique_knot_1 = unique(this.nurbs_data_.knot_vectors_{1});
                     unique_knot_2 = unique(this.nurbs_data_.knot_vectors_{2});
                     unique_knot_3 = unique(this.nurbs_data_.knot_vectors_{3});
                     
-                    % Plot bottom face
+                    % Plot face zeta = 0
                     this.plotMeshPatch(unique_knot_1, unique_knot_2, 0);
-                    % Plot top face
+                    % Plot face zeta = 1
                     this.plotMeshPatch(unique_knot_1, unique_knot_2, 1);
-                    % Plot east face
-                    this.plotMeshPatch(unique_knot_1, 1, unique_knot_3);
-                    % Plot west face
+                    % Plot face eta = 0
                     this.plotMeshPatch(unique_knot_1, 0, unique_knot_3);
-                    % Plot rare face
+                    % Plot face eta = 1
+                    this.plotMeshPatch(unique_knot_1, 1, unique_knot_3);
+                    % Plot face xi = 0
                     this.plotMeshPatch(0, unique_knot_2, unique_knot_3);
-                    % Plot front face
+                    % Plot face xi = 1
                     this.plotMeshPatch(1, unique_knot_2, unique_knot_3);
+                    
+                    xlabel('\xi');
+                    ylabel('\eta');
+                    zlabel('\zeta');
             end
             
         end
@@ -154,25 +161,25 @@ classdef NurbsTools < handle
                     % Only surface nurbs are plotted for 3d case
                     unique_knot_1 = unique(this.nurbs_data_.knot_vectors_{1});
                     unique_knot_2 = unique(this.nurbs_data_.knot_vectors_{2});
-                    unique_knot_3 = unique(this.nurbs_data_.knot_vectors_{3});
+                    unique_knot_3 = unique(this.nurbs_data_.knot_vectors_{3});                    
                     
-                    % Plot bottom face
-                    unique_knot_vector = {unique_knot_1, unique_knot_2, 0};
-                    this.plotSurfaceNurbs(N, unique_knot_vector);
-                    % Plot top face
-                    unique_knot_vector = {unique_knot_1, unique_knot_2, 1};
-                    this.plotSurfaceNurbs(N, unique_knot_vector);
-                    % Plot east face
-                    unique_knot_vector = {unique_knot_1, 1, unique_knot_3};
-                    this.plotSurfaceNurbs(N, unique_knot_vector);
-                    % Plot west face
-                    unique_knot_vector = {unique_knot_1, 0, unique_knot_3};
-                    this.plotSurfaceNurbs(N, unique_knot_vector);
-                    % Plot rare face
+                    % Plot face xi = 0
                     unique_knot_vector = {0, unique_knot_2, unique_knot_3};
                     this.plotSurfaceNurbs(N, unique_knot_vector);
-                    % Plot front face
+                    % Plot face xi = 1
                     unique_knot_vector = {1, unique_knot_2, unique_knot_3};
+                    this.plotSurfaceNurbs(N, unique_knot_vector);
+                    % Plot face eta = 0
+                    unique_knot_vector = {unique_knot_1, 0, unique_knot_3};
+                    this.plotSurfaceNurbs(N, unique_knot_vector);
+                    % Plot face eta = 1
+                    unique_knot_vector = {unique_knot_1, 1, unique_knot_3};
+                    this.plotSurfaceNurbs(N, unique_knot_vector);
+                    % Plot face zeta = 0
+                    unique_knot_vector = {unique_knot_1, unique_knot_2, 0};
+                    this.plotSurfaceNurbs(N, unique_knot_vector);
+                    % Plot face zeta = 1
+                    unique_knot_vector = {unique_knot_1, unique_knot_2, 1};
                     this.plotSurfaceNurbs(N, unique_knot_vector);
                     
                     % Plot knot mesh using 3d basis functions
@@ -182,56 +189,59 @@ classdef NurbsTools < handle
                     
                     % Start from the knot point from knot_1, generate
                     % sample points along directions (+-)2 & (+-)3
-                    for knot_p = unique_knot_vector{1}
+                    for knot_p = unique_knot_1
                         this.plotKnotLine([knot_p 0 0], direction{2}, N(2));
                     end
                     
-                    for knot_p = unique_knot_vector{1}
+                    for knot_p = unique_knot_1
                         this.plotKnotLine([knot_p 1 1], -direction{2}, N(2));
                     end
                     
-                    for knot_p = unique_knot_vector{1}
+                    for knot_p = unique_knot_1
                         this.plotKnotLine([knot_p 0 0], direction{3}, N(3));
                     end
                     
-                    for knot_p = unique_knot_vector{1}
+                    for knot_p = unique_knot_1
                         this.plotKnotLine([knot_p 1 1], -direction{3}, N(3));
                     end
                     % Start from the knot point from knot_2, generate
                     % sample points along directions (+-)1 & (+-)3
-                    for knot_p = unique_knot_vector{2}
+                    for knot_p = unique_knot_2
                         this.plotKnotLine([0 knot_p 0], direction{1}, N(1));
                     end
                     
-                    for knot_p = unique_knot_vector{2}
+                    for knot_p = unique_knot_2
                         this.plotKnotLine([1 knot_p 1], -direction{1}, N(1));
                     end
                     
-                    for knot_p = unique_knot_vector{2}
+                    for knot_p = unique_knot_2
                         this.plotKnotLine([0 knot_p 0], direction{3}, N(3));
                     end
                     
-                    for knot_p = unique_knot_vector{2}
+                    for knot_p = unique_knot_2
                         this.plotKnotLine([1 knot_p 1], -direction{3}, N(3));
                     end
                     % Start from the knot point from knot_3, generate
                     % sample points along directions (+-)1 & (+-)2
-                    for knot_p = unique_knot_vector{3}
+                    for knot_p = unique_knot_3
                         this.plotKnotLine([0 0 knot_p], direction{1}, N(1));
                     end
                     
-                    for knot_p = unique_knot_vector{3}
+                    for knot_p = unique_knot_3
                         this.plotKnotLine([1 1 knot_p], -direction{1}, N(1));
                     end
                     
-                    for knot_p = unique_knot_vector{3}
+                    for knot_p = unique_knot_3
                         this.plotKnotLine([0 0 knot_p], direction{2}, N(2));
                     end
                     
-                    for knot_p = unique_knot_vector{3}
+                    for knot_p = unique_knot_3
                         this.plotKnotLine([1 1 knot_p], -direction{2}, N(2));
                     end
                     
+                    xlabel('x');
+                    ylabel('y');
+                    zlabel('x');
             end
         end
         % Plot mesh formed by control points 
@@ -294,7 +304,7 @@ classdef NurbsTools < handle
                 fv.vertices = [knot_1*ones(m.node_number,1), xx(:), yy(:)];
             elseif length(knot_2) == 1
                 m = mesh2d(length(knot_1)-1, length(knot_3)-1, 1, 1);
-                [yy, xx] = meshgrid(knot_1, knot_3);
+                [yy, xx] = meshgrid(knot_3, knot_1);
                 fv.vertices = [xx(:), knot_2*ones(m.node_number,1), yy(:)];
             elseif length(knot_3) == 1
                 m = mesh2d(length(knot_1)-1, length(knot_2)-1, 1, 1);
