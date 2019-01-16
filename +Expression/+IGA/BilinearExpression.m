@@ -55,12 +55,8 @@ classdef BilinearExpression < Expression.IGA.Expression
                 dxi_dx = inv(dx_dxi);
                               
                 % eval basis derivative with x
-                d_test_dx = dxi_dx * test_eval{2};
-                d_var_dx = dxi_dx * var_eval{2};
-                
-                % eval bilinear form
-                B_test = d_test_dx;
-                B_var = d_var_dx;
+                B_test = dxi_dx * test_eval{2};
+                B_var = dxi_dx * var_eval{2};
                 
                 % add to local matrix
                 local_matrix{i} = (B_test' * B_var).* qw(i) * J; 

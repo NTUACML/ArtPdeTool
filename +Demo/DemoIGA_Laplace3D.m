@@ -22,9 +22,16 @@ nurbs_basis = iga_domain.generateBasis(nurbs_topology);
 %% Nurbs tools create & plot nurbs
 nurbs_tool = NurbsTools(nurbs_basis);
 
+nurbs_data = nurbs_topology.domain_patch_data_.nurbs_data_;
+t_1 = linspace(nurbs_data.knot_vectors_{1}(1), nurbs_data.knot_vectors_{1}(end), 11);
+t_2 = linspace(nurbs_data.knot_vectors_{2}(1), nurbs_data.knot_vectors_{2}(end), 10);
+t_3 = linspace(nurbs_data.knot_vectors_{3}(1), nurbs_data.knot_vectors_{3}(end), 5);
+
+nurbs_tool.knotInsertion({t_1(2:end-1) t_2(2:end-1) t_3(2:end-1)});
+
 figure; hold on; grid on; view([140 30]); %axis equal; 
 nurbs_tool.plotNurbs();
-nurbs_tool.plotControlMesh();
+% nurbs_tool.plotControlMesh();
 hold off;
 %% Variable define   
 var_t = iga_domain.generateVariable('temperature', nurbs_basis,...
@@ -49,7 +56,6 @@ iga_domain.calIntegral(doamin_patch, exp1);
 
 %% Constraint (Acquire prescribed D.O.F.)
 
-
 bdr_patch = nurbs_topology.getBoundayPatch('xi_1');
 iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
 
@@ -59,11 +65,11 @@ iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
 bdr_patch = nurbs_topology.getBoundayPatch('eta_1');
 iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
 
-bdr_patch = nurbs_topology.getBoundayPatch('zeta_0');
-iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
-
-bdr_patch = nurbs_topology.getBoundayPatch('zeta_1');
-iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
+% bdr_patch = nurbs_topology.getBoundayPatch('zeta_0');
+% iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
+% 
+% bdr_patch = nurbs_topology.getBoundayPatch('zeta_1');
+% iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
 
 bdr_patch = nurbs_topology.getBoundayPatch('xi_0');
 iga_domain.generateConstraint(bdr_patch, var_t, {1, @()1});
