@@ -274,7 +274,18 @@ classdef NurbsTools < handle
         
         % TODO: finish these functions
         function degreeElevation(this, degree)
-            disp('Under development');
+            [new_points, new_knots, new_basis_number, new_order] = this.Nurb_DegElev(degree);
+            import Utility.BasicUtility.PointList  
+            
+            % transform to Cartesian coordinates
+            for i = 1:size(new_points, 1)
+                new_points(i,1:3) = new_points(i,1:3)/new_points(i,4);
+            end
+            
+            this.nurbs_data_.knot_vectors_ = new_knots;
+            this.nurbs_data_.order_ = new_order;
+            this.nurbs_data_.basis_number_ = new_basis_number;
+            this.nurbs_data_.control_points_ = PointList(new_points);
         end
         
         function knotInsertion(this, knots)
@@ -605,6 +616,294 @@ classdef NurbsTools < handle
             
             new_basis_number = size(Pw);
         end
+
+        function [Qw, Uh] = DegreeElev(this, p, Pw, UP, t)
+            % Input: p, UP, Pw, t
+            % Output: Uh, Qw
+            [N_m, N_n, N_q] = size(Pw);
+            n = length(UP)-p-2;
+            m = n+p+1;
+            ph = p+t;
+            ph2 = floor(ph/2);
+
+            %% Compute Bezier degree elevation coefficients
+            bezalfs(1, 1) = 1;
+            bezalfs(p+1, ph+1) = 1;
+            for i = 1:ph2
+               inv = 1.0 / Bin(ph, i);
+               mpi = min(p, i);
+               for j = max(0, i-t):mpi
+                   bezalfs(j+1, i+1) = inv*Bin(p, j)*Bin(t, i-j); 
+               end
+            end
+            for i = (ph2+1):(ph-1)
+                mpi = min(p, i);
+                for j = max(0, i-t):mpi
+                    bezalfs(j+1, i+1) = bezalfs(p-j+1, ph-i+1);
+                end
+            end
+            ua = UP(1);
+            for i = 0:ph
+               Uh(i+1) = ua; 
+            end
+
+            for qq = 1:N_q
+            for nn = 1:N_n  
+                Local_Pw = [];
+                Local_Qw=[];
+                mh = ph;
+                kind = ph+1;
+                r = -1;
+                a = p;
+                b = p+1;
+                cind = 1;
+                for mm = 1:N_m  
+                    Local_Pw(mm, :) = [Pw{mm, nn, qq}];
+                end
+            %% Initialize first Bezier seg
+                [~, col_n] = size(Local_Pw);
+                for col = 1:col_n
+                    Local_Qw(1, col) = Local_Pw(1, col);
+                    for i = 0:p
+                       bpts(i+1, col) = Local_Pw(i+1, col); 
+                    end
+                end
+            % Big loop thru knot vector
+            while b < m
+                i = b;
+                while b < m && UP(b+1) == UP(b+2)
+                    b = b+1;
+                end
+                mul = b - i + 1;
+                mh = mh + mul + t;
+                ub = UP(b+1);
+                oldr = r;
+                r = p-mul;
+
+                % Insert knot u(b) r times
+                if oldr > 0 
+                    lbz = floor((oldr+2)/2);
+                else 
+                    lbz = 1;
+                end    
+                if r > 0
+                    rbz = ph-floor((r+1)/2);
+                else
+                    rbz = ph;
+                end
+
+                % Insert knot to get Bezier segment
+                if r > 0 
+                    numer = ub-ua;
+                    for k = p:-1:(mul+1)
+                        alfs(k-mul) = numer / (UP(a+k+1)-ua);
+                    end
+                    for j = 1:r
+                        save = r - j;
+                        s = mul + j;
+                        for col = 1:col_n
+                            for k = p:-1:s
+                                bpts(k+1,col) = alfs(k-s+1)*bpts(k+1,col) + (1.0-alfs(k-s+1))*bpts(k,col);
+                            end
+                            Nextbpts(save+1,col)=bpts(p+1,col);
+                        end
+                    end
+                end
+                % Degree elevate Bezier
+                for i = lbz:ph
+                    for col = 1:col_n
+                        ebpts(i+1, col) = 0;
+                        mpi = min(p, i);
+                        for j = max(0, i-t):mpi
+                            ebpts(i+1, col) = ebpts(i+1, col) + bezalfs(j+1, i+1)*bpts(j+1, col);
+                        end
+                    end
+                end
+                % Must remove knot u=U(a) oldr times 
+                if oldr > 1
+                    first = kind-2;
+                    last = kind;
+                    den = ub - ua;
+                    bet = floor((ub-Uh(kind)) / den);
+                    for tr = 1:(oldr-1)
+                        i = first;
+                        j = last;
+                        kj = j-kind+1;
+                        while (j-i) > tr
+                            if i < cind
+                                alf = (ub-Uh(i+1)) / (ua-Uh(i+1));
+                                for col = 1:col_n
+                                    Local_Qw(i+1, col) = alf*Local_Qw(i+1, col) + (1.0-alf)*Local_Qw(i-1+1, col);                  
+                                end
+                            end
+                            if j >= lbz
+                                if (j-tr) <= (kind-ph+oldr)
+                                    gam = (ub-Uh(j-tr+1)) / den;
+                                    for col = 1:col_n
+                                        ebpts(kj+1, col) = gam*ebpts(kj+1, col) + (1.0-gam)*ebpts(kj+2, col);
+                                    end
+                                else
+                                    for col = 1:col_n
+                                        ebpts(kj+1, col) = bet*ebpts(kj+1, col) + (1.0-bet)*ebpts(kj+2, col);
+                                    end
+                                end
+                            end
+                            i = i+1;
+                            j = j-1;
+                            kj = kj-1;
+                        end
+                        first = first-1;
+                        last = last+1;
+                    end
+                end
+
+                % Load the knot ua
+                if a ~= p
+                    for i = 0:(ph-oldr-1)
+                        Uh(kind+1) = ua;
+                        kind = kind+1;
+                    end
+                end
+                for j = lbz:rbz
+                    for col = 1:col_n
+                        Local_Qw(cind+1, col) = ebpts(j+1, col);
+                    end
+                    cind = cind+1;
+                end
+                if b < m
+                    for col = 1:col_n
+                        for j = 0:(r-1)
+                            bpts(j+1, col) = Nextbpts(j+1, col);
+                        end
+                        for j = r:p
+                            bpts(j+1, col) = Local_Pw(b-p+j+1, col);
+                        end    
+                    end
+                    a = b;
+                    b = b+1;
+                    ua = ub;
+                else
+                    for i = 0:ph
+                        Uh(kind+i+1) = ub;
+                    end
+                end 
+            end % End big while loop
+
+            [rowQ, ~] = size(Local_Qw);
+            for i = 1:rowQ
+                Qw{i, nn, qq} = Local_Qw(i, :);
+            end
+            end
+            end
+            function b = Bin(p,i)
+                b = factorial(p) / (factorial(i)*factorial(p-i));
+            end
+        end
+
+        function [new_points, new_knots, new_basis_number, new_order] = Nurb_DegElev(this, t)  
+            % Input: p(matrix), knots(cell), point(matrix), t(matrix), basis_num(matrix)
+            % Output: new_points, new_knots, new_basis_number, new_order
+            import Utility.BasicUtility.TensorProduct
+
+            knots = this.nurbs_data_.knot_vectors_;
+            p = this.nurbs_data_.order_;
+            point = this.nurbs_data_.control_points_(:,:);
+            basis_n = this.nurbs_data_.basis_number_;
+            
+            % transform to homogeneous coordinates
+            for i = 1:size(point,1)
+                point(i,1:3) = point(i,1:3)*point(i,4);
+            end
+
+            while length(basis_n) < 3
+                basis_n(1, end+1) = 1;
+            end
+
+            %Rearrange point list to cubic
+            TD = TensorProduct({basis_n(1) basis_n(2) basis_n(3)});
+            point_L = basis_n(1) * basis_n(2) * basis_n(3);
+            for k = 1:point_L
+                pos = TD.to_local_index(k);
+                Pw(pos{1},pos{2},pos{3}) = {point(k,:)};
+            end
+
+            Dim = length(knots);
+            switch Dim
+                case 1
+                    UP = knots{1};
+                    t_u = t(1);
+                    %insert u-direction
+                    if t_u == 0 
+                        Uh = UP;
+                    else
+                        [Qw, Uh] = this.DegreeElev(p(1), Pw, UP, t_u);
+                        Pw = Qw;
+                    end
+                    new_knots = {Uh};
+
+                case 2
+                    UP = knots{1}; VP = knots{2};
+                    t_u = t(1); t_v = t(2);
+                    %elevate u-direction
+                    if t_u == 0
+                        Uh = UP;
+                    else
+                        [Qw, Uh] = this.DegreeElev(p(1), Pw, UP, t_u);
+                        Pw = Qw;
+                    end
+                    %elevate v-direction
+                    if t_v == 0 
+                        Vh = VP;
+                    else
+                        tempPw = permute(Pw, [2 1 3]);
+                        [Qw, Vh] = this.DegreeElev(p(2), tempPw, VP, t_v);
+                        Pw = permute(Qw,[2 1 3]);
+                    end
+                    new_knots = {Uh, Vh};
+
+                case 3
+                    UP = knots{1}; VP = knots{2}; WP = knots{3};
+                    t_u = t(1); t_v = t(2); t_w = t(3);
+                    %insert u-direction
+                    if t_u == 0
+                        Uh = UP;
+                    else
+                        [Qw, Uh] = this.DegreeElev(p(1), Pw, UP, t_u);
+                        Pw = Qw;
+                    end
+                    %elevate v-direction
+                    if t_v == 0 
+                        Vh = VP;
+                    else
+                        tempPw = permute(Pw, [2 1 3]);
+                        [Qw, Vh] = this.DegreeElev(p(2), tempPw, VP, t_v);
+                        Pw = permute(Qw,[2 1 3]);
+                    end
+                    %elevate w-direction
+                    if t_w == 0 
+                        Wh = WP;
+                    else
+                        tempPw = permute(Pw,[3 2 1]);
+                        [Qw, Wh] = this.DegreeElev(p(3), tempPw, WP, t_w);%
+                        Pw = permute(Qw,[3 2 1]);
+                    end
+                    new_knots = {Uh, Vh, Wh};      
+            end
+
+            %Rearrange cubic control point to point-list type
+            [N_i, N_j, N_k] = size(Pw);
+            TD_3 = TensorProduct({N_i N_j N_k});
+            for k = 1:N_k
+                for j = 1:N_j 
+                    for i = 1:N_i 
+                        global_index = TD_3.to_global_index({i j k});
+                        new_points(global_index, :) = Pw{i, j, k};
+                    end
+                end
+            end
+            new_basis_number = size(Pw);
+            new_order = this.nurbs_data_.order_ + t;
+            end
 
 
 
