@@ -40,6 +40,7 @@ hold off;
 % [position_org, gradient_org] = nurbs_tool.evaluateNurbs(xi, 'position', 'gradient');
 
 %% Knot insert
+nurbs_tool.degreeElevation([1 1 1]);
 nurbs_tool.knotInsertion({[0.2 0.8] [0.3 0.7] [0.4 0.9]});
 
 nurbs_data.dispControlPoints();
