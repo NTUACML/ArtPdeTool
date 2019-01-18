@@ -286,6 +286,9 @@ classdef NurbsTools < handle
             this.nurbs_data_.order_ = new_order;
             this.nurbs_data_.basis_number_ = new_basis_number;
             this.nurbs_data_.control_points_ = PointList(new_points);
+            
+            this.basis_function_.num_basis_ = prod(this.nurbs_data_.basis_number_);
+            this.basis_function_.topology_data_.point_data_ = this.nurbs_data_.control_points_;
         end
         
         function knotInsertion(this, knots)
