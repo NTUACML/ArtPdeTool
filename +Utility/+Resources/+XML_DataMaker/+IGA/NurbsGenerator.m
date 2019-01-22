@@ -21,9 +21,24 @@ switch nurbs_name
         status = true;
     case 'Plane_quarter_hole'
         nurbs = Plane_quarter_hole();
-        t = linspace(0.1, 0.9, 9);
-        nurbs = nrbkntins(nurbs,{t, t});
+        
+%         nurbs = nrbdegelev(nurbs, [1 0]);        
+%         t = linspace(0.1, 0.9, 9);
+%         nurbs = nrbkntins(nurbs,{t, t});
         status = true;
+    case 'Hexa_quarter_hole'
+        nurbs = Plane_quarter_hole();
+        nurbs.number = [nurbs.number, 2];
+        nurbs.knots{1,3} = [0 0 1 1];
+        nurbs.order = [nurbs.order 2];
+        temp = nurbs.coefs;
+        s = size(temp);
+        nurbs.coefs = zeros([s 2]);
+        nurbs.coefs(:,:,:,1) = temp;
+        temp(3,:,:) = (temp(3,:,:)./temp(4,:,:) + 1).*temp(4,:,:);
+        nurbs.coefs(:,:,:,2) = temp;
+
+        status = true;    
     case 'Lens_top_right'
         import Utility.BasicUtility.PointList
         import Utility.NurbsUtility.Nurbs
