@@ -653,7 +653,8 @@ classdef NurbsTools < handle
             end
 
             for qq = 1:N_q
-            for nn = 1:N_n  
+            for nn = 1:N_n
+                ua = UP(1);
                 Local_Pw = [];
                 Local_Qw=[];
                 mh = ph;
