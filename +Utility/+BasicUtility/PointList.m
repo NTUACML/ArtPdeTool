@@ -55,11 +55,14 @@ classdef PointList < handle
         
         function this = subsasgn(this,S, B)
             import Utility.BasicUtility.Point
-            if (S.type == '()')
+%             if (S.type == '()')
+            if (strcmp(S.type,'()'))    
                 this = setSliceMethod(this, S.subs, B);
-            elseif (S.type == '{}')
+%             elseif (S.type == '{}')
+            elseif (strcmp(S.type,'{}'))
                 this = setCellMethod(this, S.subs, B);
-            elseif (S.type == '.')
+%             elseif (S.type == '.')
+            elseif (strcmp(S.type,'.'))
                 switch(S.subs)
                     case 'num_rows_'
                     	this.num_rows_ = B;
@@ -77,11 +80,14 @@ classdef PointList < handle
         function data = subsref(this,S)
             len_s = length(S);
             if(len_s == 1)
-                if (S.type == '()')
+%                 if (S.type == '()')
+                if (strcmp(S.type,'()'))
                     data = this.getSliceMethod(S.subs);
-                elseif (S.type == '{}')
+%                 elseif (S.type == '{}')
+                elseif (strcmp(S.type,'{}'))
                     data = this.getCellMethod(S.subs);
-                elseif (S.type == '.')
+%                 elseif (S.type == '.')
+                elseif (strcmp(S.type,'.'))
                     switch(S.subs)
                         case 'num_rows_'
                             data = this.num_rows_;
@@ -97,16 +103,19 @@ classdef PointList < handle
                     data = [];
                 end
             else
-                if(S(1).type == '.')
+%                 if(S(1).type == '.')
+                if(strcmp(S(1).type,'.'))    
                     switch(S(1).subs)
                         case 'data_'
-                            if(S(2).type == '{}')
+%                             if(S(2).type == '{}')
+                            if(strcmp(S(2).type,'{}'))
                                 data = this.data_{S(2).subs{1}};
                             else
                                 data = [];
                             end
                         case 'size'
-                            if(S(2).type == '()')
+%                             if(S(2).type == '()')
+                            if(strcmp(S(2).type,'()'))
                                 data = this.num_rows_;
                             else
                                 data = [];
@@ -142,10 +151,12 @@ classdef PointList < handle
             
             subs_rows = subs{1};
             subs_cols = subs{2};
-            if(subs_rows == ':')
+%             if(subs_rows == ':')
+            if(strcmp(subs_rows,':'))    
                 subs_rows = 1 : this.num_rows_;
             end
-            if(subs_cols == ':')
+%             if(subs_cols == ':')
+            if(strcmp(subs_cols,':'))    
                 subs_cols = 1 : this.num_cols_;
             end
             num_run_rows = length(subs_rows);
@@ -206,7 +217,8 @@ classdef PointList < handle
             end
             
             subs_rows = subs{1};
-            if(subs_rows == ':')
+%             if(subs_rows == ':')
+            if(strcmp(subs_rows,':'))
                 subs_rows = 1 : this.num_rows_;
             end
             
@@ -237,7 +249,8 @@ classdef PointList < handle
             b_num_cols_ = B.num_cols_;
             
             subs_rows = subs{1};
-            if(subs_rows == ':')
+%             if(subs_rows == ':')
+            if(strcmp(subs_rows,':'))    
                 subs_rows = 1 : this.num_rows_;
             end
             

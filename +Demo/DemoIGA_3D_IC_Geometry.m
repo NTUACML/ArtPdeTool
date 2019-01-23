@@ -21,7 +21,8 @@ nurbs_basis = iga_domain.generateBasis(geo.topology_data_{1});
 
 %% Nurbs tools create
 nurbs_tool = NurbsTools(nurbs_basis);
-
+nurbs_tool.degreeElevation([1 1 1]);
+nurbs_tool.knotInsertion({[0.1 0.9] [0.5] [0.5]});
 % Plot nurbs
 figure; hold on; axis equal; grid on; view([30 25]);
 nurbs_tool.plotNurbs([15 15 4]);
