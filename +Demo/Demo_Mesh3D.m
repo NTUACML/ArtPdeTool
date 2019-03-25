@@ -1,4 +1,4 @@
-function DemoMesh3D
+function Demo_Mesh3D
 clc; clear; close all;
 import Utility.Resources.mesh3d
 

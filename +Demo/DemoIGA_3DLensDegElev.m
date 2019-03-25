@@ -1,4 +1,4 @@
-function Demo3DLensDegElev
+function DemoIGA_3DLensDegElev
 clc; clear; close all;
 
 %% Include package

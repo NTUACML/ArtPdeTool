@@ -1,4 +1,4 @@
-function DemoNewNurbsClass
+function DemoIGA_NewNurbsClass
 clc; clear; close all;
 
 %% Include package

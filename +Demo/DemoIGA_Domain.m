@@ -1,4 +1,4 @@
-function DemoIGADomain
+function DemoIGA_Domain
 clc; clear; close all;
 
 %% create Geometry
