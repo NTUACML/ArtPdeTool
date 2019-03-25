@@ -4,9 +4,16 @@ clear; clc; home
 import Utility.Resources.XML_DataMaker.IGA.NurbsGenerator
 
 %% Generate nurbs object
-% 'Unit_Square' 'Plane_quarter_hole' 'Beam_refined' 'Solid_quarter_hole'
-% 'Lens_top_right' 'Lens_bottom_right' 'Lens_top_left' 'Lens_bottom_left' '3D_Lens_left'
-case_name = 'Solid_quarter_hole';
+% case_name = 'Unit_Square';
+% case_name = 'Rectangle';
+case_name = 'Plane_quarter_hole';
+% case_name = 'Solid_quarter_hole';
+% case_name = 'Lens_top_right'; 
+% case_name = 'Lens_bottom_right;' 
+% case_name = 'Lens_top_left'; 
+% case_name = 'Lens_bottom_left'; 
+% case_name = '3D_Lens_left'; 
+% case_name = '3D_Lens_right';
 
 nurbs = NurbsGenerator(case_name);
 

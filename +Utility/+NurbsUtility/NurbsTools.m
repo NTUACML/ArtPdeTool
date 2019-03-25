@@ -272,42 +272,7 @@ classdef NurbsTools < handle
             
         end
         
-        % TODO: finish these functions
-        function degreeElevation(this, degree)
-            [new_points, new_knots, new_basis_number, new_order] = this.Nurb_DegElev(degree);
-            import Utility.BasicUtility.PointList  
-            
-            % transform to Cartesian coordinates
-            for i = 1:size(new_points, 1)
-                new_points(i,1:3) = new_points(i,1:3)/new_points(i,4);
-            end
-            
-            this.nurbs_data_.knot_vectors_ = new_knots;
-            this.nurbs_data_.order_ = new_order;
-            this.nurbs_data_.basis_number_ = new_basis_number;
-            this.nurbs_data_.control_points_ = PointList(new_points);
-            
-            this.basis_function_.num_basis_ = prod(this.nurbs_data_.basis_number_);
-            this.basis_function_.topology_data_.point_data_ = this.nurbs_data_.control_points_;
-        end
         
-        function knotInsertion(this, knots)
-            [new_points, new_knots, new_basis_number] = this.Nurb_KnotIns(knots);
-            import Utility.BasicUtility.PointList  
-            
-            % transform to Cartesian coordinates
-            for i = 1:size(new_points, 1)
-                new_points(i,1:3) = new_points(i,1:3)/new_points(i,4);
-            end
-            
-            this.nurbs_data_.knot_vectors_ = new_knots;
-            this.nurbs_data_.basis_number_ = new_basis_number;
-            this.nurbs_data_.control_points_ = PointList(new_points);
-            
-            this.basis_function_.num_basis_ = prod(this.nurbs_data_.basis_number_);
-            this.basis_function_.topology_data_.point_data_ = this.nurbs_data_.control_points_;          
-        end
- 
     end
     
     methods(Access = private)
@@ -909,10 +874,43 @@ classdef NurbsTools < handle
             end
             new_basis_number = size(Pw);
             new_order = this.nurbs_data_.order_ + t;
+        end
+
+        % These two functions are moved here as private functions
+        function degreeElevation(this, degree)
+            [new_points, new_knots, new_basis_number, new_order] = this.Nurb_DegElev(degree);
+            import Utility.BasicUtility.PointList  
+            
+            % transform to Cartesian coordinates
+            for i = 1:size(new_points, 1)
+                new_points(i,1:3) = new_points(i,1:3)/new_points(i,4);
             end
-
-
-
+            
+            this.nurbs_data_.knot_vectors_ = new_knots;
+            this.nurbs_data_.order_ = new_order;
+            this.nurbs_data_.basis_number_ = new_basis_number;
+            this.nurbs_data_.control_points_ = PointList(new_points);
+            
+            this.basis_function_.num_basis_ = prod(this.nurbs_data_.basis_number_);
+            this.basis_function_.topology_data_.point_data_ = this.nurbs_data_.control_points_;
+        end
+        
+        function knotInsertion(this, knots)
+            [new_points, new_knots, new_basis_number] = this.Nurb_KnotIns(knots);
+            import Utility.BasicUtility.PointList  
+            
+            % transform to Cartesian coordinates
+            for i = 1:size(new_points, 1)
+                new_points(i,1:3) = new_points(i,1:3)/new_points(i,4);
+            end
+            
+            this.nurbs_data_.knot_vectors_ = new_knots;
+            this.nurbs_data_.basis_number_ = new_basis_number;
+            this.nurbs_data_.control_points_ = PointList(new_points);
+            
+            this.basis_function_.num_basis_ = prod(this.nurbs_data_.basis_number_);
+            this.basis_function_.topology_data_.point_data_ = this.nurbs_data_.control_points_;          
+        end      
         
     end
     
