@@ -7,16 +7,14 @@ import Domain.*
 import Utility.BasicUtility.*
 import Utility.NurbsUtility.* 
 
-% xml_path = './ArtPDE_IGA_Plane_quarter_hole.art_geometry';
-% ArtPDE_IGA_3D_Lens_left;
 xml_path = './ArtPDE_IGA_Plane_quarter_hole.art_geometry';
 
 geo = GeometryBuilder.create('IGA', 'XML', xml_path);
 nurbs_topology = geo.topology_data_{1};
 
-domain_patch = nurbs_topology.getDomainPatch();
-nurbs_data = domain_patch.nurbs_data_;
+domain_patch = nurbs_topology.domain_patch_data_;
 
+boundary_oatch = nurbs_topology.boundary_patch_data_;
 %% Create Domain
 iga_domain = DomainBuilder.create('IGA');
 
@@ -26,12 +24,18 @@ nurbs_basis = iga_domain.generateBasis(nurbs_topology);
 %% Create Nurbs tools
 nurbs_tool = NurbsTools(nurbs_basis);
 
+% Plot nurbs
+figure; hold on; grid on; %axis equal;
+nurbs_tool.plotNurbs([21 21 21]); view([50 30]);
+nurbs_tool.plotControlMesh();
+hold off;
+
 %% Test query basis function 
 import BasisFunction.IGA.QueryUnit
 query_unit = QueryUnit();
 
 for i = 1:5
-    % Query basis function point by point
+    % Query basis function point by point using domain basis functions
     xi = rand(1,domain_patch.dim_);
     query_unit.query_protocol_ = {Region.Domain, xi, 1};
     nurbs_basis.query(query_unit);
@@ -52,12 +56,36 @@ for i = 1:5
     [position, gradient] = nurbs_tool.evaluateNurbs(xi, 'gradient');
     
     % Compare results
-    str = '(%10.3f%10.3f%10.3f) (%10.3f%10.3f%10.3f)\n';
+    str = '(%10.5f%10.5f%10.5f) (%10.5f%10.5f%10.5f)\n';
     fprintf(str, val, position);
     fprintf(str, dval_dxi, gradient{1});
     fprintf(str, dval_deta, gradient{2});
     disp('-----------------------------------------------------------------');
 end
+
+patch_name = 'eta_0';
+
+for i = 1:5
+    % Query basis function point by point using boundary basis functions
+    xi = rand(1,boundary_oatch(patch_name).dim_);
+    query_unit.query_protocol_ = {Region.Boundary, xi, 1};
+    nurbs_basis.query(query_unit, patch_name);
+    
+    non_zero_id_bdr = query_unit.non_zero_id_;
+    R_bdr = query_unit.evaluate_basis_{1};
+    dR_dxi_bdr = query_unit.evaluate_basis_{2}(1,:);
+    dR_deta_bdr = query_unit.evaluate_basis_{2}(2,:);
+
+    % Query basis function point by point using domain basis functions
+    query_unit.query_protocol_ = {Region.Domain, [xi 0], 1};
+    nurbs_basis.query(query_unit);
+    
+    non_zero_id_dom = query_unit.non_zero_id_;
+    R_dom = query_unit.evaluate_basis_{1};
+    dR_dxi_dom = query_unit.evaluate_basis_{2}(1,:);
+    dR_deta_dom = query_unit.evaluate_basis_{2}(2,:);   
+end
+
 
 %% Create expression
 exp1 = Expression.ExpressionBase;

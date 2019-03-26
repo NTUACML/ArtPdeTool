@@ -7,7 +7,7 @@ import Utility.NurbsUtility.*
 import Geometry.*
 import Domain.*
 %% Geometry data input
-xml_path = './ArtPDE_IGA_Plane_quarter_hole.art_geometry';
+xml_path = './ArtPDE_IGA_Solid_quarter_hole.art_geometry';
 
 geo = GeometryBuilder.create('IGA', 'XML', xml_path);
 nurbs_data = geo.topology_data_{1}.domain_patch_data_.nurbs_data_;
@@ -32,7 +32,7 @@ nurbs_tool.plotControlMesh();
 hold off;
 
 % generate 5 random parametric point
-xi = [0.5 1];%rand(5, geo_dim);
+xi = rand(5, geo_dim);
 
 % Evaluate nurbs & derivatives
 [position_org, gradient_org] = nurbs_tool.evaluateNurbs(xi, 'position', 'gradient');
