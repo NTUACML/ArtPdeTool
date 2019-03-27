@@ -1,4 +1,4 @@
-function [num_quadrature, position, weighting] = Hexa8()
+function [num_quadrature, position, weighting] = Hexa27()
 %HEXA8 Summary of this function goes here
 %   Detailed explanation goes here
 %     xg = [-0.57735026918963D0, 0.57735026918963D0];
@@ -15,9 +15,9 @@ function [num_quadrature, position, weighting] = Hexa8()
 %         end
 %     end
     
-    xg = [-0.577350269189626, 0.577350269189626]';
-	w = [1, 1]';
-    n = 2;      
+    xg = [-0.774596669241483, 0, 0.774596669241483]';
+	w = [0.555555555555554, 0.888888888888889, 0.555555555555554]';
+    n = 3;      
     
     [x, y, z] = meshgrid(xg, xg, xg);
     [wx, wy, wz] = meshgrid(w, w, w);

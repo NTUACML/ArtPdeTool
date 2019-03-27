@@ -7,7 +7,7 @@ import Domain.*
 import Utility.BasicUtility.*
 import Utility.NurbsUtility.* 
 
-xml_path = './ArtPDE_IGA_Plane_quarter_hole.art_geometry';
+xml_path = './ArtPDE_IGA_Solid_quarter_hole.art_geometry';
 
 geo = GeometryBuilder.create('IGA', 'XML', xml_path);
 nurbs_topology = geo.topology_data_{1};
@@ -63,29 +63,32 @@ for i = 1:5
     disp('-----------------------------------------------------------------');
 end
 
-patch_name = 'eta_0';
+patch_name = 'zeta_1';
 
-for i = 1:5
-    % Query basis function point by point using boundary basis functions
-    xi = rand(1,boundary_oatch(patch_name).dim_);
-    query_unit.query_protocol_ = {Region.Boundary, xi, 1};
-    nurbs_basis.query(query_unit, patch_name);
-    
-    non_zero_id_bdr = query_unit.non_zero_id_;
-    R_bdr = query_unit.evaluate_basis_{1};
-    dR_dxi_bdr = query_unit.evaluate_basis_{2}(1,:);
-    dR_deta_bdr = query_unit.evaluate_basis_{2}(2,:);
+% Query basis function point by point using boundary basis functions
+query_boundary = QueryUnit();
 
-    % Query basis function point by point using domain basis functions
-    query_unit.query_protocol_ = {Region.Domain, [xi 0], 1};
-    nurbs_basis.query(query_unit);
-    
-    non_zero_id_dom = query_unit.non_zero_id_;
-    R_dom = query_unit.evaluate_basis_{1};
-    dR_dxi_dom = query_unit.evaluate_basis_{2}(1,:);
-    dR_deta_dom = query_unit.evaluate_basis_{2}(2,:);   
-end
+xi = rand(1,boundary_oatch(patch_name).dim_);
+query_boundary.query_protocol_ = {Region.Boundary, xi, 1};
+nurbs_basis.query(query_boundary, patch_name);
 
+% Query basis function point by point using domain basis functions
+query_domain = QueryUnit();
+
+query_domain.query_protocol_ = {Region.Domain, [xi(1) xi(2) 1], 1};
+nurbs_basis.query(query_domain);
+
+disp(query_boundary.non_zero_id_');
+disp(query_domain.non_zero_id_');
+disp('-----------------------------------------------------------------');
+disp(query_boundary.evaluate_basis_{1});
+disp(query_domain.evaluate_basis_{1});
+disp('-----------------------------------------------------------------');
+disp(query_boundary.evaluate_basis_{2}(1,:));
+disp(query_domain.evaluate_basis_{2}(1,:));
+disp('-----------------------------------------------------------------');
+disp(query_boundary.evaluate_basis_{2}(2,:));
+disp(query_domain.evaluate_basis_{2}(2,:));
 
 %% Create expression
 exp1 = Expression.ExpressionBase;
@@ -121,7 +124,7 @@ end
 hold off;
 
 %% Plot domain integration points in physical space
-figure; hold on; grid on; %axis equal;
+figure; hold on; grid on; axis equal;
 nurbs_tool.plotNurbs();
 
 for i = 1:domain_integration_rule.num_integral_unit_
@@ -130,31 +133,28 @@ for i = 1:domain_integration_rule.num_integral_unit_
 
     plot3(position(:,1), position(:,2), position(:,3), 'k.', 'MarkerSize', 10);
 end
-hold off;
+% hold off;
 
 %% Test boundary integral
-% TODO: The evaluation functin is moved to nurbs_tool now.
-% Hence we can not use nurbs_data to evaluate directly.
-% More over, there is no boundary basis functions for
-% boundary nurbs. In order to modify the problem, the
-% boundary basis functinos need to be constructed when the
-% basis functions object is created. The nurbs_tool will
-% have the function that can compute the boundary nurbs
+for patch_key = keys(nurbs_topology.boundary_patch_data_)
+    bdr_patch = nurbs_topology.getBoundayPatch(patch_key{1});   
+    
+    iga_domain.calIntegral(bdr_patch, exp1, {'Default', 3});
+end
 
-% for patch_key = keys(nurbs_topology.boundary_patch_data_)
-%     bdr_patch = nurbs_topology.getBoundayPatch(patch_key{1});
-%     iga_domain.calIntegral(bdr_patch, exp1);
-% end
-% 
-% for rule_key = 2:5
-%     bdr_integration_rule = iga_domain.integration_rule_(rule_key);
-%     
-%     for i = 1:bdr_integration_rule.num_integral_unit_
-%         position = bdr_integration_rule.integral_unit_{i}.quadrature_{2};
-%         position = domain_patch.nurbs_data_.evaluateNurbs(position);
-%         
-%         plot3(position(:,1), position(:,2), position(:,3), 'o');
-%     end
-% end
+for rule_key = 2:7
+    bdr_integration_rule = iga_domain.integration_rule_(rule_key);
+       
+    for i = 1:bdr_integration_rule.num_integral_unit_
+        xi = bdr_integration_rule.integral_unit_{i}.quadrature_{2}; 
+        for j = 1:size(xi,1)
+            query_boundary.query_protocol_ = {Region.Boundary, xi(j,:), 0};
+            nurbs_basis.query(query_boundary, bdr_integration_rule.integral_patch_.name_);
+                       
+            position = query_boundary.evaluate_basis_{1}*domain_patch.nurbs_data_.control_points_(query_boundary.non_zero_id_,1:3);
+            plot3(position(:,1), position(:,2), position(:,3), 'r.', 'MarkerSize', 12);            
+        end    
+    end  
+end
 
 end

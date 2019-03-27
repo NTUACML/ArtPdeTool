@@ -241,7 +241,7 @@ classdef NurbsTools < handle
                     
                     xlabel('x');
                     ylabel('y');
-                    zlabel('x');
+                    zlabel('z');
             end
         end
         % Plot mesh formed by control points 

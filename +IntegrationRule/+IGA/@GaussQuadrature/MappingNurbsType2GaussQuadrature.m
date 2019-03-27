@@ -6,7 +6,12 @@ import IntegrationRule.IGA.GaussQuadrature
 
 switch nurbs_type
     case NurbsType.Curve
-        [num_quadrature, position, weighting] = GaussQuadrature.Line2();
+        switch number_quad_pnt(1)
+            case 2
+                [num_quadrature, position, weighting] = GaussQuadrature.Line2();
+            case 3
+                [num_quadrature, position, weighting] = GaussQuadrature.Line3();
+        end        
         lu = unit_span{1}(2)-unit_span{1}(1);
         position(:,1) = 0.5*(position(:,1)+1)*lu + unit_span{1}(1);
         weighting = weighting/2*lu;
