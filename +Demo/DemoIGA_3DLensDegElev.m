@@ -1,4 +1,4 @@
-function Demo3DLensDegElev
+function DemoIGA_3DLensDegElev
 clc; clear; close all;
 
 %% Include package
@@ -14,6 +14,10 @@ xml_path = './ArtPDE_IGA_3D_Lens_left.art_geometry';
 
 geo = GeometryBuilder.create('IGA', 'XML', xml_path);
 nurbs_data = geo.topology_data_{1}.domain_patch_data_.nurbs_data_;
+
+for val = values(geo.topology_data_{1}.boundary_patch_data_)
+    val{1}.nurbs_data_
+end
 
 nurbs_data.dispControlPoints();
 nurbs_data.dispKnotVectors();

@@ -16,24 +16,24 @@ classdef IntegralUnit < BasisFunction.IGA.QueryUnit
             this.int_region_ = region;
             this.unit_span_ = unit_span;
             this.query_protocol_{1} = this.int_region_; 
-            if this.int_region_ == Region.Boundary
-                this.modifyQueryProtocol();
-            end
+%             if this.int_region_ == Region.Boundary
+%                 this.modifyQueryProtocol();
+%             end
         end
         
         function setQueryPosition(this, xi)
             this.xi_ = xi; 
-            this.query_protocol_ = {this.int_region_, this.xi_};
+            this.query_protocol_{2} = xi;
         end
         
     end
         
-     methods (Access=private)   
-        function modifyQueryProtocol(this)
-            import Utility.BasicUtility.Region        
-            this.query_protocol_{1} = Region.Domain;
-        end
-    end
+%      methods (Access=private)   
+%         function modifyQueryProtocol(this)
+%             import Utility.BasicUtility.Region        
+%             this.query_protocol_{1} = Region.Domain;
+%         end
+%     end
     
 end
 

@@ -1,4 +1,4 @@
-function Demo2VTK
+function Demo_2VTK
 clc; clear; close all;
 
 import Utility.Resources.*

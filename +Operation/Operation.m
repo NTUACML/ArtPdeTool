@@ -96,7 +96,20 @@ classdef Operation < handle
                         else
                             disp('Error <Operation>! - getExpression!');
                             disp('> the stiffness bilinear form should input test and variable.');
-                        end   
+                        end
+                    elseif strcmp(this.op_data_,'delta_Tr(epsilon)_T')
+                        % Linear form for linear elasticity
+                        if(~isempty(varargin) || ~(length(varargin{1}) < 2))
+                            test = varargin{1}{1};
+                            thermal_function = varargin{1}{2};
+                                                   
+                            expression = ElasticityLinearExpression();
+                            expression.setTest(test);
+                            expression.setSourceFunction(thermal_function);
+                        else
+                            disp('Error <Operation>! - getExpression!');
+                            disp('> the stiffness bilinear form should input test and variable.');
+                        end
                     else
                         expression = Expression();
                     end    

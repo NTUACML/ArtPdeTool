@@ -7,11 +7,10 @@ classdef NurbsTools < handle
     methods
         % Constructor
         function this = NurbsTools(basis_function)
-            this.basis_function_ = basis_function;
-            
-            nurbs_patch = basis_function.topology_data_.getDomainPatch();
-            this.nurbs_data_ = nurbs_patch.nurbs_data_;
+            this.basis_function_ = basis_function;     
+            this.nurbs_data_ = basis_function.topology_data_.domain_patch_data_.nurbs_data_;
         end
+        
         % Plot parametric mesh formed by uniqued knot vectors
         function plotParametricMesh(this)
             switch this.nurbs_data_.getGeometryDimension()
@@ -51,6 +50,7 @@ classdef NurbsTools < handle
             end
             
         end
+        
         % Evaluate nurbs or its derivatives or its hassian matrix at xi
         function [position, gradient, hassian] = evaluateNurbs(this, xi, varargin)
             if ~isequal(size(xi,2), this.nurbs_data_.getGeometryDimension())
@@ -59,9 +59,9 @@ classdef NurbsTools < handle
             end
             
             import BasisFunction.IGA.QueryUnit
-            import Utility.BasicUtility.Region
             
             query_unit = QueryUnit();
+            domain_patch = this.basis_function_.topology_data_.domain_patch_data_;
             
             % Current shape funciton have to query point by point
             geo_dim = this.nurbs_data_.getGeometryDimension();
@@ -74,22 +74,9 @@ classdef NurbsTools < handle
                 varargin = {'position', 'gradient', 'hassian'};
             end
             
-            for i = 1:size(xi,1)
-                if any(strcmp(varargin, 'hassian'))
-                    query_unit.query_protocol_ = {Region.Domain, xi(i,:), 2};
-                    this.basis_function_.query(query_unit);
-                    
-                    non_zero_id = query_unit.non_zero_id_;
-                    R = query_unit.evaluate_basis_{1};
-                    position(i,:) = R * this.nurbs_data_.control_points_(non_zero_id,1:3);
-                    for dim_i = 1:geo_dim
-                        temp = query_unit.evaluate_basis_{2}(dim_i,:);
-                        gradient{dim_i}(i,:) = temp * this.nurbs_data_.control_points_(non_zero_id,1:3);
-                    end                    
-                    %TODO computation of the Hassian matrix
-                    hassian = [];
-                elseif any(strcmp(varargin, 'gradient'))
-                    query_unit.query_protocol_ = {Region.Domain, xi(i,:), 1};
+            if any(strcmp(varargin, 'hassian'))
+                for i = 1:size(xi,1)
+                    query_unit.query_protocol_ = {domain_patch, xi(i,:), 2};
                     this.basis_function_.query(query_unit);
                     
                     non_zero_id = query_unit.non_zero_id_;
@@ -99,40 +86,34 @@ classdef NurbsTools < handle
                         temp = query_unit.evaluate_basis_{2}(dim_i,:);
                         gradient{dim_i}(i,:) = temp * this.nurbs_data_.control_points_(non_zero_id,1:3);
                     end
-                elseif any(strcmp(varargin, 'position'))
-                    query_unit.query_protocol_ = {Region.Domain, xi(i,:), 0};
+                end
+                %TODO computation of the Hassian matrix
+                hassian = [];
+            elseif any(strcmp(varargin, 'gradient'))
+                for i = 1:size(xi,1)
+                    query_unit.query_protocol_ = {domain_patch, xi(i,:), 1};
+                    this.basis_function_.query(query_unit);
+                    
+                    non_zero_id = query_unit.non_zero_id_;
+                    R = query_unit.evaluate_basis_{1};
+                    position(i,:) = R * this.nurbs_data_.control_points_(non_zero_id,1:3);
+                    for dim_i = 1:geo_dim
+                        temp = query_unit.evaluate_basis_{2}(dim_i,:);
+                        gradient{dim_i}(i,:) = temp * this.nurbs_data_.control_points_(non_zero_id,1:3);
+                    end
+                end
+            elseif any(strcmp(varargin, 'position'))
+                for i = 1:size(xi,1)
+                    query_unit.query_protocol_ = {domain_patch, xi(i,:), 0};
                     this.basis_function_.query(query_unit);
                     
                     non_zero_id = query_unit.non_zero_id_;
                     R = query_unit.evaluate_basis_{1};
                     position(i,:) = R * this.nurbs_data_.control_points_(non_zero_id,1:3);
                 end
-                
-                
-%                 for case_name = varargin
-%                     switch case_name{1}
-%                         case 'position'
-%                             query_unit.query_protocol_ = {Region.Domain, xi(i,:), 0};
-%                             this.basis_function_.query(query_unit);
-%                             
-%                             non_zero_id = query_unit.non_zero_id_;
-%                             R = query_unit.evaluate_basis_{1};
-%                             position(i,:) = R * this.nurbs_data_.control_points_(non_zero_id,1:3);
-%                         case 'gradient'
-%                             query_unit.query_protocol_ = {Region.Domain, xi(i,:), 1};
-%                             this.basis_function_.query(query_unit);
-%                             
-%                             non_zero_id = query_unit.non_zero_id_;
-%                             for dim_i = 1:geo_dim
-%                                 temp = query_unit.evaluate_basis_{2}(dim_i,:);
-%                                 gradient{dim_i}(i,:) = temp * this.nurbs_data_.control_points_(non_zero_id,1:3);
-%                             end
-%                         case 'hassian'
-%                             %TODO computation of the Hassian matrix
-%                     end
-%                 end
-            end
+            end       
         end
+        
         % Plot nurbs geometry
         function plotNurbs(this, varargin)
             geo_dim = this.nurbs_data_.getGeometryDimension();
@@ -241,9 +222,10 @@ classdef NurbsTools < handle
                     
                     xlabel('x');
                     ylabel('y');
-                    zlabel('x');
+                    zlabel('z');
             end
         end
+        
         % Plot mesh formed by control points 
         function plotControlMesh(this)
             geo_dim = this.nurbs_data_.getGeometryDimension();
@@ -272,42 +254,6 @@ classdef NurbsTools < handle
             
         end
         
-        % TODO: finish these functions
-        function degreeElevation(this, degree)
-            [new_points, new_knots, new_basis_number, new_order] = this.Nurb_DegElev(degree);
-            import Utility.BasicUtility.PointList  
-            
-            % transform to Cartesian coordinates
-            for i = 1:size(new_points, 1)
-                new_points(i,1:3) = new_points(i,1:3)/new_points(i,4);
-            end
-            
-            this.nurbs_data_.knot_vectors_ = new_knots;
-            this.nurbs_data_.order_ = new_order;
-            this.nurbs_data_.basis_number_ = new_basis_number;
-            this.nurbs_data_.control_points_ = PointList(new_points);
-            
-            this.basis_function_.num_basis_ = prod(this.nurbs_data_.basis_number_);
-            this.basis_function_.topology_data_.point_data_ = this.nurbs_data_.control_points_;
-        end
-        
-        function knotInsertion(this, knots)
-            [new_points, new_knots, new_basis_number] = this.Nurb_KnotIns(knots);
-            import Utility.BasicUtility.PointList  
-            
-            % transform to Cartesian coordinates
-            for i = 1:size(new_points, 1)
-                new_points(i,1:3) = new_points(i,1:3)/new_points(i,4);
-            end
-            
-            this.nurbs_data_.knot_vectors_ = new_knots;
-            this.nurbs_data_.basis_number_ = new_basis_number;
-            this.nurbs_data_.control_points_ = PointList(new_points);
-            
-            this.basis_function_.num_basis_ = prod(this.nurbs_data_.basis_number_);
-            this.basis_function_.topology_data_.point_data_ = this.nurbs_data_.control_points_;          
-        end
- 
     end
     
     methods(Access = private)
@@ -909,10 +855,43 @@ classdef NurbsTools < handle
             end
             new_basis_number = size(Pw);
             new_order = this.nurbs_data_.order_ + t;
+        end
+
+        % These two functions are moved here as private functions
+        function degreeElevation(this, degree)
+            [new_points, new_knots, new_basis_number, new_order] = this.Nurb_DegElev(degree);
+            import Utility.BasicUtility.PointList  
+            
+            % transform to Cartesian coordinates
+            for i = 1:size(new_points, 1)
+                new_points(i,1:3) = new_points(i,1:3)/new_points(i,4);
             end
-
-
-
+            
+            this.nurbs_data_.knot_vectors_ = new_knots;
+            this.nurbs_data_.order_ = new_order;
+            this.nurbs_data_.basis_number_ = new_basis_number;
+            this.nurbs_data_.control_points_ = PointList(new_points);
+            
+            this.basis_function_.num_basis_ = prod(this.nurbs_data_.basis_number_);
+            this.basis_function_.topology_data_.point_data_ = this.nurbs_data_.control_points_;
+        end
+        
+        function knotInsertion(this, knots)
+            [new_points, new_knots, new_basis_number] = this.Nurb_KnotIns(knots);
+            import Utility.BasicUtility.PointList  
+            
+            % transform to Cartesian coordinates
+            for i = 1:size(new_points, 1)
+                new_points(i,1:3) = new_points(i,1:3)/new_points(i,4);
+            end
+            
+            this.nurbs_data_.knot_vectors_ = new_knots;
+            this.nurbs_data_.basis_number_ = new_basis_number;
+            this.nurbs_data_.control_points_ = PointList(new_points);
+            
+            this.basis_function_.num_basis_ = prod(this.nurbs_data_.basis_number_);
+            this.basis_function_.topology_data_.point_data_ = this.nurbs_data_.control_points_;          
+        end      
         
     end
     
