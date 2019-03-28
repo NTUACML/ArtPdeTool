@@ -9,6 +9,10 @@ import Utility.NurbsUtility.Nurbs
 switch nurbs_name
     case 'Unit_Square'
         nurbs = Rectangle(1, 1, [0.5 0.5]);
+        nurbs = degreeElevation(nurbs, [1 1]);
+        n = 10;
+        t = linspace(1/n, 1-1/n, n-1);
+        nurbs = knotInsertion(nurbs, {t t});
         status = true;
     case 'Rectangle'        
         D = 2; L = 20;
@@ -16,7 +20,7 @@ switch nurbs_name
         status = true;  
     case 'Plane_quarter_hole'
         nurbs = Plane_quarter_hole();
-        nurbs = knotInsertion(nurbs, {[0.2 0.8] [0.3 0.7]});
+%         nurbs = knotInsertion(nurbs, {[0.2 0.8] [0.3 0.7]});
         status = true;
     case 'Solid_quarter_hole'        
         nurbs = Solid_quater_hole(1);
