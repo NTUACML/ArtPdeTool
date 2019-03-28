@@ -1,4 +1,4 @@
-function DemoIGALensGeometry
+function DemoIGA_LensGeometry
 clc; clear; close all;
 
 %% create Geometry

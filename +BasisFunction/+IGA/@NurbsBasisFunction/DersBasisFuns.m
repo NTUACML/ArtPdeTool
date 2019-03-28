@@ -6,6 +6,13 @@ import BasisFunction.IGA.NurbsBasisFunction
 
 % compute span index integer
 n = length(U) - p - 2;
+
+bool = u > max(U);
+u(bool) = max(U);
+
+bool = u < min(U);
+u(bool) = min(U);
+
 i = NurbsBasisFunction.FindSpan(n,p,u,U);
 
 ndu(1,1) = 1;

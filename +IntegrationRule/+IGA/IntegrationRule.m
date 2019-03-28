@@ -28,18 +28,16 @@ classdef IntegrationRule < IntegrationRule.IntegrationRuleBase
         function status = generateDomainIntUnit(this, generate_parameter)
             nurbs_data = this.integral_patch_.nurbs_data_;  
             if isempty(generate_parameter)
-                dividing_method = 'Default';
+                generation_method = 'Default';
                 number_quad_pnt = ceil((nurbs_data.order_ + 1)*0.5);  
             else
-                dividing_method = generate_parameter{1};
+                generation_method = generate_parameter{1};
                 number_quad_pnt = generate_parameter{2}*ones(size(nurbs_data.order_));
             end
             
             % IntUnit number
-            switch dividing_method
+            switch generation_method
                 case 'Default'
-                    % note: this.integral_unit_ is allocated inside
-                    % generateKnotVectorMesh. Consider to modify
                     this.generateIntegralUnitByKnotMesh(nurbs_data);
                 case 'QuadTree'
                     disp('To be finihed...');
@@ -62,35 +60,16 @@ classdef IntegrationRule < IntegrationRule.IntegrationRuleBase
         function status = generateBoundaryIntUnit(this, generate_parameter)
             nurbs_data = this.integral_patch_.nurbs_data_;  
             if isempty(generate_parameter)
-                dividing_method = 'Default';
-                number_quad_pnt = ceil((nurbs_data.domain_nurbs_data_.order_ + 1)*0.5);  
+                generation_method = 'Default';
+                number_quad_pnt = ceil((nurbs_data.order_ + 1)*0.5);  
             else
-                dividing_method = generate_parameter{1};
+                generation_method = generate_parameter{1};
                 number_quad_pnt = generate_parameter{2};
             end
-            
-            % Find the plane where the control points located. e.g. xi = 0,
-            % eta = 1, etc, ...
-            domain_dim = length(nurbs_data.domain_nurbs_data_.order_);
-            sample_pnt = nurbs_data.control_points_(:,1:domain_dim);
-            bool = false(1,size(sample_pnt,2));
-            for i = 1:size(sample_pnt,2)
-                temp = unique(sample_pnt(:,i));
-                if length(temp) == 1
-                    bool(i) = true;
-                end
-            end
-            
-            boundary_indicator = cell(1, domain_dim);
-            boundary_indicator{bool} = sample_pnt(1, bool);
-            
-            number_quad_pnt = number_quad_pnt(~bool);
-            
+                        
             % IntUnit number
-            switch dividing_method
+            switch generation_method
                 case 'Default'
-                    % note: this.integral_unit_ is allocated inside
-                    % generateKnotVectorMesh. Consider to modify
                     this.generateIntegralUnitByKnotMesh(nurbs_data);
                 case 'QuadTree'
                     disp('To be finihed...');
@@ -105,25 +84,7 @@ classdef IntegrationRule < IntegrationRule.IntegrationRuleBase
                 integral_unit = this.integral_unit_{int_unit_id};
                 integral_unit.quadrature_ = ...
                     GaussQuadrature.MappingNurbsType2GaussQuadrature(...
-                    nurbs_data.type_, this.integral_unit_{int_unit_id}.unit_span_, number_quad_pnt);
-                % map to domain domain nurbs parametric coordinates
-                % TODO: The evaluation functin is moved to nurbs_tool now.
-                % Hence we can not use nurbs_data to evaluate directly.
-                % More over, there is no boundary basis functions for
-                % boundary nurbs. In order to modify the problem, the
-                % boundary basis functinos need to be constructed when the
-                % basis functions object is created. The nurbs_tool will
-                % have the function that can compute the boundary nurbs 
-                integral_unit.quadrature_{2} = nurbs_data.evaluateNurbs(integral_unit.quadrature_{2});
-                
-                if length(nurbs_data.knot_vectors_) == 1
-                    integral_unit.quadrature_{2} = integral_unit.quadrature_{2}(:,1:2);
-                end
-                % modify weightings
-                % TODO suuport NURBS solid
-                le = norm(nurbs_data.control_points_(nurbs_data.control_points_.num_rows_,1:3)-nurbs_data.control_points_(1,1:3));
-                integral_unit.quadrature_{3} = integral_unit.quadrature_{3}*le;
-                
+                    nurbs_data.type_, this.integral_unit_{int_unit_id}.unit_span_, number_quad_pnt);                
             end
             status = true;
         end    

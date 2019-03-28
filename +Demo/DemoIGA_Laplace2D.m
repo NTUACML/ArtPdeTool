@@ -8,7 +8,7 @@ import Domain.*
 import Operation.*
 
 %% Geometry data input
-xml_path = './ArtPDE_IGA_Lens_bottom_left.art_geometry';
+xml_path = './ArtPDE_IGA_Plane_quarter_hole.art_geometry';
 % ArtPDE_IGA_Lens_bottom_left; ArtPDE_IGA_Plane4_refined
 geo = GeometryBuilder.create('IGA', 'XML', xml_path);
 nurbs_topology = geo.topology_data_{1};

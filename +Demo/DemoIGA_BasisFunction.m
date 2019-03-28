@@ -1,4 +1,4 @@
-function DemoIGABasisFunction
+function DemoIGA_BasisFunction
 clc; clear; close all;
 
 %% create Geometry

@@ -10,7 +10,7 @@ classdef QueryUnit < handle
     
     methods
         function this = QueryUnit()
-            % IGA: {region, xi, content} content cna be either 0 for evaluating value,
+            % IGA: {patch, xi, content} content cna be either 0 for evaluating value,
             % 1 for evaluating value and derivative, default option is 0
             this.query_protocol_ = {[], [], 0};
         end
