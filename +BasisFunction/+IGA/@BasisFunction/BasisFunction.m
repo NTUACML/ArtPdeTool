@@ -35,7 +35,7 @@ classdef BasisFunction < BasisFunction.BasisFunctionBase
         
         function results = query(this, query_unit, query_parameter)
             import Utility.BasicUtility.Region
-            switch query_unit.query_protocol_{1} 
+            switch query_unit.query_protocol_{1}.region_ 
                 case Region.Domain
                     [ GlobalDof, R, dR_dxi ] = this.domain_basis_function_(query_unit.query_protocol_{2}, query_unit.query_protocol_{3});
                     query_unit.non_zero_id_ = GlobalDof;
@@ -44,17 +44,14 @@ classdef BasisFunction < BasisFunction.BasisFunctionBase
                     results = true;
                 case Region.Boundary
                     domain_patch = this.topology_data_.domain_patch_data_;
-                    boundary_patch = this.topology_data_.boundary_patch_data_(query_parameter);
+                    boundary_patch = query_unit.query_protocol_{1};
                     
-                    boundary_basis_function = this.boundary_basis_function_(query_parameter);
+                    boundary_basis_function = this.boundary_basis_function_(boundary_patch.name_);
                     [ GlobalDof, R, ~ ] = boundary_basis_function(query_unit.query_protocol_{2}, 0);
                     
                     % map to domain parametric coordinate 
                     xi = R*boundary_patch.nurbs_data_.control_points_(GlobalDof,:);
-                    % Check id the domain parametric coordinates are greater or less than 1 or 0
-                 
-                    
-                    
+                                        
                     % evaluate domain basis functions
                     [ GlobalDof, R, dR_dxi ] = this.domain_basis_function_(xi(1:domain_patch.dim_), query_unit.query_protocol_{3});
                     query_unit.non_zero_id_ = GlobalDof;

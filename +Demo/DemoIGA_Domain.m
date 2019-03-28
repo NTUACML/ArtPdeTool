@@ -14,7 +14,7 @@ nurbs_topology = geo.topology_data_{1};
 
 domain_patch = nurbs_topology.domain_patch_data_;
 
-boundary_oatch = nurbs_topology.boundary_patch_data_;
+boundary_patch_map = nurbs_topology.boundary_patch_data_;
 %% Create Domain
 iga_domain = DomainBuilder.create('IGA');
 
@@ -25,7 +25,7 @@ nurbs_basis = iga_domain.generateBasis(nurbs_topology);
 nurbs_tool = NurbsTools(nurbs_basis);
 
 % Plot nurbs
-figure; hold on; grid on; %axis equal;
+figure; hold on; grid on; axis equal;
 nurbs_tool.plotNurbs([21 21 21]); view([50 30]);
 nurbs_tool.plotControlMesh();
 hold off;
@@ -34,10 +34,11 @@ hold off;
 import BasisFunction.IGA.QueryUnit
 query_unit = QueryUnit();
 
+
 for i = 1:5
     % Query basis function point by point using domain basis functions
     xi = rand(1,domain_patch.dim_);
-    query_unit.query_protocol_ = {Region.Domain, xi, 1};
+    query_unit.query_protocol_ = {domain_patch, xi, 1};
     nurbs_basis.query(query_unit);
     
     non_zero_id = query_unit.non_zero_id_;
@@ -63,19 +64,19 @@ for i = 1:5
     disp('-----------------------------------------------------------------');
 end
 
-patch_name = 'zeta_1';
+boundary_patch = boundary_patch_map('eta_1');
 
 % Query basis function point by point using boundary basis functions
 query_boundary = QueryUnit();
 
-xi = rand(1,boundary_oatch(patch_name).dim_);
-query_boundary.query_protocol_ = {Region.Boundary, xi, 1};
-nurbs_basis.query(query_boundary, patch_name);
+xi = rand(1,boundary_patch.dim_);
+query_boundary.query_protocol_ = {boundary_patch, xi, 1};
+nurbs_basis.query(query_boundary);
 
 % Query basis function point by point using domain basis functions
 query_domain = QueryUnit();
 
-query_domain.query_protocol_ = {Region.Domain, [xi(1) xi(2) 1], 1};
+query_domain.query_protocol_ = {domain_patch, [xi(1) xi(2) 1], 1};
 nurbs_basis.query(query_domain);
 
 disp(query_boundary.non_zero_id_');
@@ -148,8 +149,8 @@ for rule_key = 2:7
     for i = 1:bdr_integration_rule.num_integral_unit_
         xi = bdr_integration_rule.integral_unit_{i}.quadrature_{2}; 
         for j = 1:size(xi,1)
-            query_boundary.query_protocol_ = {Region.Boundary, xi(j,:), 0};
-            nurbs_basis.query(query_boundary, bdr_integration_rule.integral_patch_.name_);
+            query_boundary.query_protocol_ = {bdr_integration_rule.integral_patch_, xi(j,:), 0};
+            nurbs_basis.query(query_boundary);
                        
             position = query_boundary.evaluate_basis_{1}*domain_patch.nurbs_data_.control_points_(query_boundary.non_zero_id_,1:3);
             plot3(position(:,1), position(:,2), position(:,3), 'r.', 'MarkerSize', 12);            

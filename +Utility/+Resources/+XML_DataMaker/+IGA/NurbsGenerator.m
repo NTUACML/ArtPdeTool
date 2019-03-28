@@ -21,6 +21,7 @@ switch nurbs_name
     case 'Plane_quarter_hole'
         nurbs = Plane_quarter_hole();
 %         nurbs = knotInsertion(nurbs, {[0.2 0.8] [0.3 0.7]});
+%         nurbs = degreeElevation(nurbs, [1 1]);
         status = true;
     case 'Solid_quarter_hole'        
         nurbs = Solid_quater_hole(1);
