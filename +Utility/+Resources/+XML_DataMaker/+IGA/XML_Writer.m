@@ -7,13 +7,13 @@ import Utility.Resources.NurbsToolBox.*
 %% Generate nurbs object
 % case_name = 'Unit_Square';
 % case_name = 'Rectangle';
-% case_name = 'Plane_quarter_hole';
+case_name = 'Plane_quarter_hole';
 % case_name = 'Solid_quarter_hole';
 % case_name = 'Lens_top_right'; 
 % case_name = 'Lens_bottom_right;' 
 % case_name = 'Lens_top_left'; 
 % case_name = 'Lens_bottom_left'; 
-case_name = '3D_Lens_left'; 
+% case_name = '3D_Lens_left'; 
 % case_name = '3D_Lens_right';
 
 nurbs = NurbsGenerator(case_name);
@@ -509,6 +509,52 @@ switch geo_dim
             vector_node.appendChild(doc_handle.createTextNode(knot_row_str));
             vector_node.setAttribute('dof',num2str(length(knot_data{i})));
         end 
+        
+        
+%         % START Test Trimmed Curve
+%         % CREATE TRIMMED BOUNDARY NURBS PATCH
+%         patch_node = DataNodeCreate('Patch', unit_node, doc_handle);
+%         patch_node.setAttribute('region','Boundary');
+%         patch_node.setAttribute('name','trimmed_curve');
+%         
+%         % /Unit/Patch/ControlPoint
+%         CTPT_node = DataNodeCreate('ControlPoint', patch_node, doc_handle);
+%         CTPT_node.setAttribute('dim','3');
+% 
+%         % /Unit/Patch/ControlPoint/Point
+%         pnts = [0.1 0.3 0.6 1.0; 
+%                 0.0 0.5 0.6 0.8; 
+%                 0.0 0.0 0.0 0.0]; 
+%             
+%         crv = nrbmak(pnts,[0 0 0 1/2 1 1 1]); 
+%         
+%         point_data = crv.coefs';
+%         for i = 1 : size(point_data, 1)
+%             point_node = DataNodeCreate('Point', CTPT_node, doc_handle);
+%             point_row_str = num2str(point_data(i, :));
+%             point_node.appendChild(doc_handle.createTextNode(point_row_str));
+%         end
+%         
+%         % /Unit/Patch/Order
+%         order_node = DataNodeCreate('Order', patch_node, doc_handle);
+%         order_str = num2str(crv.order-1);
+%         order_node.appendChild(doc_handle.createTextNode(order_str));
+%         
+%         % /Unit/Patch/Knot
+%         knot_node = DataNodeCreate('Knot', patch_node, doc_handle);
+%         
+%         % /Unit/Patch/Knot/Vector
+%         knot_data = {crv.knots};
+%         for i = 1 : size(knot_data, 1)
+%             vector_node = DataNodeCreate('Vector', knot_node, doc_handle);
+%             knot_row_str = num2str(knot_data{i});
+%             vector_node.appendChild(doc_handle.createTextNode(knot_row_str));
+%             vector_node.setAttribute('dof',num2str(length(knot_data{i})));
+%         end
+%         % END Test Trimmed Curve
+        
+        
+        
 end
 
 %% Document write
