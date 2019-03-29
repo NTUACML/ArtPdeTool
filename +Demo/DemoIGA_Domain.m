@@ -76,7 +76,7 @@ nurbs_basis.query(query_boundary);
 % Query basis function point by point using domain basis functions
 query_domain = QueryUnit();
 
-query_domain.query_protocol_ = {domain_patch, [xi(1) xi(2) 1], 1};
+query_domain.query_protocol_ = {domain_patch, [xi(1) 1 xi(2)], 1};
 nurbs_basis.query(query_domain);
 
 disp(query_boundary.non_zero_id_');

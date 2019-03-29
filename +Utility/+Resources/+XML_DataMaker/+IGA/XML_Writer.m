@@ -2,17 +2,18 @@ function XML_Writer
 clear; clc; home
 
 import Utility.Resources.XML_DataMaker.IGA.NurbsGenerator
+import Utility.Resources.NurbsToolBox.*
 
 %% Generate nurbs object
 % case_name = 'Unit_Square';
 % case_name = 'Rectangle';
-case_name = 'Plane_quarter_hole';
+% case_name = 'Plane_quarter_hole';
 % case_name = 'Solid_quarter_hole';
 % case_name = 'Lens_top_right'; 
 % case_name = 'Lens_bottom_right;' 
 % case_name = 'Lens_top_left'; 
 % case_name = 'Lens_bottom_left'; 
-% case_name = '3D_Lens_left'; 
+case_name = '3D_Lens_left'; 
 % case_name = '3D_Lens_right';
 
 nurbs = NurbsGenerator(case_name);
