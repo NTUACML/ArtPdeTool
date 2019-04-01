@@ -8,7 +8,7 @@ import Domain.*
 import Operation.*
 
 %% Geometry data input
-xml_path = './ArtPDE_IGA_Plane_quarter_hole.art_geometry';
+xml_path = './ArtPDE_IGA_Unit_Square.art_geometry';
 % ArtPDE_IGA_Lens_bottom_left; ArtPDE_IGA_Plane4_refined
 geo = GeometryBuilder.create('IGA', 'XML', xml_path);
 nurbs_topology = geo.topology_data_{1};
@@ -21,12 +21,6 @@ nurbs_basis = iga_domain.generateBasis(nurbs_topology);
 
 %% Nurbs tools create
 nurbs_tool = NurbsTools(nurbs_basis);
-
-nurbs_data = nurbs_topology.domain_patch_data_.nurbs_data_;
-t_1 = linspace(nurbs_data.knot_vectors_{1}(1), nurbs_data.knot_vectors_{1}(end), 11);
-t_2 = linspace(nurbs_data.knot_vectors_{2}(1), nurbs_data.knot_vectors_{2}(end), 10);
-
-nurbs_tool.knotInsertion({t_1(2:end-1) t_2(2:end-1)});
 
 %% Variable define   
 var_t = iga_domain.generateVariable('temperature', nurbs_basis,...

@@ -61,7 +61,7 @@ classdef Interpolation < Interpolation.InterpolationBase
             import BasisFunction.IGA.QueryUnit
             import Utility.BasicUtility.Region
             query_unit = QueryUnit();
-            query_unit.query_protocol_{1} = Region.Domain;
+            query_unit.query_protocol_{1} = patch;
             
             % Evaluate physical position & variable
             switch out_style                

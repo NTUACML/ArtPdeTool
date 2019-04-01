@@ -10,15 +10,12 @@ classdef IntegralUnit < BasisFunction.IGA.QueryUnit
     end
     
     methods
-        function this = IntegralUnit(region, unit_span)
+        function this = IntegralUnit(patch, unit_span)
             import Utility.BasicUtility.Region
             this@BasisFunction.IGA.QueryUnit();
-            this.int_region_ = region;
+            this.int_region_ = patch.region_;
             this.unit_span_ = unit_span;
-            this.query_protocol_{1} = this.int_region_; 
-%             if this.int_region_ == Region.Boundary
-%                 this.modifyQueryProtocol();
-%             end
+            this.query_protocol_{1} = patch; 
         end
         
         function setQueryPosition(this, xi)

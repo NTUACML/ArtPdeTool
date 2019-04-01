@@ -15,6 +15,13 @@ classdef Mapping < Mapping.MappingBase
         
         function mapping_unit = queryLocalMapping(this, query_unit)
             import Mapping.IGA.MappingUnit
+            % In order to evaluate Jacobian, 1st order derivative is
+            % required. However, in massexpression, the default query
+            % protocol is to query the BASIS VALUE only. We have to
+            % modify the protocol here. TODO, re-design a process for
+            % query protocol.
+            query_unit.query_protocol_{3} = 1;
+            
             this.basis_.query(query_unit, []);            
             eval_basis = query_unit.evaluate_basis_;
             non_zero_id = query_unit.non_zero_id_;

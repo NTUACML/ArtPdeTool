@@ -85,9 +85,10 @@ t_interpo = Interpolation(var_t);
 [x, data, element] = t_interpo.DomainDataSampling();
 
 %% Show result (Post-Processes)
-fv.vertices = [x, data];
+fv.vertices = [x(:,1:2), data.value{1}];
 fv.faces = element;
-fv.facevertexcdata = data;
+fv.facevertexcdata = data.value{1};
+
 patch(fv,'CDataMapping','scaled','EdgeColor',[.7 .7 .7],'FaceColor','interp','FaceAlpha',1);
 grid on;
 title('ArtPDE Laplace problem... (IGA)')

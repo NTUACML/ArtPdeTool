@@ -30,27 +30,27 @@ classdef BilinearExpression < Expression.IGA.Expression
             
             local_matrix = cell(num_q,1);
                         
-            % Bind query function
-            import Utility.BasicUtility.Region
-            if query_unit.int_region_ == Region.Domain
-                query_function =@(query_unit) test_basis.query(query_unit);
-            elseif query_unit.int_region_ == Region.Boundary
-                patch_name = [];
-                this.var_.basis_data_.topology_data_;
-                query_function =@(query_unit) test_basis.query(query_unit, patch_name);
-            end
+%             % Bind query function
+%             import Utility.BasicUtility.Region
+%             if query_unit.int_region_ == Region.Domain
+%                 query_function =@(query_unit) test_basis.query(query_unit);
+%             elseif query_unit.int_region_ == Region.Boundary
+%                 patch_name = [];
+%                 this.var_.basis_data_.topology_data_;
+%                 query_function =@(query_unit) test_basis.query(query_unit, patch_name);
+%             end
             
             % loop integration points
             for i = 1 : num_q
                 query_unit.query_protocol_{2} = qx(i,:);
                 
                 % Test query
-                test_basis.query(query_unit, []);
+                test_basis.query(query_unit);
                 test_non_zero_id = query_unit.non_zero_id_;
                 test_eval = query_unit.evaluate_basis_;
                 
                 % Variable query
-                var_basis.query(query_unit, []);
+                var_basis.query(query_unit);
                 var_non_zero_id = query_unit.non_zero_id_;
                 var_eval = query_unit.evaluate_basis_;
                 

@@ -32,15 +32,15 @@ classdef MassExpression < Expression.IGA.Expression
             
             % loop integration points
             for i = 1 : num_q
-                query_unit.query_protocol_{2} = num2cell(qx(i,:));
+                query_unit.query_protocol_{2} = qx(i,:);
                 
                 % Test query
-                test_basis.query(query_unit, []);
+                test_basis.query(query_unit);
                 test_non_zero_id = query_unit.non_zero_id_;
                 test_eval = query_unit.evaluate_basis_;
                 
                 % Variable query
-                var_basis.query(query_unit, []);
+                var_basis.query(query_unit);
                 var_non_zero_id = query_unit.non_zero_id_;
                 var_eval = query_unit.evaluate_basis_;
                 
