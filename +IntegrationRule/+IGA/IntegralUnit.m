@@ -15,7 +15,7 @@ classdef IntegralUnit < BasisFunction.IGA.QueryUnit
             this@BasisFunction.IGA.QueryUnit();
             this.int_region_ = patch.region_;
             this.unit_span_ = unit_span;
-            this.query_protocol_{1} = patch; 
+            this.query_protocol_{1} = patch;
         end
         
         function setQueryPosition(this, xi)

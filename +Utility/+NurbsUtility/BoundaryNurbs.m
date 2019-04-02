@@ -3,14 +3,18 @@ classdef BoundaryNurbs < Utility.NurbsUtility.Nurbs
     %   Detailed explanation goes here
     
     properties
-        % the data of corresponding domain nurbs
-        domain_nurbs_data_ = []
+        % orientation of the boundary nurbs 
+        % +1 : in 2D problem, the normal is calculated by rotating tangent
+        % vector CLOCKWISE
+        % -1 : in 2D problem, the normal is calculated by rotating tangent
+        % vector COUNTERCLOCKWISE
+        orientation_
     end
     
     methods
-        function this = BoundaryNurbs(knot_vectors, order, control_point_list, domain_nurbs_data)
+        function this = BoundaryNurbs(knot_vectors, order, control_point_list, orientation)
             this@Utility.NurbsUtility.Nurbs(knot_vectors, order, control_point_list);
-            this.domain_nurbs_data_ = domain_nurbs_data;
+            this.orientation_ = orientation;
         end
     end
     

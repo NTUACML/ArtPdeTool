@@ -26,7 +26,7 @@ classdef Mapping < Mapping.MappingBase
             eval_basis = query_unit.evaluate_basis_;
             non_zero_id = query_unit.non_zero_id_;
             local_pt = this.points_(non_zero_id, :);
-            mapping_unit = MappingUnit(local_pt, eval_basis);
+            mapping_unit = MappingUnit(local_pt, eval_basis, query_unit.query_protocol_{1});
         end
     end
     

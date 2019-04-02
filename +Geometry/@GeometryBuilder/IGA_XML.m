@@ -100,10 +100,23 @@ function IGA_XML_LoadBoundaryPatch(xml_patch, topo)
     
     knot_vectors = xml_patch.getKnot();
     
-    domain_nurbs_data = topo.domain_patch_data_.nurbs_data_;
+    switch boundary_patch.dim_
+        case 1
+            if any(strcmp({'eta_0', 'xi_1'}, boundary_patch.name_))
+                orientation = 1;
+            else
+                orientation = -1;
+            end
+        case 2
+            if any(strcmp({'xi_1', 'eta_1', 'zeta_1'}, boundary_patch.name_))
+                orientation = 1;
+            else
+                orientation = -1;
+            end
+    end
     
-    % Generate domain nurbs
-    boundary_patch.nurbs_data_ = BoundaryNurbs(knot_vectors, order, PointList(CT_PT), domain_nurbs_data);
+    % Generate boundary nurbs
+    boundary_patch.nurbs_data_ = BoundaryNurbs(knot_vectors, order, PointList(CT_PT), orientation);
 end
 
 

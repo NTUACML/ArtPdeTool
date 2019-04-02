@@ -5,12 +5,14 @@ classdef MappingUnit < handle
     properties
         local_point_
         eval_basis_
+        patch_
     end
     
     methods
-        function this = MappingUnit(local_point, eval_basis)
+        function this = MappingUnit(local_point, eval_basis, patch)
             this.local_point_ = local_point;
             this.eval_basis_ = eval_basis;
+            this.patch_ = patch;
         end
         
         function [dx_dxi, J] = calJacobian(this)
@@ -31,6 +33,49 @@ classdef MappingUnit < handle
         function x = calPhysicalPosition(this)
             x = this.eval_basis_{1} * this.local_point_;
         end
+        
+        function tangent_vector = calTangentVector(this)
+            dx_dxi = this.eval_basis_{2} * this.local_point_;
+            
+            switch this.patch_.dim_
+                case 1
+                    if any(strcmp(this.patch_.name_, {'eta_0', 'eta_1'}))
+                        dxi_ds = [1 0];
+                    else
+                        dxi_ds = [0 1];
+                    end
+                case 2
+                    
+            end
+                        
+            tangent_vector = dxi_ds * dx_dxi;
+        end
+        
+        function normal_vector = calNormalVector(this)
+            dx_dxi = this.eval_basis_{2} * this.local_point_;
+            
+            switch this.patch_.dim_
+                case 1
+                    if any(strcmp(this.patch_.name_, {'eta_0', 'eta_1'}))
+                        dxi_ds = [1 0];
+                    else
+                        dxi_ds = [0 1];
+                    end
+                    
+                    tangent_vector = dxi_ds * dx_dxi;
+                    
+                    if this.patch_.nurbs_data_.orientation_ == 1
+                        normal_vector = tangent_vector*[0 -1; 1 0];
+                    else
+                        normal_vector = tangent_vector*[0 1; -1 0];
+                    end                    
+                case 2
+                    
+            end
+            
+                        
+        end
+        
     end
     
 end
