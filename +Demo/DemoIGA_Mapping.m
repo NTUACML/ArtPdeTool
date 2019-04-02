@@ -7,7 +7,7 @@ import Domain.*
 import Utility.BasicUtility.*
 import Utility.NurbsUtility.* 
 
-xml_path = './ArtPDE_IGA_Solid_quarter_hole.art_geometry';
+xml_path = './ArtPDE_IGA_3D_Lens_left.art_geometry';
 
 geo = GeometryBuilder.create('IGA', 'XML', xml_path);
 nurbs_topology = geo.topology_data_{1};
@@ -37,7 +37,8 @@ import BasisFunction.IGA.QueryUnit
 query_boundary = QueryUnit();
 
 
-n = 6;
+% 3D test
+n = 4;
 temp = linspace(0, 1, n);
 [xx, yy] = meshgrid(temp, temp);
 xx = xx(:);
@@ -53,11 +54,11 @@ for bdr_patch = values(boundary_patch_map)
         % get local mapping
         F = iga_domain.mapping_.queryLocalMapping(query_boundary);
         position(i,:) = F.calPhysicalPosition();
-%         normal = F.calNormalVector();
-%         normal = normal/ norm(normal);
+        normal = F.calNormalVector();
+        normal = normal/ norm(normal);
         
         plot3(position(i,1), position(i,2), position(i,3), 'ro'); 
-%         quiver(position(i,1), position(i,2), normal(1), normal(2), 0.1, 'LineWidth', 2);
+        quiver3(position(i,1), position(i,2), position(i,3), normal(1), normal(2), normal(3), 1.5, 'LineWidth', 2);
     end
 %     plot(position(:,1), position(:,2), '-r', 'LineWidth', 2);
 end

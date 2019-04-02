@@ -70,6 +70,21 @@ classdef MappingUnit < handle
                         normal_vector = tangent_vector*[0 1; -1 0];
                     end                    
                 case 2
+                    if any(strcmp(this.patch_.name_, {'xi_0', 'xi_1'}))
+                        dxi_ds = [0 1 0; 0 0 1];
+                    elseif any(strcmp(this.patch_.name_, {'eta_0', 'eta_1'}))
+                        dxi_ds = [0 0 1; 1 0 0];
+                    else
+                        dxi_ds = [1 0 0; 0 1 0];
+                    end
+                    
+                    tangent_vector = dxi_ds * dx_dxi;
+                    
+                    if this.patch_.nurbs_data_.orientation_ == 1
+                        normal_vector = cross(tangent_vector(1,:), tangent_vector(2,:));
+                    else
+                        normal_vector = -cross(tangent_vector(1,:), tangent_vector(2,:));
+                    end  
                     
             end
             
