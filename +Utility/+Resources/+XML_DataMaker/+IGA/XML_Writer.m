@@ -7,8 +7,8 @@ import Utility.Resources.NurbsToolBox.*
 %% Generate nurbs object
 % case_name = 'Unit_Square';
 % case_name = 'Rectangle';
-case_name = 'Plane_quarter_hole';
-% case_name = 'Solid_quarter_hole';
+% case_name = 'Plane_quarter_hole';
+case_name = 'Solid_quarter_hole';
 % case_name = 'Lens_top_right'; 
 % case_name = 'Lens_bottom_right;' 
 % case_name = 'Lens_top_left'; 
@@ -201,7 +201,7 @@ switch geo_dim
         CTPT_node.setAttribute('dim','3');
 
         % /Unit/Patch/ControlPoint/Point
-        surf = nrb4surf([0.0 1.0 0.0],[1.0 1.0 0.0],[0.0 1.0 1.0],[1.0 1.0 1.0]);
+        surf = nrb4surf([0.0 1.0 0.0],[0.0 1.0 1.0],[1.0 1.0 0.0],[1.0 1.0 1.0]);
         surf = nrbdegelev(surf, [order_elevated(1) order_elevated(3)]);
         surf = nrbkntins(surf,{xi_i zeta_i});
         
@@ -240,7 +240,7 @@ switch geo_dim
         CTPT_node.setAttribute('dim','3');
 
         % /Unit/Patch/ControlPoint/Point
-        surf = nrb4surf([0.0 0.0 0.0],[1.0 0.0 0.0],[0.0 0.0 1.0],[1.0 0.0 1.0]);
+        surf = nrb4surf([0.0 0.0 0.0],[0.0 0.0 1.0],[1.0 0.0 0.0],[1.0 0.0 1.0]);
         surf = nrbdegelev(surf, [order_elevated(1) order_elevated(3)]);
         surf = nrbkntins(surf,{xi_i zeta_i});
       

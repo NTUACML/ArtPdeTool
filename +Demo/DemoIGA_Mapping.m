@@ -7,7 +7,7 @@ import Domain.*
 import Utility.BasicUtility.*
 import Utility.NurbsUtility.* 
 
-xml_path = './ArtPDE_IGA_Plane_quarter_hole.art_geometry';
+xml_path = './ArtPDE_IGA_Solid_quarter_hole.art_geometry';
 
 geo = GeometryBuilder.create('IGA', 'XML', xml_path);
 nurbs_topology = geo.topology_data_{1};
@@ -39,21 +39,25 @@ query_boundary = QueryUnit();
 
 n = 6;
 temp = linspace(0, 1, n);
-position = zeros(n, 2);
+[xx, yy] = meshgrid(temp, temp);
+xx = xx(:);
+yy = yy(:);
+
+position = zeros(n, domain_patch.dim_);
 
 for bdr_patch = values(boundary_patch_map)
-    for i = 1:n
-        s = temp(i);    
+    for i = 1:n^2
+        s = [xx(i) yy(i)];    
         query_boundary.query_protocol_ = {bdr_patch{1}, s, 0};
         
         % get local mapping
         F = iga_domain.mapping_.queryLocalMapping(query_boundary);
         position(i,:) = F.calPhysicalPosition();
-        normal = F.calNormalVector();
-        normal = normal/ norm(normal);
+%         normal = F.calNormalVector();
+%         normal = normal/ norm(normal);
         
-        plot(position(i,1), position(i,2), 'ro'); 
-        quiver(position(i,1), position(i,2), normal(1), normal(2), 'LineWidth', 2);
+        plot3(position(i,1), position(i,2), position(i,3), 'ro'); 
+%         quiver(position(i,1), position(i,2), normal(1), normal(2), 0.1, 'LineWidth', 2);
     end
 %     plot(position(:,1), position(:,2), '-r', 'LineWidth', 2);
 end
