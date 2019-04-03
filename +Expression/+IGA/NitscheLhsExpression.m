@@ -48,15 +48,13 @@ classdef NitscheLhsExpression < Expression.IGA.Expression
                 
                 % Put non_zero id
                 basis_id = {test_non_zero_id, var_non_zero_id};
-                
-                
-                % calculate normal vector at quadrature points
-                
-                
+             
                 % get local mapping
                 F = mapping.queryLocalMapping(query_unit);
 
                 [dx_dxi, J] = F.calJacobian();
+                
+                normal = F.calNormalVector();
                 
                 dxi_dx = inv(dx_dxi);
                               
@@ -64,7 +62,7 @@ classdef NitscheLhsExpression < Expression.IGA.Expression
                 B_var = dxi_dx * var_eval{2};
                                              
                 % add to local matrix
-                temp = (test_eval{1}' *[n_1 n_2]* B_var);
+                temp = (test_eval{1}' * normal * B_var);
                 local_matrix{i} = (-temp - temp' + this.beta_ * test_eval{1}' * var_eval{1}).* qw(i) * J; 
                 
             end

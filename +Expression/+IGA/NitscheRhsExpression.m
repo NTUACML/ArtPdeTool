@@ -43,12 +43,23 @@ classdef NitscheRhsExpression < Expression.IGA.Expression
                 % get local mapping
                 F = mapping.queryLocalMapping(query_unit);
 
-                [~, J] = F.calJacobian();
+                [dx_dxi, J] = F.calJacobian();
                 
+                % eval basis derivative with x
+                dxi_dx = inv(dx_dxi);
+                             
+                B_test = dxi_dx * test_eval{2};
+                
+                % eval source function at quadrature point
                 x = F.calPhysicalPosition();
                 
+                val = this.source_function_(x(1), x(2));
+                
+                % eval normal vector at quadrature point
+                normal = F.calNormalVector();
+                
                 % add to local matrix
-                local_matrix{i} = (test_eval{1}' * this.source_function_(x(1), x(2))).* qw(i) * J; 
+                local_matrix{i} = (-(normal*B_test)' + this.beta_* test_eval{1}')* val .* qw(i) * J; 
             end
             
             data = local_matrix{1};
@@ -56,9 +67,6 @@ classdef NitscheRhsExpression < Expression.IGA.Expression
                 data = data + local_matrix{i};
             end
             
-            if ~isempty(this.beta_)
-                data = data * this.beta_;
-            end
         end
         
         function setSourceFunction(this, f)

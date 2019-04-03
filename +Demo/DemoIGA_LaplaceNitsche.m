@@ -48,7 +48,7 @@ operation3.setOperator('laplace_nitsche_dirichlet_rhs_term');
 %% Expression acquired
 exp1 = operation1.getExpression('IGA', {test_t, var_t});
 
-beta = 1e6;
+beta = 1e2;
 exp2 = operation2.getExpression('IGA', {test_t, var_t, beta});
 
 boudary_function = @(x, y) sin(pi*x);

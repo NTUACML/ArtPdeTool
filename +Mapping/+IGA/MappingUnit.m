@@ -88,6 +88,7 @@ classdef MappingUnit < handle
                     
             end
             
+            normal_vector = normal_vector/ norm(normal_vector);
                         
         end
         

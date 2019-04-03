@@ -45,9 +45,6 @@ operation2.setOperator('test_dot_var');
 operation3 = Operation();
 operation3.setOperator('test_dot_f');
 
-operation4 = Operation();
-operation4.setOperator('nitsche');
-
 %% Expression acquired
 exp1 = operation1.getExpression('IGA', {test_t, var_t});
 

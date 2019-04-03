@@ -48,15 +48,15 @@ xi = rand(5, geo_dim);
 % nurbs_data.dispKnotVectors();
 
 % Plot knot mesh in parametric space
-% figure; hold on; axis equal; view([-30 30]);
-% nurbs_tool.plotParametricMesh();
-% hold off;
+figure; hold on; axis equal; %view([-30 30]);
+nurbs_tool.plotParametricMesh();
+hold off;
 
 % Plot nurbs
-% figure; hold on; grid on; axis equal;
-% nurbs_tool.plotNurbs([15 15 15]); view([50 30]);
-% nurbs_tool.plotControlMesh();
-% hold off;
+figure; hold on; grid on; axis equal;
+nurbs_tool.plotNurbs([15 15 15]); %view([50 30]);
+nurbs_tool.plotControlMesh();
+hold off;
 
 % Evaluate nurbs & derivatives
 % [position_new, gradient_new] = nurbs_tool.evaluateNurbs(xi, 'position', 'gradient');
