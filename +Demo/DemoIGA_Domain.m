@@ -7,7 +7,7 @@ import Domain.*
 import Utility.BasicUtility.*
 import Utility.NurbsUtility.* 
 
-xml_path = './ArtPDE_IGA_Plane_quarter_hole.art_geometry';
+xml_path = './ArtPDE_IGA_Solid_quarter_hole.art_geometry';
 
 geo = GeometryBuilder.create('IGA', 'XML', xml_path);
 nurbs_topology = geo.topology_data_{1};

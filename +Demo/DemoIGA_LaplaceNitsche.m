@@ -20,7 +20,7 @@ iga_domain = DomainBuilder.create('IGA');
 nurbs_basis = iga_domain.generateBasis(nurbs_topology);
 
 %% Plot domain
-nurbs_tool = NurbsTools(nurbs_basis);
+nurbs_tool = NurbsTools(nurbs_basis); 
 figure; hold on; grid on; axis equal;
 nurbs_tool.plotNurbs(); 
 nurbs_tool.plotControlMesh();
@@ -84,6 +84,7 @@ fv.vertices = [x(:,1:2), data.value{1}];
 fv.faces = element;
 fv.facevertexcdata = data.value{1};
 
+figure;
 patch(fv,'CDataMapping','scaled','EdgeColor',[.7 .7 .7],'FaceColor','interp','FaceAlpha',1);
 grid on;
 title('ArtPDE Laplace problem... (IGA)')
