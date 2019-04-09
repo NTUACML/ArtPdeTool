@@ -6,6 +6,7 @@ import Geometry.*
 import Domain.*
 import Utility.BasicUtility.*
 import Utility.NurbsUtility.* 
+import Operation.*
 
 xml_path = './ArtPDE_IGA_Plane_quarter_hole.art_geometry';
 geo_1 = GeometryBuilder.create('IGA', 'XML', xml_path);
@@ -18,12 +19,6 @@ topology_map = containers.Map('KeyType','char','ValueType','any');
 
 topology_map('topo_1') = geo_1.topology_data_{1};
 topology_map('topo_2') = geo_2.topology_data_{1};
-
-% create interface patch
-% boundary_patch_1 = topology_map('topo_1').boundary_patch_data_('xi_0');
-% boundary_patch_2 = topology_map('topo_2').boundary_patch_data_('xi_1');
-% topology_map('interface') = createInterfaceTopology(boundary_patch_1, boundary_patch_2);
-
 
 %% Create Domain
 iga_domain = DomainBuilder.create('IGA');
@@ -76,17 +71,17 @@ operation3 = Operation();
 operation3.setOperator('laplace_nitsche_dirichlet_rhs_term');
 
 %% Expression acquired
-exp1 = operation1.getExpression('IGA', {test_t, var_t});
+exp1 = operation1.getExpression('IGA', {v_1, u_1});
 
 beta = 1e2;
-exp2 = operation2.getExpression('IGA', {test_t, var_t, beta});
+exp2 = operation2.getExpression('IGA', {v_1, u_1, beta});
 
 boudary_function = @(x, y) sin(pi*x);
-exp3 = operation3.getExpression('IGA', {test_t, boudary_function, beta});
+exp3 = operation3.getExpression('IGA', {v_1, boudary_function, beta});
 
 %% Integral variation equations
 % Domain integral
-doamin_patch = nurbs_topology.getDomainPatch();
+doamin_patch = topology_map('topo_1').getDomainPatch();
 iga_domain.calIntegral(doamin_patch, exp1, mapping_map('topo_1'));
 
 % domain_patch = nurbs_topology.domain_patch_data_;

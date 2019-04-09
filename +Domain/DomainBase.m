@@ -7,6 +7,7 @@ classdef DomainBase < handle
         dof_manager_
         num_constraint_ = 0
         num_integration_rule_ = 0
+        num_mapping_ = 0
         constraint_
         integration_rule_
         assembler_
@@ -24,6 +25,8 @@ classdef DomainBase < handle
                 'KeyType','double','ValueType','any');
             % IntegrationRule init
             this.integration_rule_ = containers.Map(...
+                'KeyType','double','ValueType','any');
+            this.mapping_ = containers.Map(...
                 'KeyType','double','ValueType','any');
         end
     end
