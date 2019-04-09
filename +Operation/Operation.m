@@ -147,6 +147,26 @@ classdef Operation < handle
                                 disp('Error <Operation>! - getExpression!');
                                 disp('> the Nitsche lhs term should input test, variable and beta.');
                             end
+                        case 'laplace_nitsche_interface_lhs_term'
+                            % Laplace Interface term using Nitsche's method
+                            if(~isempty(varargin) || ~(length(varargin{1}) < 3))
+                                test_1 = varargin{1}{1};
+                                variable_1 = varargin{1}{2};
+                                test_2 = varargin{1}{3};
+                                variable_2 = varargin{1}{4};
+                                penalty_parameter = varargin{1}{5};
+                                
+                                expression = NitscheInterfaceExpression();
+                                expression.setTest({test_1, test_2});
+                                expression.setVar({variable_1, variable_2});
+                                
+                                if ~isempty(penalty_parameter)
+                                    expression.setPenaltyParameter(penalty_parameter);
+                                end
+                            else
+                                disp('Error <Operation>! - getExpression!');
+                                disp('> the Nitsche interface term should input two test, two variable functions and beta.');
+                            end    
                         otherwise
                             expression = Expression();
                     end   

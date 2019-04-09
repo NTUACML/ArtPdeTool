@@ -6,9 +6,9 @@ import Utility.Resources.NurbsToolBox.*
 
 %% Generate nurbs object
 % case_name = 'Unit_Square';
-% case_name = 'Rectangle';
+case_name = 'Rectangle';
 % case_name = 'Plane_quarter_hole';
-case_name = 'Plane_quarter_hole_2';
+% case_name = 'Plane_quarter_hole_2';
 % case_name = 'Solid_quarter_hole';
 % case_name = 'Lens_top_right'; 
 % case_name = 'Lens_bottom_right;' 
@@ -38,19 +38,19 @@ end
 
 %% Document create
 doc_geo = com.mathworks.xml.XMLUtils.createDocument('Geometry');
-doc_init = com.mathworks.xml.XMLUtils.createDocument('Initial');
-doc_mat = com.mathworks.xml.XMLUtils.createDocument('Material');
+% doc_init = com.mathworks.xml.XMLUtils.createDocument('Initial');
+% doc_mat = com.mathworks.xml.XMLUtils.createDocument('Material');
 
 %% Document node
 doc_geo_node = doc_geo.getDocumentElement();
 doc_geo_node.setAttribute('version',version);
 doc_geo_node.setAttribute('dim', geo_dim);
 
-doc_init_node = doc_init.getDocumentElement();
-doc_init_node.setAttribute('version',version);
-
-doc_mat_node = doc_mat.getDocumentElement();
-doc_mat_node.setAttribute('version',version);
+% doc_init_node = doc_init.getDocumentElement();
+% doc_init_node.setAttribute('version',version);
+% 
+% doc_mat_node = doc_mat.getDocumentElement();
+% doc_mat_node.setAttribute('version',version);
 
 %% Data create (Geometry part)
 doc_handle = doc_geo;
