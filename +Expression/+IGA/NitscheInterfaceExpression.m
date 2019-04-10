@@ -92,6 +92,9 @@ classdef NitscheInterfaceExpression < Expression.IGA.Expression
             F_m = mapping{1}.queryLocalMapping(query_unit_m);
             x = F_m.calPhysicalPosition();
             
+            
+            
+            
             import Utility.NurbsUtility.NurbsType
             switch query_unit.query_protocol_{1}.master_patch_.nurbs_data_.type_
                 case NurbsType.Curve
@@ -101,13 +104,13 @@ classdef NitscheInterfaceExpression < Expression.IGA.Expression
                     
                     F_s = mapping{2}.queryLocalMapping(query_unit_s);
                     x_i = F_s.calPhysicalPosition();
+                    tangent = F_s.calTangentVector();
                     
+                    slope = dot((x_i-x), tangent);
                     residual = norm(x_i-x);
                     
-                    while residual > 1e-10
-                        tangent = F_s.calTangentVector();
-                        
-                        delta_s = - residual^2 / dot((x_i-x), tangent);
+                    while abs(slope) > 1e-10              
+                        delta_s = - residual^2 / slope;
                         initial_guess = initial_guess + delta_s;
                         
                         query_unit_s.query_protocol_{2} = initial_guess;
@@ -115,14 +118,47 @@ classdef NitscheInterfaceExpression < Expression.IGA.Expression
                         F_s = mapping{2}.queryLocalMapping(query_unit_s);
                         x_i = F_s.calPhysicalPosition();
                         
+                        slope = dot((x_i-x), tangent);
                         residual = norm(x_i-x);
                         
                         format long
                         disp(initial_guess);
                         disp(residual);
+                        disp(slope);
                     end
                 otherwise % Plane or Surface
+                    % Newton iteration for solving parametric coordinates of slave patch
+                    initial_guess = [0 0];
+                    query_unit_s.query_protocol_ = {query_unit.query_protocol_{1}.slave_patch_, initial_guess, 1};
                     
+                    F_s = mapping{2}.queryLocalMapping(query_unit_s);
+                    x_i = F_s.calPhysicalPosition();
+                    tangent = F_s.calTangentVector();
+                    
+                    slope_xi = dot((x_i-x), tangent(1,:));
+                    slope_eta = dot((x_i-x), tangent(2,:));
+                    residual = norm(x_i-x);
+                    
+                    while abs(slope_xi) > 1e-10 || abs(slope_eta) > 1e-10              
+                        delta_s = - residual^2 ./ [slope_xi slope_eta];
+                        
+                        initial_guess = initial_guess + delta_s;
+                        
+                        query_unit_s.query_protocol_{2} = initial_guess;
+                        
+                        F_s = mapping{2}.queryLocalMapping(query_unit_s);
+                        x_i = F_s.calPhysicalPosition();
+                        
+                        slope_xi = dot((x_i-x), tangent(1,:));
+                        slope_eta = dot((x_i-x), tangent(2,:));
+                        residual = norm(x_i-x);
+                        
+                        format long
+                        disp(initial_guess);
+                        disp(residual);
+                        disp(slope_xi);
+                        disp(slope_eta);
+                    end
             end
 
             

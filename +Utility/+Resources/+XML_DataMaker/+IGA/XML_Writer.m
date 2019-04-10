@@ -562,11 +562,11 @@ end
 file_name_geo = [project_name, '_', doc_format ,'.art_geometry'];
 xmlwrite(file_name_geo, doc_geo);
 
-file_name_init = [project_name, '_', doc_format,'.art_initial'];
-xmlwrite(file_name_init, doc_init);
-
-file_name_mat = [project_name, '_', doc_format,'.art_material'];
-xmlwrite(file_name_mat, doc_mat);
+% file_name_init = [project_name, '_', doc_format,'.art_initial'];
+% xmlwrite(file_name_init, doc_init);
+% 
+% file_name_mat = [project_name, '_', doc_format,'.art_material'];
+% xmlwrite(file_name_mat, doc_mat);
 end
 
 %% Using Function
