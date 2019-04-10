@@ -18,7 +18,7 @@ classdef MappingUnit < handle
         function [dx_dxi, J] = calJacobian(this)          
             import Utility.BasicUtility.Region
             if this.patch_.region_ == Region.Boundary
-                [dx_dxi, tangent_vector] = this.calTangentVector();
+                [tangent_vector, dx_dxi] = this.calTangentVector();
                 
                 if size(tangent_vector,1) == 1 
                     J = norm(tangent_vector);
@@ -79,10 +79,7 @@ classdef MappingUnit < handle
                         
         end
         
-    end
-    
-    methods (Access = private)
-        function [dx_dxi, tangent_vector] = calTangentVector(this)
+        function [tangent_vector, dx_dxi] = calTangentVector(this)
             dx_dxi = this.eval_basis_{2} * this.local_point_;
             
             switch this.patch_.dim_
@@ -106,5 +103,6 @@ classdef MappingUnit < handle
         end
         
     end
+   
 end
 

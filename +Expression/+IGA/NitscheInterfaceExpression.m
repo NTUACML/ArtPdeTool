@@ -82,16 +82,49 @@ classdef NitscheInterfaceExpression < Expression.IGA.Expression
     end
     
     methods (Access = private)
-        function [query_unit_m, query_unit_s] = this.generateInterfaceQueryUnit(this, s, query_unit, mapping)
+        function [query_unit_m, query_unit_s] = generateInterfaceQueryUnit(this, s, query_unit, mapping)
             import BasisFunction.IGA.QueryUnit            
             query_unit_m = QueryUnit();
             query_unit_s = QueryUnit();
+                  
+            query_unit_m.query_protocol_ = {query_unit.query_protocol_{1}.master_patch_, s, 1};
+                        
+            F_m = mapping{1}.queryLocalMapping(query_unit_m);
+            x = F_m.calPhysicalPosition();
             
-            query_unit_m.query_protocol = {query_unit.query_protocol{1}.master_patch_, s, 1};
-            query_unit_s.query_protocol = {query_unit.query_protocol{1}.slave_patch_, [], 1};
-            
-            F_1 = mapping{1}.queryLocalMapping(query_unit);
-            x = F_1.calPhysicalPosition();
+            import Utility.NurbsUtility.NurbsType
+            switch query_unit.query_protocol_{1}.master_patch_.nurbs_data_.type_
+                case NurbsType.Curve
+                    % Newton iteration for solving parametric coordinates of slave patch
+                    initial_guess = 0;
+                    query_unit_s.query_protocol_ = {query_unit.query_protocol_{1}.slave_patch_, initial_guess, 1};
+                    
+                    F_s = mapping{2}.queryLocalMapping(query_unit_s);
+                    x_i = F_s.calPhysicalPosition();
+                    
+                    residual = norm(x_i-x);
+                    
+                    while residual > 1e-10
+                        tangent = F_s.calTangentVector();
+                        
+                        delta_s = - residual^2 / dot((x_i-x), tangent);
+                        initial_guess = initial_guess + delta_s;
+                        
+                        query_unit_s.query_protocol_{2} = initial_guess;
+                        
+                        F_s = mapping{2}.queryLocalMapping(query_unit_s);
+                        x_i = F_s.calPhysicalPosition();
+                        
+                        residual = norm(x_i-x);
+                        
+                        format long
+                        disp(initial_guess);
+                        disp(residual);
+                    end
+                otherwise % Plane or Surface
+                    
+            end
+
             
         end
     end
