@@ -42,13 +42,13 @@ classdef Mapping < Mapping.MappingBase
                         parametric_coordinate = varargin{1};
                     end
                                        
-                    iter_times = 10;
+                    iter_times = 15;
                     [parametric_coordinate, residual, cnt] = ...
                         this.NewtonIteration(patch_data, parametric_coordinate, physical_coordinate, iter_times);
                      
                     if cnt > iter_times
                         disp('Iteration failed with the current initial guess. Activate the re-initialization process.')
-                        parametric_coordinate = this.reInitializedParametricCoordinate(physical_coordinate);
+                        parametric_coordinate = this.reInitializedParametricCoordinate();
                         
                         [parametric_coordinate, residual, cnt] = ...
                             this.NewtonIteration(patch_data, parametric_coordinate, physical_coordinate, iter_times);
@@ -57,6 +57,8 @@ classdef Mapping < Mapping.MappingBase
                     str = ['cnt: ', num2str(cnt)];
                     disp(str);
                     str = ['residual: ', num2str(residual)];
+                    disp(str);
+                    str = ['parametric_coordinate: ', num2str(parametric_coordinate)];
                     disp(str);
                 otherwise % Plane or Surface
                     disp('currently nor supported...')
@@ -99,17 +101,11 @@ classdef Mapping < Mapping.MappingBase
                 [dC_dt, F, residual] = this.eval(patch_data, parametric_coordinate, physical_coordinate);
                 
                 cnt = cnt + 1;
-                str = ['parametric_coordinate: ', num2str(parametric_coordinate)];
-                disp(str);
-                
-                if cnt > 5
-                    disp('here');
-                end
             end
         end
         
-        function parametric_coordinate = reInitializedParametricCoordinate(this, physical_coordinate)
-            parametric_coordinate = 0;
+        function parametric_coordinate = reInitializedParametricCoordinate(this)
+            parametric_coordinate = 1;
 
         end
     end

@@ -50,8 +50,9 @@ for xi = temp
     % Given physical coordinate, find xi
     parametric_coordinate = mapping.inverseMapping(physical_position, patch_data);
     
-%     disp(xi);
-%     disp(parametric_coordinate);
+    disp(xi);
+    disp(parametric_coordinate);
+    disp('-----------------')
 end
 
 
