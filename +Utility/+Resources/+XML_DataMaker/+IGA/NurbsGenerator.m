@@ -15,14 +15,24 @@ switch nurbs_name
         nurbs = knotInsertion(nurbs, {t t});
         status = true;
     case 'Rectangle'        
-        D = 2; L = 20;
-        nurbs = Rectangle(D, L, [0 0]);
+        D = 0.5; L = 1;
+        nurbs = Rectangle(D, L, [0.5 0.25]);
+        
+        nurbs = degreeElevation(nurbs, [1 1]);
+        n = 10;
+        t_1 = linspace(1/n, 1-1/n, n-1);
+        n = 5;
+        t_2 = linspace(1/n, 1-1/n, n-1);
+        nurbs = knotInsertion(nurbs, {t_1 t_2});
         status = true;  
     case 'Plane_quarter_hole'
         nurbs = Plane_quarter_hole();
 %         nurbs = knotInsertion(nurbs, {[0.2 0.8] [0.3 0.7]});
 %         nurbs = degreeElevation(nurbs, [1 1]);
         status = true;
+    case 'Plane_quarter_hole_2'
+        nurbs = Plane_quarter_hole_2();
+        status = true;    
     case 'Solid_quarter_hole'        
         nurbs = Solid_quater_hole(1);
         status = true;    
@@ -112,23 +122,59 @@ import Utility.NurbsUtility.Nurbs
 
 knot_vectors = {[0 0 0 0.5 1 1 1]  [0 0 0 1 1 1]};
 order = [2 2];
-temp = [-1 0 0 1;
-    -1 sqrt(2)-1 0 (1+1/sqrt(2))/2;
-     1-sqrt(2) 1 0 (1+1/sqrt(2))/2;
-     0 1 0 1;
-    
-    -2.5 0 0 1;
-    -2.5 0.75 0 1;
-    -0.75 2.5 0 1;
-     0 2.5 0 1;
-    
-    -4 0 0 1;
-    -4 4 0 1;
-    -4 4 0 1;
-     0 4 0 1];
+
+temp = [ 
+    0 1 0 1;
+    -1+sqrt(2) 1 0 (1+1/sqrt(2))/2;
+    1 sqrt(2)-1 0 (1+1/sqrt(2))/2;
+    1 0 0 1;
  
-temp(:,1) = -temp(:,1);
+    0 2.5 0 1;
+    0.75 2.5 0 1;
+    2.5 0.75 0 1;
+    2.5 0 0 1;
  
+    0 4 0 1;
+    4 4 0 1;
+    4 4 0 1;
+    4 0 0 1
+    ];
+
+control_point_list = PointList(temp);
+
+nurbs = Nurbs(knot_vectors, order, control_point_list);
+
+end
+
+function nurbs = Plane_quarter_hole_2
+import Utility.BasicUtility.PointList
+import Utility.NurbsUtility.Nurbs
+
+knot_vectors = {[0 0 0 0.5 1 1 1]  [0 0 0 1 1 1]};
+order = [2 2];
+
+temp = [ 
+    0 1 0 1;
+    -1+sqrt(2) 1 0 (1+1/sqrt(2))/2;
+    1 sqrt(2)-1 0 (1+1/sqrt(2))/2;
+    1 0 0 1;
+ 
+    0 2.5 0 1;
+    0.75 2.5 0 1;
+    2.5 0.75 0 1;
+    2.5 0 0 1;
+ 
+    0 4 0 1;
+    4 4 0 1;
+    4 4 0 1;
+    4 0 0 1
+    ];
+
+
+for i = 1:size(temp,1)
+    temp(i,1:2) = temp(i,1:2)*[0 1; -1 0];
+end
+
 control_point_list = PointList(temp);
 
 nurbs = Nurbs(knot_vectors, order, control_point_list);

@@ -18,6 +18,8 @@ classdef Assembler < Assembler.AssemblerBase
                 status = this.IGA_RHS_Assembly(var, basis_id, data);
             elseif(type == AssemblyType.Constraint)
                 status = this.IGA_Constraint_Assembly(var, basis_id, data);
+            elseif(type == AssemblyType.Coupled)
+                status = this.IGA_Coupled_Assembly(var, basis_id, data);
             else
                 disp('Error <IGA Assembler>! - Assembly!');
                 disp('> your assembly type error, please check!');
@@ -91,6 +93,14 @@ classdef Assembler < Assembler.AssemblerBase
                 end
             end
 
+        end
+        
+        function status = this.IGA_Coupled_Assembly(var, basis_id, data)
+            
+            
+            
+            
+            status = true;
         end
     end
 end

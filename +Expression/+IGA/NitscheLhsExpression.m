@@ -1,12 +1,13 @@
-classdef BilinearExpression < Expression.IGA.Expression
+classdef NitscheLhsExpression < Expression.IGA.Expression
     %BILINEAREXPRESSION Summary of this class goes here
     %   Detailed explanation goes here
     
     properties
+        beta_ = [];
     end
     
     methods
-        function this = BilinearExpression()
+        function this = NitscheLhsExpression()
             this@Expression.IGA.Expression();
         end
         
@@ -15,9 +16,6 @@ classdef BilinearExpression < Expression.IGA.Expression
             type = AssemblyType.Matrix;
             var = {this.test_; this.var_};
             
-            % TODO:In bilinear form consisting of multiplication of derivatives
-            % of shape & test, first order derivatives are necessary. Try
-            % to improve this process, make it automatic.
             query_unit.query_protocol_{3} = 1;
             
             % Get quadrature
@@ -27,18 +25,12 @@ classdef BilinearExpression < Expression.IGA.Expression
             
             test_basis = this.test_.basis_data_;
             var_basis = this.var_.basis_data_;
-            
-            local_matrix = cell(num_q,1);
                         
-%             % Bind query function
-%             import Utility.BasicUtility.Region
-%             if query_unit.int_region_ == Region.Domain
-%                 query_function =@(query_unit) test_basis.query(query_unit);
-%             elseif query_unit.int_region_ == Region.Boundary
-%                 patch_name = [];
-%                 this.var_.basis_data_.topology_data_;
-%                 query_function =@(query_unit) test_basis.query(query_unit, patch_name);
-%             end
+            % The basis query protocal in IGA is point by point, while in
+            % FEM is element by element. Hence we do not known the non-zero
+            % basis befroe query. In other word, the size of local matrix
+            % is not known in piror.
+            local_matrix = cell(num_q,1);
             
             % loop integration points
             for i = 1 : num_q
@@ -56,28 +48,35 @@ classdef BilinearExpression < Expression.IGA.Expression
                 
                 % Put non_zero id
                 basis_id = {test_non_zero_id, var_non_zero_id};
-                
+             
                 % get local mapping
                 F = mapping.queryLocalMapping(query_unit);
-                
+
                 [dx_dxi, J] = F.calJacobian();
+                
+                normal = F.calNormalVector();
                 
                 dxi_dx = inv(dx_dxi);
                               
                 % eval basis derivative with x
-                B_test = dxi_dx * test_eval{2};
                 B_var = dxi_dx * var_eval{2};
-                
+                                             
                 % add to local matrix
-                local_matrix{i} = (B_test' * B_var).* qw(i) * J; 
+                temp = (test_eval{1}' * normal * B_var);
+                local_matrix{i} = (-temp - temp' + this.beta_ * test_eval{1}' * var_eval{1}).* qw(i) * J; 
+                
             end
             
             data = local_matrix{1};
             for i = 2 : num_q
                 data = data + local_matrix{i};
             end
+            
         end
-
+        
+        function setPenaltyParameter(this, beta)
+            this.beta_ = beta;
+        end
     end
     
 end

@@ -27,7 +27,7 @@ classdef LinearExpression < Expression.IGA.Expression
             
             % loop integration points
             for i = 1 : num_q
-                query_unit.query_protocol_{2} = num2cell(qx(i,:));
+                query_unit.query_protocol_{2} = qx(i,:);
                 
                 % Test query
                 test_basis.query(query_unit, []);

@@ -113,7 +113,7 @@ classdef Domain < Domain.DomainBase
             
         end
         
-        function status = calIntegral(this, patch, expression, varargin)
+        function status = calIntegral(this, patch, expression, mapping, varargin)
             % Check input data
             if(isa(patch, 'Utility.BasicUtility.Patch') ...
                && ...
@@ -134,6 +134,10 @@ classdef Domain < Domain.DomainBase
                 if(genetrated_status)
                     this.num_integration_rule_ = this.num_integration_rule_ + 1;
                     this.integration_rule_(this.num_integration_rule_) = int_rule;
+                    
+                    this.num_mapping_ = this.num_mapping_ + 1;
+                    this.mapping_(this.num_mapping_) = mapping;
+                    
                     status = true;
                 else
                     disp('Error <IGA Domain>! - calIntegral!');
@@ -183,8 +187,8 @@ classdef Domain < Domain.DomainBase
                     % Loop int unit
                     for i_int_unit = 1 : int_rule.num_integral_unit_
                         int_unit = int_rule.integral_unit_{i_int_unit};
-                        % Expression evaluate
-                        [type, var, basis_id, data] = int_exp.eval(int_unit, this.mapping_);
+                        % Expression evaluate                        
+                        [type, var, basis_id, data] = int_exp.eval(int_unit, this.mapping_(i_int_rule));
                         % Assembly
                         this.assembler_.Assembly(type, var, basis_id, data);
                     end

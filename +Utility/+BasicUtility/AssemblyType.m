@@ -2,7 +2,7 @@ classdef AssemblyType < handle
     %REGION Summary of this class goes here
     %   Detailed explanation goes here
     enumeration
-        Matrix, Vector, Constraint
+        Matrix, Vector, Constraint, Coupled
     end
 end
 

@@ -6,14 +6,15 @@ import Utility.Resources.NurbsToolBox.*
 
 %% Generate nurbs object
 % case_name = 'Unit_Square';
-% case_name = 'Rectangle';
+case_name = 'Rectangle';
 % case_name = 'Plane_quarter_hole';
+% case_name = 'Plane_quarter_hole_2';
 % case_name = 'Solid_quarter_hole';
 % case_name = 'Lens_top_right'; 
 % case_name = 'Lens_bottom_right;' 
 % case_name = 'Lens_top_left'; 
 % case_name = 'Lens_bottom_left'; 
-case_name = '3D_Lens_left'; 
+% case_name = '3D_Lens_left'; 
 % case_name = '3D_Lens_right';
 
 nurbs = NurbsGenerator(case_name);
@@ -37,19 +38,19 @@ end
 
 %% Document create
 doc_geo = com.mathworks.xml.XMLUtils.createDocument('Geometry');
-doc_init = com.mathworks.xml.XMLUtils.createDocument('Initial');
-doc_mat = com.mathworks.xml.XMLUtils.createDocument('Material');
+% doc_init = com.mathworks.xml.XMLUtils.createDocument('Initial');
+% doc_mat = com.mathworks.xml.XMLUtils.createDocument('Material');
 
 %% Document node
 doc_geo_node = doc_geo.getDocumentElement();
 doc_geo_node.setAttribute('version',version);
 doc_geo_node.setAttribute('dim', geo_dim);
 
-doc_init_node = doc_init.getDocumentElement();
-doc_init_node.setAttribute('version',version);
-
-doc_mat_node = doc_mat.getDocumentElement();
-doc_mat_node.setAttribute('version',version);
+% doc_init_node = doc_init.getDocumentElement();
+% doc_init_node.setAttribute('version',version);
+% 
+% doc_mat_node = doc_mat.getDocumentElement();
+% doc_mat_node.setAttribute('version',version);
 
 %% Data create (Geometry part)
 doc_handle = doc_geo;
@@ -201,7 +202,7 @@ switch geo_dim
         CTPT_node.setAttribute('dim','3');
 
         % /Unit/Patch/ControlPoint/Point
-        surf = nrb4surf([0.0 1.0 0.0],[1.0 1.0 0.0],[0.0 1.0 1.0],[1.0 1.0 1.0]);
+        surf = nrb4surf([0.0 1.0 0.0],[0.0 1.0 1.0],[1.0 1.0 0.0],[1.0 1.0 1.0]);
         surf = nrbdegelev(surf, [order_elevated(1) order_elevated(3)]);
         surf = nrbkntins(surf,{xi_i zeta_i});
         
@@ -240,7 +241,7 @@ switch geo_dim
         CTPT_node.setAttribute('dim','3');
 
         % /Unit/Patch/ControlPoint/Point
-        surf = nrb4surf([0.0 0.0 0.0],[1.0 0.0 0.0],[0.0 0.0 1.0],[1.0 0.0 1.0]);
+        surf = nrb4surf([0.0 0.0 0.0],[0.0 0.0 1.0],[1.0 0.0 0.0],[1.0 0.0 1.0]);
         surf = nrbdegelev(surf, [order_elevated(1) order_elevated(3)]);
         surf = nrbkntins(surf,{xi_i zeta_i});
       
@@ -509,17 +510,63 @@ switch geo_dim
             vector_node.appendChild(doc_handle.createTextNode(knot_row_str));
             vector_node.setAttribute('dof',num2str(length(knot_data{i})));
         end 
+        
+        
+%         % START Test Trimmed Curve
+%         % CREATE TRIMMED BOUNDARY NURBS PATCH
+%         patch_node = DataNodeCreate('Patch', unit_node, doc_handle);
+%         patch_node.setAttribute('region','Boundary');
+%         patch_node.setAttribute('name','trimmed_curve');
+%         
+%         % /Unit/Patch/ControlPoint
+%         CTPT_node = DataNodeCreate('ControlPoint', patch_node, doc_handle);
+%         CTPT_node.setAttribute('dim','3');
+% 
+%         % /Unit/Patch/ControlPoint/Point
+%         pnts = [0.1 0.3 0.6 1.0; 
+%                 0.0 0.5 0.6 0.8; 
+%                 0.0 0.0 0.0 0.0]; 
+%             
+%         crv = nrbmak(pnts,[0 0 0 1/2 1 1 1]); 
+%         
+%         point_data = crv.coefs';
+%         for i = 1 : size(point_data, 1)
+%             point_node = DataNodeCreate('Point', CTPT_node, doc_handle);
+%             point_row_str = num2str(point_data(i, :));
+%             point_node.appendChild(doc_handle.createTextNode(point_row_str));
+%         end
+%         
+%         % /Unit/Patch/Order
+%         order_node = DataNodeCreate('Order', patch_node, doc_handle);
+%         order_str = num2str(crv.order-1);
+%         order_node.appendChild(doc_handle.createTextNode(order_str));
+%         
+%         % /Unit/Patch/Knot
+%         knot_node = DataNodeCreate('Knot', patch_node, doc_handle);
+%         
+%         % /Unit/Patch/Knot/Vector
+%         knot_data = {crv.knots};
+%         for i = 1 : size(knot_data, 1)
+%             vector_node = DataNodeCreate('Vector', knot_node, doc_handle);
+%             knot_row_str = num2str(knot_data{i});
+%             vector_node.appendChild(doc_handle.createTextNode(knot_row_str));
+%             vector_node.setAttribute('dof',num2str(length(knot_data{i})));
+%         end
+%         % END Test Trimmed Curve
+        
+        
+        
 end
 
 %% Document write
 file_name_geo = [project_name, '_', doc_format ,'.art_geometry'];
 xmlwrite(file_name_geo, doc_geo);
 
-file_name_init = [project_name, '_', doc_format,'.art_initial'];
-xmlwrite(file_name_init, doc_init);
-
-file_name_mat = [project_name, '_', doc_format,'.art_material'];
-xmlwrite(file_name_mat, doc_mat);
+% file_name_init = [project_name, '_', doc_format,'.art_initial'];
+% xmlwrite(file_name_init, doc_init);
+% 
+% file_name_mat = [project_name, '_', doc_format,'.art_material'];
+% xmlwrite(file_name_mat, doc_mat);
 end
 
 %% Using Function

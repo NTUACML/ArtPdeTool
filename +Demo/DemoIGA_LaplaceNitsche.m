@@ -1,4 +1,4 @@
-function DemoIGA_LaplaceWeakBC
+function DemoIGA_LaplaceNitsche
 clc; clear; close all;
 
 %% Include package
@@ -20,7 +20,7 @@ iga_domain = DomainBuilder.create('IGA');
 nurbs_basis = iga_domain.generateBasis(nurbs_topology);
 
 %% Plot domain
-nurbs_tool = NurbsTools(nurbs_basis);
+nurbs_tool = NurbsTools(nurbs_basis); 
 figure; hold on; grid on; axis equal;
 nurbs_tool.plotNurbs(); 
 nurbs_tool.plotControlMesh();
@@ -33,44 +33,43 @@ var_t = iga_domain.generateVariable('temperature', nurbs_basis,...
 test_t = iga_domain.generateTestVariable(var_t, nurbs_basis);
 
 %% Set domain mapping - > parametric domain to physical domain
-iga_domain.setMapping(nurbs_basis);
+import Mapping.IGA.Mapping
+mapping = Mapping(nurbs_basis);
 
 %% Operation define (By User)
 operation1 = Operation();
 operation1.setOperator('grad_test_dot_grad_var');
 
 operation2 = Operation();
-operation2.setOperator('test_dot_var');
+operation2.setOperator('laplace_nitsche_dirichlet_lhs_term');
 
 operation3 = Operation();
-operation3.setOperator('test_dot_f');
+operation3.setOperator('laplace_nitsche_dirichlet_rhs_term');
 
 %% Expression acquired
 exp1 = operation1.getExpression('IGA', {test_t, var_t});
 
-beta = 1e6;
+beta = 1e2;
 exp2 = operation2.getExpression('IGA', {test_t, var_t, beta});
 
-unit_function = @(x, y) sin(pi*x);
-exp3 = operation3.getExpression('IGA', {test_t, unit_function, beta});
-
-
+boudary_function = @(x, y) sin(pi*x);
+exp3 = operation3.getExpression('IGA', {test_t, boudary_function, beta});
 
 %% Integral variation equations
 % Domain integral
 doamin_patch = nurbs_topology.getDomainPatch();
-iga_domain.calIntegral(doamin_patch, exp1);
+iga_domain.calIntegral(doamin_patch, exp1, mapping);
 
 % Boundary integration for imposing Dirichlet condition using penalty
 % method
 for patch_key = keys(nurbs_topology.boundary_patch_data_)
     bdr_patch = nurbs_topology.getBoundayPatch(patch_key{1});   
     
-    iga_domain.calIntegral(bdr_patch, exp2);
+    iga_domain.calIntegral(bdr_patch, exp2, mapping);
 end
 
 bdr_patch = nurbs_topology.getBoundayPatch('eta_1');
-iga_domain.calIntegral(bdr_patch, exp3);
+iga_domain.calIntegral(bdr_patch, exp3, mapping);
 
 
 %% Solve domain equation system
@@ -86,6 +85,7 @@ fv.vertices = [x(:,1:2), data.value{1}];
 fv.faces = element;
 fv.facevertexcdata = data.value{1};
 
+figure;
 patch(fv,'CDataMapping','scaled','EdgeColor',[.7 .7 .7],'FaceColor','interp','FaceAlpha',1);
 grid on;
 title('ArtPDE Laplace problem... (IGA)')

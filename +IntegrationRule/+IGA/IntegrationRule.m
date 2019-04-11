@@ -58,7 +58,12 @@ classdef IntegrationRule < IntegrationRule.IntegrationRuleBase
         end
         
         function status = generateBoundaryIntUnit(this, generate_parameter)
-            nurbs_data = this.integral_patch_.nurbs_data_;  
+            if isa(this.integral_patch_, 'Utility.BasicUtility.InterfacePatch')            
+                nurbs_data = this.integral_patch_.master_patch_.nurbs_data_;  
+            else
+                nurbs_data = this.integral_patch_.nurbs_data_;
+            end
+            
             if isempty(generate_parameter)
                 generation_method = 'Default';
                 number_quad_pnt = ceil((nurbs_data.order_ + 1)*0.5);  
@@ -139,7 +144,7 @@ classdef IntegrationRule < IntegrationRule.IntegrationRuleBase
                     for i = 1:num_element(1)
                         element_span = {uniqued_knots{1}(i:i+1)};
                         % new integral unit
-                        int_unit = IntegralUnit(this.integral_patch_.region_, element_span);
+                        int_unit = IntegralUnit(this.integral_patch_, element_span);
                         this.integral_unit_{i} = int_unit;
                     end
                 case 2
@@ -148,7 +153,7 @@ classdef IntegrationRule < IntegrationRule.IntegrationRuleBase
                             n = (i-1)*num_element(2) + j;
                             element_span = {uniqued_knots{1}(i:i+1), uniqued_knots{2}(j:j+1)};
                             % new integral unit
-                            int_unit = IntegralUnit(this.integral_patch_.region_, element_span);
+                            int_unit = IntegralUnit(this.integral_patch_, element_span);
                             this.integral_unit_{n} = int_unit;
                         end
                     end
@@ -159,7 +164,7 @@ classdef IntegrationRule < IntegrationRule.IntegrationRuleBase
                                 n = (i-1)*num_element(2)*num_element(3) + (j-1)*num_element(3) + k;
                                 element_span = {uniqued_knots{1}(i:i+1), uniqued_knots{2}(j:j+1), uniqued_knots{3}(k:k+1)};
                                 % new integral unit
-                                int_unit = IntegralUnit(this.integral_patch_.region_, element_span);
+                                int_unit = IntegralUnit(this.integral_patch_, element_span);
                                 this.integral_unit_{n} = int_unit;
                             end
                         end
