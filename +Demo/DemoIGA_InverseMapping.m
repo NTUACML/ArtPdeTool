@@ -38,8 +38,9 @@ patch_data = boundary_patch_map('eta_1');
 import BasisFunction.IGA.QueryUnit
 query_unit = QueryUnit();
 
-temp = linspace(0, 1, 17);
+temp = linspace(0, 1, 23);
 
+% Test boundary
 for xi = temp
     query_unit.query_protocol_ = {patch_data, xi, 1};
     
@@ -54,6 +55,26 @@ for xi = temp
     disp(parametric_coordinate);
     disp('-----------------')
 end
+
+% Test domain
+[x, y] = meshgrid(temp, temp);
+temp = [x(:), y(:)]';
+
+for xi = temp
+    query_unit.query_protocol_ = {domain_patch, xi', 1};
+    
+%     % Evaluate physical position at xi
+%     F = mapping.queryLocalMapping(query_unit);
+%     physical_position = F.calPhysicalPosition();
+%     
+%     % Given physical coordinate, find xi
+%     parametric_coordinate = mapping.inverseMapping(physical_position, patch_data);
+%     
+%     disp(xi);
+%     disp(parametric_coordinate);
+%     disp('-----------------')
+% end
+
 
 
 end

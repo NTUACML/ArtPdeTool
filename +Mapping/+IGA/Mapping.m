@@ -36,12 +36,26 @@ classdef Mapping < Mapping.MappingBase
                     % Newton iteration for solving parametric coordinate
                     % given x = f(s), for specific x, find s.
                     
+                    % Initial guessing
                     if isempty(varargin)
-                        parametric_coordinate = 0; 
+                        eps = rand(1)*1e-5;
+                        t = 0.5*(max(patch_data.nurbs_data_.knot_vectors_{1}) + min(patch_data.nurbs_data_.knot_vectors_{1}));
+                        
+                        t_1 = t-eps;
+                        [~, ~, res_1] = this.eval(patch_data, t_1, physical_coordinate);
+                        
+                        t_2 = t+eps;
+                        [~, ~, res_2] = this.eval(patch_data, t_2, physical_coordinate);
+                        
+                        if (res_1 <= res_2)
+                            parametric_coordinate = t_1;
+                        else
+                            parametric_coordinate = t_2;
+                        end
                     else
                         parametric_coordinate = varargin{1};
                     end
-                                       
+     
                     iter_times = 15;
                     [parametric_coordinate, residual, cnt] = ...
                         this.NewtonIteration(patch_data, parametric_coordinate, physical_coordinate, iter_times);
@@ -105,7 +119,9 @@ classdef Mapping < Mapping.MappingBase
         end
         
         function parametric_coordinate = reInitializedParametricCoordinate(this)
-            parametric_coordinate = 1;
+            parametric_coordinate = 0.5+eps;
+            disp('Ask Kavy');
+            % search nearist control point and use the corresponding parametric coordinate as inintial guess 
 
         end
     end
