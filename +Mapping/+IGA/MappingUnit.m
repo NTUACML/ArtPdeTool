@@ -82,24 +82,31 @@ classdef MappingUnit < handle
         function [tangent_vector, dx_dxi] = calTangentVector(this)
             dx_dxi = this.eval_basis_{2} * this.local_point_;
             
-            switch this.patch_.dim_
-                case 1
-                    if any(strcmp(this.patch_.name_, {'eta_0', 'eta_1'}))
-                        dxi_ds = [1 0];
-                    else
-                        dxi_ds = [0 1];
+            import Utility.BasicUtility.Region
+            switch this.patch_.region_
+                case Region.Domain
+                    tangent_vector = dx_dxi;
+                case Region.Boundary
+                    switch this.patch_.dim_
+                        case 1
+                            if any(strcmp(this.patch_.name_, {'eta_0', 'eta_1'}))
+                                dxi_ds = [1 0];
+                            else
+                                dxi_ds = [0 1];
+                            end
+                        case 2
+                            if any(strcmp(this.patch_.name_, {'xi_0', 'xi_1'}))
+                                dxi_ds = [0 1 0; 0 0 1];
+                            elseif any(strcmp(this.patch_.name_, {'eta_0', 'eta_1'}))
+                                dxi_ds = [0 0 1; 1 0 0];
+                            else
+                                dxi_ds = [1 0 0; 0 1 0];
+                            end
                     end
-                case 2
-                    if any(strcmp(this.patch_.name_, {'xi_0', 'xi_1'}))
-                        dxi_ds = [0 1 0; 0 0 1];
-                    elseif any(strcmp(this.patch_.name_, {'eta_0', 'eta_1'}))
-                        dxi_ds = [0 0 1; 1 0 0];
-                    else
-                        dxi_ds = [1 0 0; 0 1 0];
-                    end
-             end
-                        
-            tangent_vector = dxi_ds * dx_dxi;
+                    
+                    tangent_vector = dxi_ds * dx_dxi;
+            end
+            
         end
         
     end
