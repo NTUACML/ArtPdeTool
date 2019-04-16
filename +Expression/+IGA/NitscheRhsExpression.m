@@ -45,10 +45,8 @@ classdef NitscheRhsExpression < Expression.IGA.Expression
 
                 [dx_dxi, J] = F.calJacobian();
                 
-                % eval basis derivative with x
-                dxi_dx = inv(dx_dxi);
-                             
-                B_test = dxi_dx * test_eval{2};
+                % eval basis derivative with x                             
+                B_test = dx_dxi \ test_eval{2};
                 
                 % eval source function at quadrature point
                 x = F.calPhysicalPosition();

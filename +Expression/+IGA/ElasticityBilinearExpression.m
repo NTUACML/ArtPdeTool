@@ -53,12 +53,10 @@ classdef ElasticityBilinearExpression < Expression.IGA.Expression
                 F = mapping.queryLocalMapping(query_unit);
                 
                 [dx_dxi, J] = F.calJacobian();
-                
-                dxi_dx = inv(dx_dxi);
-                              
+                                              
                 % eval basis derivative with x
-                d_test_dx = dxi_dx * test_eval{2};
-                d_var_dx = dxi_dx * var_eval{2};
+                d_test_dx = dx_dxi \ test_eval{2};
+                d_var_dx = dx_dxi \ var_eval{2};
                 
                 % eval bilinear form
                 B_test = zeros(3, 2*length(test_non_zero_id));

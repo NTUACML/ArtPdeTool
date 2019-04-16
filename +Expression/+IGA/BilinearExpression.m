@@ -61,12 +61,10 @@ classdef BilinearExpression < Expression.IGA.Expression
                 F = mapping.queryLocalMapping(query_unit);
                 
                 [dx_dxi, J] = F.calJacobian();
-                
-                dxi_dx = inv(dx_dxi);
-                              
+                                             
                 % eval basis derivative with x
-                B_test = dxi_dx * test_eval{2};
-                B_var = dxi_dx * var_eval{2};
+                B_test = dx_dxi \ test_eval{2};
+                B_var = dx_dxi \ var_eval{2};
                 
                 % add to local matrix
                 local_matrix{i} = (B_test' * B_var).* qw(i) * J; 

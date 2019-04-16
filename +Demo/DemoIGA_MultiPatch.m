@@ -8,7 +8,7 @@ import Utility.BasicUtility.*
 import Utility.NurbsUtility.* 
 import Operation.*
 
-xml_path = './ArtPDE_IGA_Rectangle_up.art_geometry';
+xml_path = './ArtPDE_IGA_Rectangle_up_2.art_geometry';
 geo_1 = GeometryBuilder.create('IGA', 'XML', xml_path);
 
 xml_path = './ArtPDE_IGA_Rectangle_bottom.art_geometry';
@@ -79,9 +79,11 @@ beta = 1e2;
 exp = operation4.getExpression('IGA', {v_1, u_1, v_2, u_2, beta});
 
 import Utility.BasicUtility.InterfacePatch
-% InterfacePatch(master_patch, slave_patch)
-interface_patch = InterfacePatch(topology_map('topo_2').getBoundayPatch('eta_1'), topology_map('topo_1').getBoundayPatch('eta_0'));
-iga_domain.calIntegral(interface_patch, exp, {mapping_map('topo_2'), mapping_map('topo_1')});
+master_patch = topology_map('topo_1').getBoundayPatch('eta_0');
+slave_patch = topology_map('topo_2').getBoundayPatch('eta_1');
+
+interface_patch = InterfacePatch(master_patch, slave_patch);
+iga_domain.calIntegral(interface_patch, exp, {mapping_map('topo_1'), mapping_map('topo_2')});
 
 % Domain integral
 doamin_patch = topology_map('topo_1').getDomainPatch();
