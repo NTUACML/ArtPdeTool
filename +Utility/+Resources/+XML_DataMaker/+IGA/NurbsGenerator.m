@@ -15,13 +15,13 @@ switch nurbs_name
         nurbs = knotInsertion(nurbs, {t t});
         status = true;
     case 'Rectangle'        
-        D = 0.5; L = 1;
-        nurbs = Rectangle(D, L, [0.5 0.25]);
+        D = 1; L = 1;
+        nurbs = Rectangle(D, L, [0.5 0.5]);
         
         nurbs = degreeElevation(nurbs, [1 1]);
         n = 10;
         t_1 = linspace(1/n, 1-1/n, n-1);
-        n = 5;
+        n = 10;
         t_2 = linspace(1/n, 1-1/n, n-1);
         nurbs = knotInsertion(nurbs, {t_1 t_2});
         status = true;  

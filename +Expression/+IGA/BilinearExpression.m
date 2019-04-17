@@ -30,15 +30,6 @@ classdef BilinearExpression < Expression.IGA.Expression
             
             local_matrix = cell(num_q,1);
                         
-%             % Bind query function
-%             import Utility.BasicUtility.Region
-%             if query_unit.int_region_ == Region.Domain
-%                 query_function =@(query_unit) test_basis.query(query_unit);
-%             elseif query_unit.int_region_ == Region.Boundary
-%                 patch_name = [];
-%                 this.var_.basis_data_.topology_data_;
-%                 query_function =@(query_unit) test_basis.query(query_unit, patch_name);
-%             end
             
             % loop integration points
             for i = 1 : num_q

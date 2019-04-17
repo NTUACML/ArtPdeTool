@@ -95,9 +95,49 @@ classdef Assembler < Assembler.AssemblerBase
 
         end
         
-        function status = this.IGA_Coupled_Assembly(var, basis_id, data)
+        function status = IGA_Coupled_Assembly(this, var, basis_id, data)
             
-            
+            if(length(var) == 4 && length(basis_id) == 4)
+                test_m = var{1};
+                test_s = var{2};
+                var_m = var{3};
+                var_s = var{4};
+                
+                test_id_m = basis_id{1};
+                test_id_s = basis_id{2};
+                var_id_m = basis_id{3};
+                var_id_s = basis_id{4};
+                
+                % assemble contribution from test_m and var_m
+                row_id = this.dof_manager_.getAssemblyId(test_m.variable_data_, test_id_m);
+                col_id = this.dof_manager_.getAssemblyId(var_m, var_id_m);
+                
+                this.lhs_(row_id, col_id) = this.lhs_(row_id, col_id) + data{1};
+                
+                % assemble contribution from test_m and var_s
+                row_id = this.dof_manager_.getAssemblyId(test_m.variable_data_, test_id_m);
+                col_id = this.dof_manager_.getAssemblyId(var_s, var_id_s);
+                
+                this.lhs_(row_id, col_id) = this.lhs_(row_id, col_id) + data{2};
+                
+                % assemble contribution from test_s and var_m
+                row_id = this.dof_manager_.getAssemblyId(test_s.variable_data_, test_id_s);
+                col_id = this.dof_manager_.getAssemblyId(var_m, var_id_m);
+                
+                this.lhs_(row_id, col_id) = this.lhs_(row_id, col_id) + data{3};
+                
+                % assemble contribution from test_m and var_s
+                row_id = this.dof_manager_.getAssemblyId(test_s.variable_data_, test_id_s);
+                col_id = this.dof_manager_.getAssemblyId(var_s, var_id_s);
+                
+                this.lhs_(row_id, col_id) = this.lhs_(row_id, col_id) + data{4};
+                
+                status = true;
+            else
+                disp('Error <IGA Assembler>! - IGA_LHS_Assembly!');
+                disp('> LHS assembling error, please check!');
+                status = false;
+            end
             
             
             status = true;

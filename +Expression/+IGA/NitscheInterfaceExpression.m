@@ -22,26 +22,26 @@ classdef NitscheInterfaceExpression < Expression.IGA.Expression
             qw = query_unit.quadrature_{3};
             
             % Get test & trial basis functions for master & slave patches
-            basis_m = this.test_{1}.basis_data_;
-            basis_s = this.test_{2}.basis_data_;
+            basis_1 = this.var_{1}.basis_data_;
+            basis_2 = this.var_{2}.basis_data_;
             
-            number_m = prod(basis_m.topology_data_.domain_patch_data_.nurbs_data_.order_+1);
-            number_s = prod(basis_s.topology_data_.domain_patch_data_.nurbs_data_.order_+1);
+            num_non_zeros_1 = prod(basis_1.topology_data_.domain_patch_data_.nurbs_data_.order_+1);
+            num_non_zeros_2 = prod(basis_2.topology_data_.domain_patch_data_.nurbs_data_.order_+1);
             
-            local_matrix_mm = zeros(number_m, number_m); % test_m x var_m
-            local_matrix_ms = zeros(number_m, number_s); % test_m x var_s
-            local_matrix_sm = zeros(number_s, number_m); % test_s x var_m
-            local_matrix_ss = zeros(number_s, number_s); % test_s x var_s
+            local_matrix_11 = zeros(num_non_zeros_1, num_non_zeros_1); % test_m x var_m
+            local_matrix_12 = zeros(num_non_zeros_1, num_non_zeros_2); % test_m x var_s
+            local_matrix_21 = zeros(num_non_zeros_2, num_non_zeros_1); % test_s x var_m
+            local_matrix_22 = zeros(num_non_zeros_2, num_non_zeros_2); % test_s x var_s
             
             % loop integration points
             for i = 1 : num_q                
                 [query_unit_m, query_unit_s] = this.generateInterfaceQueryUnit(qx(i,:), query_unit, mapping);
-                
+
                 % Query basis function & non_zero_id
-                basis_m.query(query_unit_m);
+                basis_1.query(query_unit_m);
                 eval_m = query_unit_m.evaluate_basis_;
                 
-                basis_s.query(query_unit_s);
+                basis_2.query(query_unit_s);
                 eval_s = query_unit_s.evaluate_basis_;
                                
                 % Put non_zero id
@@ -67,20 +67,24 @@ classdef NitscheInterfaceExpression < Expression.IGA.Expression
                 normal = F_m.calNormalVector();
                 
                 % add to local matrix
-                temp = (eval_m{1}' * normal * B_m);
-                local_matrix_mm = local_matrix_mm + (-temp - temp' + this.beta_ * eval_m{1}' * eval_m{1}).* qw(i) * J; 
+%                 temp = 0.5*(eval_m{1}' * normal * B_m);
+%                 local_matrix_mm = local_matrix_mm + (-temp - temp' + this.beta_ * eval_m{1}' * eval_m{1})* qw(i) * J; 
+                local_matrix_11 = local_matrix_11 + (+ this.beta_ * eval_m{1}' * eval_m{1})* qw(i) * J;
                 
-                temp = (eval_m{1}' * normal * B_s);
-                local_matrix_ms = local_matrix_ms + (-temp - temp' + this.beta_ * eval_m{1}' * eval_s{1}).* qw(i) * J;
+%                 temp = 0.5*(eval_m{1}' * normal * B_s);
+%                 local_matrix_ms = local_matrix_ms + (-temp + temp' - this.beta_ * eval_m{1}' * eval_s{1})* qw(i) * J;
+                local_matrix_12 = local_matrix_12 + (- this.beta_ * eval_m{1}' * eval_s{1})* qw(i) * J;
                 
-                temp = (eval_s{1}' * normal * B_m);
-                local_matrix_sm = local_matrix_sm + (-temp - temp' + this.beta_ * eval_s{1}' * eval_m{1}).* qw(i) * J;
+%                 temp = 0.5*(eval_s{1}' * normal * B_m);
+%                 local_matrix_sm = local_matrix_sm + (+temp - temp' - this.beta_ * eval_s{1}' * eval_m{1})* qw(i) * J;
+                local_matrix_21 = local_matrix_21 + (- this.beta_ * eval_s{1}' * eval_m{1})* qw(i) * J;
                 
-                temp = (eval_s{1}' * normal * B_s);
-                local_matrix_ss = local_matrix_ss + (-temp - temp' + this.beta_ * eval_s{1}' * eval_s{1}).* qw(i) * J;
+%                 temp = 0.5*(eval_s{1}' * normal * B_s);
+%                 local_matrix_ss = local_matrix_ss + (+temp + temp' + this.beta_ * eval_s{1}' * eval_s{1})* qw(i) * J;
+                local_matrix_22 = local_matrix_22 + (+ this.beta_ * eval_s{1}' * eval_s{1})* qw(i) * J;
             end
             
-            data = {local_matrix_mm, local_matrix_ms, local_matrix_sm, local_matrix_ss};
+            data = {local_matrix_11, local_matrix_12, local_matrix_21, local_matrix_22};
         end
         
         function setPenaltyParameter(this, beta)
