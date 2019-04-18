@@ -65,23 +65,17 @@ classdef NitscheInterfaceExpression < Expression.IGA.Expression
                 
                 % eval normal vector from master to slave
                 normal = F_m.calNormalVector();
-                
+                               
+                tempA = 0.5 * normal * B_m;
+                tempB = 0.5 * normal * B_s;
                 % add to local matrix
-%                 temp = 0.5*(eval_m{1}' * normal * B_m);
-%                 local_matrix_mm = local_matrix_mm + (-temp - temp' + this.beta_ * eval_m{1}' * eval_m{1})* qw(i) * J; 
-                local_matrix_11 = local_matrix_11 + (+ this.beta_ * eval_m{1}' * eval_m{1})* qw(i) * J;
+                local_matrix_11 = local_matrix_11 + (-eval_m{1}'*tempA - tempA'*eval_m{1} + this.beta_ * eval_m{1}' * eval_m{1})* qw(i) * J; 
                 
-%                 temp = 0.5*(eval_m{1}' * normal * B_s);
-%                 local_matrix_ms = local_matrix_ms + (-temp + temp' - this.beta_ * eval_m{1}' * eval_s{1})* qw(i) * J;
-                local_matrix_12 = local_matrix_12 + (- this.beta_ * eval_m{1}' * eval_s{1})* qw(i) * J;
+                local_matrix_12 = local_matrix_12 + (-eval_m{1}'*tempB + tempA'*eval_s{1} - this.beta_ * eval_m{1}' * eval_s{1})* qw(i) * J;
                 
-%                 temp = 0.5*(eval_s{1}' * normal * B_m);
-%                 local_matrix_sm = local_matrix_sm + (+temp - temp' - this.beta_ * eval_s{1}' * eval_m{1})* qw(i) * J;
-                local_matrix_21 = local_matrix_21 + (- this.beta_ * eval_s{1}' * eval_m{1})* qw(i) * J;
+                local_matrix_21 = local_matrix_21 + (+eval_s{1}'*tempA - tempB'*eval_m{1} - this.beta_ * eval_s{1}' * eval_m{1})* qw(i) * J;
                 
-%                 temp = 0.5*(eval_s{1}' * normal * B_s);
-%                 local_matrix_ss = local_matrix_ss + (+temp + temp' + this.beta_ * eval_s{1}' * eval_s{1})* qw(i) * J;
-                local_matrix_22 = local_matrix_22 + (+ this.beta_ * eval_s{1}' * eval_s{1})* qw(i) * J;
+                local_matrix_22 = local_matrix_22 + (+eval_s{1}'*tempB + tempB'*eval_s{1} + this.beta_ * eval_s{1}' * eval_s{1})* qw(i) * J;
             end
             
             data = {local_matrix_11, local_matrix_12, local_matrix_21, local_matrix_22};

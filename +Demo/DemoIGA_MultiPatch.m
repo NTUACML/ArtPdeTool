@@ -55,20 +55,20 @@ v_2 = iga_domain.generateTestVariable(u_2, basis_map('topo_2'));
 operation1 = Operation();
 operation1.setOperator('grad_test_dot_grad_var');
 
-% operation2 = Operation();
-% operation2.setOperator('laplace_nitsche_dirichlet_lhs_term');
-% 
-% operation3 = Operation();
-% operation3.setOperator('laplace_nitsche_dirichlet_rhs_term');
+operation2 = Operation();
+operation2.setOperator('laplace_nitsche_dirichlet_lhs_term');
+
+operation3 = Operation();
+operation3.setOperator('laplace_nitsche_dirichlet_rhs_term');
 
 operation4 = Operation();
 operation4.setOperator('laplace_nitsche_interface_lhs_term');
 
-operation2 = Operation();
-operation2.setOperator('test_dot_var');
-
-operation3 = Operation();
-operation3.setOperator('test_dot_f');
+% operation2 = Operation();
+% operation2.setOperator('test_dot_var');
+% 
+% operation3 = Operation();
+% operation3.setOperator('test_dot_f');
 
 
 %% Set domain mapping - > parametric domain to physical domain
