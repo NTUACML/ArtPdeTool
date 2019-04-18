@@ -36,6 +36,16 @@ iga_domain.setMapping(nurbs_basis);
 import BasisFunction.IGA.QueryUnit
 query_boundary = QueryUnit();
 
+query_boundary.query_protocol_ = {domain_patch, [0.25 0.25], 0};
+% get local mapping
+F = iga_domain.mapping_.queryLocalMapping(query_boundary);
+position = F.calPhysicalPosition();
+[dx_dxi, J] = F.calJacobian();
+
+
+plot(position(1),position(2),'ko' )
+
+
 switch domain_patch.dim_
     case 2
         % 2D test

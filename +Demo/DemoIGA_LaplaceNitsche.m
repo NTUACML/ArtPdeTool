@@ -9,7 +9,7 @@ import Domain.*
 import Operation.*
 
 %% Input geometry data
-xml_path = './ArtPDE_IGA_Unit_Square.art_geometry';
+xml_path = './ArtPDE_IGA_Rectangle.art_geometry';
 geo = GeometryBuilder.create('IGA', 'XML', xml_path);
 nurbs_topology = geo.topology_data_{1};
 

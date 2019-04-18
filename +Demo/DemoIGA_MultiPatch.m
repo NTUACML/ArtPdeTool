@@ -8,10 +8,10 @@ import Utility.BasicUtility.*
 import Utility.NurbsUtility.* 
 import Operation.*
 
-xml_path = './ArtPDE_IGA_Rectangle_up.art_geometry';
+xml_path = './ArtPDE_IGA_Rectangle_bottom.art_geometry';
 geo_1 = GeometryBuilder.create('IGA', 'XML', xml_path);
 
-xml_path = './ArtPDE_IGA_Rectangle_bottom.art_geometry';
+xml_path = './ArtPDE_IGA_Rectangle_top.art_geometry';
 geo_2 = GeometryBuilder.create('IGA', 'XML', xml_path);
 
 %% create topology map
@@ -37,7 +37,7 @@ for basis = values(basis_map)
     
     % Plot nurbs    
     nurbs_tool.plotNurbs([11 11]);
-%     nurbs_tool.plotControlMesh();
+    nurbs_tool.plotControlMesh();
 end
 hold off;
 
@@ -64,6 +64,13 @@ operation3.setOperator('laplace_nitsche_dirichlet_rhs_term');
 operation4 = Operation();
 operation4.setOperator('laplace_nitsche_interface_lhs_term');
 
+% operation2 = Operation();
+% operation2.setOperator('test_dot_var');
+% 
+% operation3 = Operation();
+% operation3.setOperator('test_dot_f');
+
+
 %% Set domain mapping - > parametric domain to physical domain
 mapping_map = containers.Map('KeyType','char','ValueType','any');
 
@@ -79,9 +86,11 @@ beta = 1e2;
 exp = operation4.getExpression('IGA', {v_1, u_1, v_2, u_2, beta});
 
 import Utility.BasicUtility.InterfacePatch
-% InterfacePatch(master_patch, slave_patch)
-interface_patch = InterfacePatch(topology_map('topo_2').getBoundayPatch('eta_1'), topology_map('topo_1').getBoundayPatch('eta_0'));
-iga_domain.calIntegral(interface_patch, exp, {mapping_map('topo_2'), mapping_map('topo_1')});
+master_patch = topology_map('topo_1').getBoundayPatch('eta_1');
+slave_patch = topology_map('topo_2').getBoundayPatch('eta_0');
+
+interface_patch = InterfacePatch(master_patch, slave_patch);
+iga_domain.calIntegral(interface_patch, exp, {mapping_map('topo_1'), mapping_map('topo_2')});
 
 % Domain integral
 doamin_patch = topology_map('topo_1').getDomainPatch();
@@ -102,11 +111,7 @@ iga_domain.calIntegral(bdr_patch, exp, mapping_map('topo_1'));
 bdr_patch = topology_map('topo_1').getBoundayPatch('xi_1');
 iga_domain.calIntegral(bdr_patch, exp, mapping_map('topo_1'));
 
-bdr_patch = topology_map('topo_1').getBoundayPatch('eta_1');
-iga_domain.calIntegral(bdr_patch, exp, mapping_map('topo_1'));
-
-boudary_function = @(x, y) sin(pi*x);
-exp = operation3.getExpression('IGA', {v_1, boudary_function, beta});
+bdr_patch = topology_map('topo_1').getBoundayPatch('eta_0');
 iga_domain.calIntegral(bdr_patch, exp, mapping_map('topo_1'));
 
 % topology 2
@@ -118,16 +123,39 @@ iga_domain.calIntegral(bdr_patch, exp, mapping_map('topo_2'));
 bdr_patch = topology_map('topo_2').getBoundayPatch('xi_1');
 iga_domain.calIntegral(bdr_patch, exp, mapping_map('topo_2'));
 
-bdr_patch = topology_map('topo_2').getBoundayPatch('eta_0');
+bdr_patch = topology_map('topo_2').getBoundayPatch('eta_1');
 iga_domain.calIntegral(bdr_patch, exp, mapping_map('topo_2'));
 
+boudary_function = @(x, y) sin(pi*x);
+exp = operation3.getExpression('IGA', {v_2, boudary_function, beta});
+iga_domain.calIntegral(bdr_patch, exp, mapping_map('topo_2'));
 
 %% Solve domain equation system
 iga_domain.solve('default');
 
+%% Data Interpolation
+import Interpolation.IGA.Interpolation;
+u_interpo_1 = Interpolation(u_1);
+[x, data, element] = u_interpo_1.DomainDataSampling();
 
-% domain_patch = nurbs_topology.domain_patch_data_;
-% boundary_patch_map = nurbs_topology.boundary_patch_data_;
+%% Show result (Post-Processes)
+fv.vertices = [x(:,1:2), data.value{1}];
+fv.faces = element;
+fv.facevertexcdata = data.value{1};
 
+figure; hold on; grid on; view([0 0]);
+title('ArtPDE Laplace problem... (IGA)')
+
+patch(fv,'CDataMapping','scaled','EdgeColor',[.7 .7 .7],'FaceColor','interp','FaceAlpha',1);
+
+u_interpo_2 = Interpolation(u_2);
+[x, data, element] = u_interpo_2.DomainDataSampling();
+
+%% Show result (Post-Processes)
+fv.vertices = [x(:,1:2), data.value{1}];
+fv.faces = element;
+fv.facevertexcdata = data.value{1};
+
+patch(fv,'CDataMapping','scaled','EdgeColor',[.7 .7 .7],'FaceColor','interp','FaceAlpha',1);
 
 end

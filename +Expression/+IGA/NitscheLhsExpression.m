@@ -55,12 +55,10 @@ classdef NitscheLhsExpression < Expression.IGA.Expression
                 [dx_dxi, J] = F.calJacobian();
                 
                 normal = F.calNormalVector();
-                
-                dxi_dx = inv(dx_dxi);
-                              
+                                              
                 % eval basis derivative with x
-                B_var = dxi_dx * var_eval{2};
-                                             
+                B_var = dx_dxi \ var_eval{2};
+
                 % add to local matrix
                 temp = (test_eval{1}' * normal * B_var);
                 local_matrix{i} = (-temp - temp' + this.beta_ * test_eval{1}' * var_eval{1}).* qw(i) * J; 

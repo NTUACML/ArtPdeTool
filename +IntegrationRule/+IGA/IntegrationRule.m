@@ -91,6 +91,38 @@ classdef IntegrationRule < IntegrationRule.IntegrationRuleBase
                     GaussQuadrature.MappingNurbsType2GaussQuadrature(...
                     nurbs_data.type_, this.integral_unit_{int_unit_id}.unit_span_, number_quad_pnt);                
             end
+            
+            % if the patch is a interface patch, the integration units are
+            % transformed into those consisted of only one quadrature
+            % point. However, this is not a good way to do that. The
+            % generating procesure needs to be re-designed.
+            if isa(this.integral_patch_, 'Utility.BasicUtility.InterfacePatch')            
+                total_num_quad_point = this.num_integral_unit_*number_quad_pnt;
+                qx = zeros(total_num_quad_point, this.integral_patch_.dim_);
+                wx = zeros(total_num_quad_point, 1);
+                
+                for i = 1:this.num_integral_unit_
+                    for j = 1:number_quad_pnt
+                        qx((i-1)*number_quad_pnt+j,:) = this.integral_unit_{i}.quadrature_{2}(j,:);
+                        wx((i-1)*number_quad_pnt+j) = this.integral_unit_{i}.quadrature_{3}(j);
+                    end
+                end
+                
+                new_integral_unit = cell(total_num_quad_point,1);
+                
+                import IntegrationRule.IGA.IntegralUnit
+                for i = 1:this.num_integral_unit_
+                    for j = 1:number_quad_pnt
+                        cnt = (i-1)*number_quad_pnt+j;
+                        new_integral_unit{cnt} = IntegralUnit(this.integral_patch_, this.integral_unit_{i}.unit_span_);
+                        new_integral_unit{cnt}.quadrature_ = {1, qx(cnt,:), wx(cnt)};
+                    end
+                end
+                
+               this.integral_unit_ = new_integral_unit;  
+               this.num_integral_unit_ = total_num_quad_point;
+            end
+            
             status = true;
         end    
         

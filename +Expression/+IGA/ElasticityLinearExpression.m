@@ -48,11 +48,9 @@ classdef ElasticityLinearExpression < Expression.IGA.Expression
                 [dx_dxi, J] = F.calJacobian();
                 
                 x = F.calPhysicalPosition();
-                
-                dxi_dx = inv(dx_dxi);
-                              
+                                              
                 % eval basis derivative with x
-                d_test_dx = dxi_dx * test_eval{2};
+                d_test_dx = dx_dxi \ test_eval{2};
                 
                 % eval linear form
                 D_test = zeros(1, 2*length(test_non_zero_id));
