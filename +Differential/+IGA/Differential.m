@@ -2,7 +2,7 @@ classdef Differential < Differential.DifferentialBase
 
     properties (Access = private)     
         points_
-        mapping_unit_
+        mapping_unit_        
     end
     
     methods
@@ -77,10 +77,10 @@ classdef Differential < Differential.DifferentialBase
                         xi = 0.5*(max(this.patch_.nurbs_data_.knot_vectors_{1}) + min(this.patch_.nurbs_data_.knot_vectors_{1}));
                         
                         t_1 = xi-eps;
-                        [~, ~, res_1] = this.eval(t_1, physical_coordinate);
+                        [~, ~, res_1] = this.eval(t_1, x);
                         
                         t_2 = xi+eps;
-                        [~, ~, res_2] = this.eval(t_2, physical_coordinate);
+                        [~, ~, res_2] = this.eval(t_2, x);
                         
                         if (res_1 <= res_2)
                             xi = t_1;
@@ -93,14 +93,14 @@ classdef Differential < Differential.DifferentialBase
      
                     iter_times = 15;
                     [xi, residual, cnt] = ...
-                        this.NewtonIteration(this.patch_, xi, physical_coordinate, iter_times);
+                        this.NewtonIteration(xi, x, iter_times);
                      
                     if cnt > iter_times
                         disp('Iteration failed with the current initial guess. Activate the re-initialization process.')
                         xi = this.reInitializedParametricCoordinate();
                         
                         [xi, residual, cnt] = ...
-                            this.NewtonIteration(this.patch_, xi, physical_coordinate, iter_times);
+                            this.NewtonIteration(xi, x, iter_times);
                     end
                     
                     str = ['cnt: ', num2str(cnt)];

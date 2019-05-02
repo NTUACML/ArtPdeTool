@@ -12,7 +12,7 @@ classdef ElasticityBilinearExpression < Expression.IGA.Expression
             this.constitutive_law_ = constitutive_law;
         end
         
-        function [type, var, basis_id, data] = eval(this, query_unit, mapping)
+        function [type, var, basis_id, data] = eval(this, query_unit, differential)
             import Utility.BasicUtility.AssemblyType
             type = AssemblyType.Matrix;
             var = {this.test_; this.var_};
@@ -50,9 +50,9 @@ classdef ElasticityBilinearExpression < Expression.IGA.Expression
                 basis_id = {test_non_zero_id, var_non_zero_id};
                 
                 % get local mapping
-                F = mapping.queryLocalMapping(query_unit);
-                
-                [dx_dxi, J] = F.calJacobian();
+                differential.queryAt(qx(i,:));
+
+                [dx_dxi, J] = differential.jacobian();
                                               
                 % eval basis derivative with x
                 d_test_dx = dx_dxi \ test_eval{2};

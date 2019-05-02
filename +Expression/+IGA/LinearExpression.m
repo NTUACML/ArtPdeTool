@@ -12,7 +12,7 @@ classdef LinearExpression < Expression.IGA.Expression
             this@Expression.IGA.Expression();
         end
         
-        function [type, var, basis_id, data] = eval(this, query_unit, mapping)
+        function [type, var, basis_id, data] = eval(this, query_unit, differential)
             import Utility.BasicUtility.AssemblyType
             type = AssemblyType.Vector;
             var = {this.test_};
@@ -38,11 +38,11 @@ classdef LinearExpression < Expression.IGA.Expression
                 basis_id = {test_non_zero_id};
                 
                 % get local mapping
-                F = mapping.queryLocalMapping(query_unit);
+                differential.queryAt(qx(i,:));
 
-                [~, J] = F.calJacobian();
+                [~, J] = differential.jacobian(); 
                 
-                x = F.calPhysicalPosition();
+                x = differential.mapping();
                 
                 % add to local matrix
                 local_matrix{i} = (test_eval{1}' * this.source_function_(x(1), x(2))).* qw(i) * J; 

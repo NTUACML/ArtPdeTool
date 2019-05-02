@@ -103,9 +103,11 @@ exp1 = Expression.ExpressionBase;
 % The second parameter decides how many quad points are generated in each
 % parametric coordinate.
 
+import Differential.IGA.*
+dOmega = Differential(nurbs_basis, domain_patch);
 % number_quad_pt = [2 2];
-% iga_domain.calIntegral(domain_patch, exp1, {'Default', number_quad_pt});
-iga_domain.calIntegral(domain_patch, exp1);
+% iga_domain.integrate(exp1, dOmega, {'Default', number_quad_pt});
+iga_domain.integrate(exp1, dOmega);
 
 domain_integration_rule = iga_domain.integration_rule_(1);
 
@@ -139,8 +141,9 @@ end
 %% Test boundary integral
 for patch_key = keys(nurbs_topology.boundary_patch_data_)
     bdr_patch = nurbs_topology.getBoundayPatch(patch_key{1});   
+    dGamma = Differential(nurbs_basis, bdr_patch);
     
-    iga_domain.calIntegral(bdr_patch, exp1, {'Default', 3});
+    iga_domain.integrate(exp1, dGamma, {'Default', 3});
 end
 
 for rule_key = 2:7

@@ -11,7 +11,7 @@ classdef NitscheInterfaceExpression < Expression.IGA.Expression
             this@Expression.IGA.Expression();
         end
         
-        function [type, var, basis_id, data] = eval(this, query_unit, mapping)
+        function [type, var, basis_id, data] = eval(this, query_unit, differential)
             import Utility.BasicUtility.AssemblyType
             type = AssemblyType.Coupled;           
             var = { this.test_{1}, this.test_{2}, this.var_{1}, this.var_{2} };
@@ -35,7 +35,7 @@ classdef NitscheInterfaceExpression < Expression.IGA.Expression
             
             % loop integration points
             for i = 1 : num_q                
-                [query_unit_m, query_unit_s] = this.generateInterfaceQueryUnit(qx(i,:), query_unit, mapping);
+                [query_unit_m, query_unit_s] = this.generateInterfaceQueryUnit(qx(i,:), query_unit, differential);
 
                 % Query basis function & non_zero_id
                 basis_1.query(query_unit_m);
@@ -48,23 +48,21 @@ classdef NitscheInterfaceExpression < Expression.IGA.Expression
                 basis_id = {query_unit_m.non_zero_id_, query_unit_s.non_zero_id_, query_unit_m.non_zero_id_, query_unit_s.non_zero_id_};
              
                 % get local mapping for master patch
-                F_m = mapping{1}.queryLocalMapping(query_unit_m);
-
-                [dx_dxi, J] = F_m.calJacobian();
+                differential.differential_m_.queryAt(query_unit_m.query_protocol_{2});
+                [dx_dxi, J] = differential.differential_m_.jacobian();
                                                               
                 % eval basis derivative with x
                 B_m = dx_dxi \ eval_m{2};
                 
-                % get local mapping for slave patch                           
-                F_s = mapping{2}.queryLocalMapping(query_unit_s);
-
-                [dx_dxi, ~] = F_s.calJacobian();
+                % get local mapping for slave patch  
+                differential.differential_s_.queryAt(query_unit_s.query_protocol_{2});
+                [dx_dxi, ~] = differential.differential_s_.jacobian();
                                               
                 % eval basis derivative with x
                 B_s = dx_dxi \ eval_s{2};
                 
                 % eval normal vector from master to slave
-                normal = F_m.calNormalVector();
+                normal = differential.differential_m_.normalVector();
                                
                 tempA = 0.5 * normal * B_m;
                 tempB = 0.5 * normal * B_s;
@@ -87,20 +85,19 @@ classdef NitscheInterfaceExpression < Expression.IGA.Expression
     end
     
     methods (Access = private)
-        function [query_unit_m, query_unit_s] = generateInterfaceQueryUnit(this, s, query_unit, mapping)
+        function [query_unit_m, query_unit_s] = generateInterfaceQueryUnit(this, s, query_unit, differential)                            
+            % evaluate physical point 
+            differential.differential_m_.queryAt(s);
+            
+            x = differential.differential_m_.mapping();
+            t = differential.differential_s_.inverseMapping(x);
+            
             import BasisFunction.IGA.QueryUnit            
             query_unit_m = QueryUnit();
             query_unit_s = QueryUnit();
-                  
-            query_unit_m.query_protocol_ = {query_unit.query_protocol_{1}.master_patch_, s, 1};
             
-            % evaluate physical point 
-            F_m = mapping{1}.queryLocalMapping(query_unit_m);
-            x = F_m.calPhysicalPosition();
-  
-            t = mapping{2}.inverseMapping(x, query_unit.query_protocol_{1}.slave_patch_);
-            
-            query_unit_s.query_protocol_ = {query_unit.query_protocol_{1}.slave_patch_, t, 1};    
+            query_unit_m.query_protocol_ = {query_unit.query_protocol_{1}.master_patch_, s, 1};            
+            query_unit_s.query_protocol_ = {query_unit.query_protocol_{1}.slave_patch_, t, 1};
         end
     end
     

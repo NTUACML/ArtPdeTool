@@ -11,7 +11,7 @@ classdef MassExpression < Expression.IGA.Expression
             this@Expression.IGA.Expression();
         end
         
-        function [type, var, basis_id, data] = eval(this, query_unit, mapping)
+        function [type, var, basis_id, data] = eval(this, query_unit, differential)
             import Utility.BasicUtility.AssemblyType
             type = AssemblyType.Matrix;
             var = {this.test_; this.var_};
@@ -48,9 +48,9 @@ classdef MassExpression < Expression.IGA.Expression
                 basis_id = {test_non_zero_id, var_non_zero_id};
                 
                 % get local mapping
-                F = mapping.queryLocalMapping(query_unit);
+                differential.queryAt(qx(i,:));
 
-                [~, J] = F.calJacobian();
+                [~, J] = differential.jacobian();
                 
                 % add to local matrix
                 local_matrix{i} = (test_eval{1}' * var_eval{1}).* qw(i) * J; 

@@ -29,10 +29,9 @@ nurbs_basis = iga_domain.generateBasis(nurbs_topology);
 
 %% Test query function
 import BasisFunction.IGA.QueryUnit
-import Utility.BasicUtility.Region
 
 query_unit = QueryUnit();
-query_unit.query_protocol_{1} = Region.Domain;
+query_unit.query_protocol_{1} = domain_patch;
 query_unit.query_protocol_{3} = 1; % Evaluate value & 1st order derivatives
 
 % create sample points in parametric space

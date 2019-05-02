@@ -23,7 +23,6 @@ geo_container{4} = GeometryBuilder.create('IGA', 'XML', xml_path);
 %% Domain create
 iga_domain = DomainBuilder.create('IGA');
 
-
 figure; hold all; view([0 90]); grid on; axis equal;
 for geo = geo_container
     nurbs_topology = geo{1}.topology_data_{1};

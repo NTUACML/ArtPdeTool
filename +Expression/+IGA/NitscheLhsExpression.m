@@ -11,7 +11,7 @@ classdef NitscheLhsExpression < Expression.IGA.Expression
             this@Expression.IGA.Expression();
         end
         
-        function [type, var, basis_id, data] = eval(this, query_unit, mapping)
+        function [type, var, basis_id, data] = eval(this, query_unit, differential)
             import Utility.BasicUtility.AssemblyType
             type = AssemblyType.Matrix;
             var = {this.test_; this.var_};
@@ -50,11 +50,11 @@ classdef NitscheLhsExpression < Expression.IGA.Expression
                 basis_id = {test_non_zero_id, var_non_zero_id};
              
                 % get local mapping
-                F = mapping.queryLocalMapping(query_unit);
+                differential.queryAt(qx(i,:));
 
-                [dx_dxi, J] = F.calJacobian();
+                [dx_dxi, J] = differential.jacobian();
                 
-                normal = F.calNormalVector();
+                normal = differential.normalVector();
                                               
                 % eval basis derivative with x
                 B_var = dx_dxi \ var_eval{2};
