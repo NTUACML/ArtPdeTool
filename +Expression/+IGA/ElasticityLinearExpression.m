@@ -11,7 +11,7 @@ classdef ElasticityLinearExpression < Expression.IGA.Expression
             this@Expression.IGA.Expression();
         end
         
-        function [type, var, basis_id, data] = eval(this, query_unit, mapping)
+        function [type, var, basis_id, data] = eval(this, query_unit, differential)
             import Utility.BasicUtility.AssemblyType
             type = AssemblyType.Vector;
             var = {this.test_};
@@ -43,11 +43,11 @@ classdef ElasticityLinearExpression < Expression.IGA.Expression
                 basis_id = {test_non_zero_id};
                 
                 % get local mapping
-                F = mapping.queryLocalMapping(query_unit);
+                differential.queryAt(qx(i,:));
+
+                [dx_dxi, J] = differential.jacobian();
                 
-                [dx_dxi, J] = F.calJacobian();
-                
-                x = F.calPhysicalPosition();
+                x = differential.mapping();
                                               
                 % eval basis derivative with x
                 d_test_dx = dx_dxi \ test_eval{2};

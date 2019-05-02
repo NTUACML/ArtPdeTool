@@ -7,11 +7,11 @@ classdef DomainBase < handle
         dof_manager_
         num_constraint_ = 0
         num_integration_rule_ = 0
-        num_mapping_ = 0
+        num_differential_ = 0
         constraint_
         integration_rule_
         assembler_
-        mapping_
+        differential_
     end
     
     methods
@@ -26,7 +26,7 @@ classdef DomainBase < handle
             % IntegrationRule init
             this.integration_rule_ = containers.Map(...
                 'KeyType','double','ValueType','any');
-            this.mapping_ = containers.Map(...
+            this.differential_ = containers.Map(...
                 'KeyType','double','ValueType','any');
         end
     end
@@ -38,6 +38,7 @@ classdef DomainBase < handle
         constraint = generateConstraint(this, patch, variable, constraint_data, varargin);
         status = setMapping(this, basis, varargin);
         status = calIntegral(this, patch, expression, varargin);
+        status = integrate(this, expression, differential, varargin);
         %status = cal(this, patch, expression, varargin);
         status = solve(this, varargin);
     end

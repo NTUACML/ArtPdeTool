@@ -21,14 +21,6 @@ nurbs_basis = iga_domain.generateBasis(nurbs_topology);
 
 %% Nurbs tools create & plot nurbs
 nurbs_tool = NurbsTools(nurbs_basis);
-
-nurbs_data = nurbs_topology.domain_patch_data_.nurbs_data_;
-t_1 = linspace(nurbs_data.knot_vectors_{1}(1), nurbs_data.knot_vectors_{1}(end), 11);
-t_2 = linspace(nurbs_data.knot_vectors_{2}(1), nurbs_data.knot_vectors_{2}(end), 10);
-t_3 = linspace(nurbs_data.knot_vectors_{3}(1), nurbs_data.knot_vectors_{3}(end), 5);
-
-nurbs_tool.knotInsertion({t_1(2:end-1) t_2(2:end-1) t_3(2:end-1)});
-
 figure; hold on; grid on; view([140 30]); %axis equal; 
 nurbs_tool.plotNurbs();
 % nurbs_tool.plotControlMesh();
@@ -39,9 +31,6 @@ var_t = iga_domain.generateVariable('temperature', nurbs_basis,...
 %% Test variable define
 test_t = iga_domain.generateTestVariable(var_t, nurbs_basis);
 
-%% Set domain mapping - > physical domain to parametric domain
-iga_domain.setMapping(nurbs_basis);
-
 %% Operation define (By User)
 operation1 = Operation();
 operation1.setOperator('grad_test_dot_grad_var');
@@ -51,8 +40,12 @@ exp1 = operation1.getExpression('IGA', {test_t, var_t});
 
 %% Integral variation equations
 % Domain integral
-doamin_patch = nurbs_topology.getDomainPatch();
-iga_domain.calIntegral(doamin_patch, exp1);
+import Differential.IGA.*
+
+domain_patch = nurbs_topology.getDomainPatch();
+dOmega = Differential(nurbs_basis, domain_patch);
+
+iga_domain.integrate(exp1, dOmega);
 
 %% Constraint (Acquire prescribed D.O.F.)
 

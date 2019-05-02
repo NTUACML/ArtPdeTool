@@ -21,7 +21,7 @@ nurbs_basis = iga_domain.generateBasis(nurbs_topology);
 
 %% Plot domain
 nurbs_tool = NurbsTools(nurbs_basis);
-figure; hold on; grid on; axis equal;
+figure; hold on; grid on; 
 nurbs_tool.plotNurbs(); 
 nurbs_tool.plotControlMesh();
 hold off;
@@ -31,9 +31,6 @@ var_t = iga_domain.generateVariable('temperature', nurbs_basis,...
                                     VariableType.Scalar, 1);      
 %% Define test variable
 test_t = iga_domain.generateTestVariable(var_t, nurbs_basis);
-
-%% Set domain mapping - > parametric domain to physical domain
-iga_domain.setMapping(nurbs_basis);
 
 %% Operation define (By User)
 operation1 = Operation();
@@ -54,24 +51,28 @@ exp2 = operation2.getExpression('IGA', {test_t, var_t, beta});
 unit_function = @(x, y) sin(pi*x);
 exp3 = operation3.getExpression('IGA', {test_t, unit_function, beta});
 
-
-
 %% Integral variation equations
 % Domain integral
-doamin_patch = nurbs_topology.getDomainPatch();
-iga_domain.calIntegral(doamin_patch, exp1);
+import Differential.IGA.*
+
+% Domain integral
+domain_patch = nurbs_topology.getDomainPatch();
+dOmega = Differential(nurbs_basis, domain_patch);
+
+iga_domain.integrate(exp1, dOmega);
 
 % Boundary integration for imposing Dirichlet condition using penalty
 % method
 for patch_key = keys(nurbs_topology.boundary_patch_data_)
     bdr_patch = nurbs_topology.getBoundayPatch(patch_key{1});   
-    
-    iga_domain.calIntegral(bdr_patch, exp2);
+    dGamma = Differential(nurbs_basis, bdr_patch);
+
+    iga_domain.integrate(exp2, dGamma);
 end
 
 bdr_patch = nurbs_topology.getBoundayPatch('eta_1');
-iga_domain.calIntegral(bdr_patch, exp3);
-
+dGamma = Differential(nurbs_basis, bdr_patch);
+iga_domain.integrate(exp3, dGamma);
 
 %% Solve domain equation system
 iga_domain.solve('default');

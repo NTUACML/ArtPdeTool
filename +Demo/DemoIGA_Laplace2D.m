@@ -28,9 +28,6 @@ var_t = iga_domain.generateVariable('temperature', nurbs_basis,...
 %% Test variable define
 test_t = iga_domain.generateTestVariable(var_t, nurbs_basis);
 
-%% Set domain mapping - > physical domain to parametric domain
-iga_domain.setMapping(nurbs_basis);
-
 %% Operation define (By User)
 operation1 = Operation();
 operation1.setOperator('grad_test_dot_grad_var');
@@ -40,12 +37,14 @@ exp1 = operation1.getExpression('IGA', {test_t, var_t});
 
 %% Integral variation equations
 % Domain integral
-doamin_patch = nurbs_topology.getDomainPatch();
-iga_domain.calIntegral(doamin_patch, exp1);
+import Differential.IGA.*
+
+domain_patch = nurbs_topology.getDomainPatch();
+dOmega = Differential(nurbs_basis, domain_patch);
+
+iga_domain.integrate(exp1, dOmega);
 
 %% Constraint (Acquire prescribed D.O.F.)
-
-
 bdr_patch = nurbs_topology.getBoundayPatch('xi_1');
 iga_domain.generateConstraint(bdr_patch, var_t, {1, @()0});
 

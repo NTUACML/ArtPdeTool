@@ -1,4 +1,4 @@
-function DemoIGA_Mapping
+function DemoIGA_Differential
 clc; clear; close all;
 
 %% create Geometry
@@ -30,22 +30,23 @@ nurbs_tool.plotNurbs([21 21 21]);
 
 
 %% Set domain mapping - > parametric domain to physical domain
-iga_domain.setMapping(nurbs_basis);
+import Differential.IGA.*
+dOmega = Differential(nurbs_basis, domain_patch);
 
-% plor nurbs boundary patch
-import BasisFunction.IGA.QueryUnit
-query_boundary = QueryUnit();
+xi_org = [0.2333876 0.13384755];
+dOmega.queryAt(xi_org);
+position = dOmega.mapping();
 
-query_boundary.query_protocol_ = {domain_patch, [0.25 0.25], 0};
-% get local mapping
-F = iga_domain.mapping_.queryLocalMapping(query_boundary);
-position = F.calPhysicalPosition();
-[dx_dxi, J] = F.calJacobian();
+xi = dOmega.inverseMapping(position);
 
+format('long');
+disp(xi);
+% [dx_dxi, J] = dOmega.jacobian();
 
 plot(position(1),position(2),'ko' )
 
 
+%% Test boundary query
 switch domain_patch.dim_
     case 2
         % 2D test
@@ -55,17 +56,16 @@ switch domain_patch.dim_
         position = zeros(n, domain_patch.dim_);
         
         for bdr_patch = values(boundary_patch_map)
+            dGamma = Differential(nurbs_basis, bdr_patch{1});
+
             for i = 1:n
-                s = temp(i);
-                query_boundary.query_protocol_ = {bdr_patch{1}, s, 0};
+                dGamma.queryAt(temp(i));
                 
-                % get local mapping
-                F = iga_domain.mapping_.queryLocalMapping(query_boundary);
-                position(i,:) = F.calPhysicalPosition();
-                normal = F.calNormalVector();
-                               
+                position(i,:) = dGamma.mapping();
+                normal = dGamma.normalVector();
+                
                 plot(position(i,1), position(i,2), 'ro');
-                quiver(position(i,1), position(i,2),normal(1), normal(2), 'LineWidth', 2);
+                quiver(position(i,1), position(i,2), normal(1), normal(2), 'LineWidth', 2);
             end
         end
     case 3
@@ -79,14 +79,14 @@ switch domain_patch.dim_
         position = zeros(n, domain_patch.dim_);
         
         for bdr_patch = values(boundary_patch_map)
+            dGamma = Differential(nurbs_basis, bdr_patch{1});
+            
             for i = 1:n^2
                 s = [xx(i) yy(i)];
-                query_boundary.query_protocol_ = {bdr_patch{1}, s, 0};
+                dGamma.queryAt(s);
                 
-                % get local mapping
-                F = iga_domain.mapping_.queryLocalMapping(query_boundary);
-                position(i,:) = F.calPhysicalPosition();
-                normal = F.calNormalVector();
+                position(i,:) = dGamma.mapping();
+                normal = dGamma.normalVector();
                                
                 plot3(position(i,1), position(i,2), position(i,3), 'ro');
                 quiver3(position(i,1), position(i,2), position(i,3), normal(1), normal(2), normal(3), 1.5, 'LineWidth', 2);

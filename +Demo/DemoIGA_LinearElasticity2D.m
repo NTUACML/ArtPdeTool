@@ -23,7 +23,7 @@ import Operation.*
 import Interpolation.IGA.Interpolation
 
 %% Geometry data input
-xml_path = './ArtPDE_IGA_Beam_refined.art_geometry';
+xml_path = './ArtPDE_IGA_Rectangle.art_geometry';
 geo = GeometryBuilder.create('IGA', 'XML', xml_path);
 nurbs_topology = geo.topology_data_{1};
 
@@ -39,9 +39,6 @@ var_u = iga_domain.generateVariable('displacement', nurbs_basis,...
 %% Test variable define
 test_u = iga_domain.generateTestVariable(var_u, nurbs_basis);
 
-%% Set domain mapping - > physical domain to parametric domain
-iga_domain.setMapping(nurbs_basis);
-
 %% Operation define (By User)
 operation1 = Operation();
 operation1.setOperator('delta_epsilon_dot_sigma');
@@ -51,8 +48,13 @@ exp1 = operation1.getExpression('IGA', {test_u, var_u, constitutive_law});
 
 %% Integral variation equations
 % Domain integral
-doamin_patch = nurbs_topology.getDomainPatch();
-iga_domain.calIntegral(doamin_patch, exp1, {'Default', 3});
+import Differential.IGA.*
+
+% Domain integral
+domain_patch = nurbs_topology.getDomainPatch();
+dOmega = Differential(nurbs_basis, domain_patch);
+
+iga_domain.integrate(exp1, dOmega, {'Default', 3});
 
 %% Constraint (Acquire prescribed D.O.F.)
 %% Exact solution for Cantilever Beam
@@ -93,7 +95,7 @@ figure; hold on; grid on;
 nurbs_tool.plotNurbs();
 nurbs_tool.plotControlMesh();
 
-control_point = doamin_patch.nurbs_data_.control_points_(:,1:3);
+control_point = domain_patch.nurbs_data_.control_points_(:,1:3);
 xlabel('x'); ylabel('y'); zlabel('z'); 
 for i = 1:size(control_point,1)
     text(control_point(i,1), control_point(i,2), control_point(i,3), num2str(i), 'FontSize',14);

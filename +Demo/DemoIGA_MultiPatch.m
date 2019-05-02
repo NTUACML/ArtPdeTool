@@ -64,71 +64,78 @@ operation3.setOperator('laplace_nitsche_dirichlet_rhs_term');
 operation4 = Operation();
 operation4.setOperator('laplace_nitsche_interface_lhs_term');
 
-% operation2 = Operation();
-% operation2.setOperator('test_dot_var');
-% 
-% operation3 = Operation();
-% operation3.setOperator('test_dot_f');
-
-
-%% Set domain mapping - > parametric domain to physical domain
-mapping_map = containers.Map('KeyType','char','ValueType','any');
-
-import Mapping.IGA.Mapping
-mapping_map('topo_1') = Mapping(basis_map('topo_1'));
-mapping_map('topo_2') = Mapping(basis_map('topo_2'));
-
 %% Integral variation equations
+import Differential.IGA.*
+
 % penalty parameter
 beta = 1e2;
 
 % Interface integral
 exp = operation4.getExpression('IGA', {v_1, u_1, v_2, u_2, beta});
 
-import Utility.BasicUtility.InterfacePatch
 master_patch = topology_map('topo_1').getBoundayPatch('eta_1');
 slave_patch = topology_map('topo_2').getBoundayPatch('eta_0');
-
 interface_patch = InterfacePatch(master_patch, slave_patch);
-iga_domain.calIntegral(interface_patch, exp, {mapping_map('topo_1'), mapping_map('topo_2')});
+
+dGamma_i = InterfaceDifferential({basis_map('topo_1'), basis_map('topo_2')}, interface_patch);
+ 
+iga_domain.integrate(exp, dGamma_i);
 
 % Domain integral
-doamin_patch = topology_map('topo_1').getDomainPatch();
-exp = operation1.getExpression('IGA', {v_1, u_1});
-iga_domain.calIntegral(doamin_patch, exp, mapping_map('topo_1'));
+domain_patch = topology_map('topo_1').getDomainPatch();
+dOmega = Differential(basis_map('topo_1'), domain_patch);  
 
-doamin_patch = topology_map('topo_2').getDomainPatch();
+exp = operation1.getExpression('IGA', {v_1, u_1});
+
+iga_domain.integrate(exp, dOmega);
+
+domain_patch = topology_map('topo_2').getDomainPatch();
+dOmega = Differential(basis_map('topo_2'), domain_patch);
+
 exp = operation1.getExpression('IGA', {v_2, u_2});
-iga_domain.calIntegral(doamin_patch, exp, mapping_map('topo_2'));
+
+iga_domain.integrate(exp, dOmega);
 
 % Boundary integral for Dirichlet boundary using the Nitsche's method
 % topology 1
 exp = operation2.getExpression('IGA', {v_1, u_1, beta});
 
 bdr_patch = topology_map('topo_1').getBoundayPatch('xi_0');
-iga_domain.calIntegral(bdr_patch, exp, mapping_map('topo_1'));
+dGamma = Differential(basis_map('topo_1'), bdr_patch);
+
+iga_domain.integrate(exp, dGamma);
 
 bdr_patch = topology_map('topo_1').getBoundayPatch('xi_1');
-iga_domain.calIntegral(bdr_patch, exp, mapping_map('topo_1'));
+dGamma = Differential(basis_map('topo_1'), bdr_patch);
+
+iga_domain.integrate(exp, dGamma);
 
 bdr_patch = topology_map('topo_1').getBoundayPatch('eta_0');
-iga_domain.calIntegral(bdr_patch, exp, mapping_map('topo_1'));
+dGamma = Differential(basis_map('topo_1'), bdr_patch);
+
+iga_domain.integrate(exp, dGamma);
 
 % topology 2
 exp = operation2.getExpression('IGA', {v_2, u_2, beta});
 
 bdr_patch = topology_map('topo_2').getBoundayPatch('xi_0');
-iga_domain.calIntegral(bdr_patch, exp, mapping_map('topo_2'));
+dGamma = Differential(basis_map('topo_2'), bdr_patch);
+
+iga_domain.integrate(exp, dGamma);
 
 bdr_patch = topology_map('topo_2').getBoundayPatch('xi_1');
-iga_domain.calIntegral(bdr_patch, exp, mapping_map('topo_2'));
+dGamma = Differential(basis_map('topo_2'), bdr_patch);
+
+iga_domain.integrate(exp, dGamma);
 
 bdr_patch = topology_map('topo_2').getBoundayPatch('eta_1');
-iga_domain.calIntegral(bdr_patch, exp, mapping_map('topo_2'));
+dGamma = Differential(basis_map('topo_2'), bdr_patch);
+
+iga_domain.integrate(exp, dGamma);
 
 boudary_function = @(x, y) sin(pi*x);
 exp = operation3.getExpression('IGA', {v_2, boudary_function, beta});
-iga_domain.calIntegral(bdr_patch, exp, mapping_map('topo_2'));
+iga_domain.integrate(exp, dGamma);
 
 %% Solve domain equation system
 iga_domain.solve('default');
