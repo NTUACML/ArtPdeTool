@@ -16,6 +16,7 @@ import Utility.Resources.NurbsToolBox.*
 % case_name = 'Lens_bottom_left'; 
 % case_name = '3D_Lens_left'; 
 % case_name = '3D_Lens_right';
+case_name = 'Unit_Cube';
 
 nurbs = NurbsGenerator(case_name);
 

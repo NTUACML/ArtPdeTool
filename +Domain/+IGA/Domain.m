@@ -151,8 +151,7 @@ classdef Domain < Domain.DomainBase
                 status = false;
             end
         end
-        
-        
+               
         function status = integrate(this, expression, differential, varargin)
             % Check input data
             if(isa(differential, 'Differential.DifferentialBase') ...
@@ -190,8 +189,7 @@ classdef Domain < Domain.DomainBase
                 status = false;
             end
         end
-        
-        
+                
         function status = setMapping(this, basis, varargin)
             if(isa(basis, 'BasisFunction.BasisFunctionBase'))
                import Mapping.IGA.Mapping

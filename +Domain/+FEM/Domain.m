@@ -148,6 +148,11 @@ classdef Domain < Domain.DomainBase
             end
         end
         
+        function status = integrate(this)
+            status = false;
+        end
+
+        
         function status = setMapping(this, basis, varargin)
             if(isa(basis, 'BasisFunction.BasisFunctionBase'))
                import Mapping.FEM.Mapping

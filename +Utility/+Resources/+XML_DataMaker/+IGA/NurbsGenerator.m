@@ -53,6 +53,9 @@ switch nurbs_name
         status = true;
     case '3D_Lens_right'
         nurbs = Solid_Lens('right');
+        status = true; 
+    case 'Unit_Cube'
+        nurbs = Solid_Cube(1, 1, 1, [0.5 0.5 0.5]);
         status = true;        
     otherwise
         str = [nurbs_name, 'does not exist in the current library.'];
@@ -430,6 +433,27 @@ switch str
             102.236428500000 -0.000000000000 -8.009999999999 1.000000000000];
 end
 
+control_point_list = PointList(temp);
+
+nurbs = Nurbs(knot_vectors, order, control_point_list);
+end
+
+function nurbs = Solid_Cube(width, length, hight, center)
+import Utility.BasicUtility.PointList
+import Utility.NurbsUtility.Nurbs
+
+knot_vectors = {[0 0 1 1] [0 0 1 1] [0 0 1 1]};
+order = [1 1 1];
+temp = [center(1)-length/2 center(2)-width/2 center(3)-hight/2 1.0;
+        center(1)+length/2 center(2)-width/2 center(3)-hight/2 1.0;
+        center(1)-length/2 center(2)+width/2 center(3)-hight/2 1.0;
+        center(1)+length/2 center(2)+width/2 center(3)-hight/2 1.0;
+        
+        center(1)-length/2 center(2)-width/2 center(3)+hight/2 1.0;
+        center(1)+length/2 center(2)-width/2 center(3)+hight/2 1.0;
+        center(1)-length/2 center(2)+width/2 center(3)+hight/2 1.0;
+        center(1)+length/2 center(2)+width/2 center(3)+hight/2 1.0];
+    
 control_point_list = PointList(temp);
 
 nurbs = Nurbs(knot_vectors, order, control_point_list);
