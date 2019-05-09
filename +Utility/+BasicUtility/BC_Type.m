@@ -3,7 +3,7 @@ classdef BC_Type
     %   Detailed explanation goes here
     
     enumeration
-        Dirichlet, Neumann, Essential, Traction, 
+        Dirichlet, Neumann, Essential, Traction 
     end
     
 end

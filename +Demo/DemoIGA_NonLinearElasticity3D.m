@@ -25,11 +25,11 @@ nurbs_tool = NurbsTools(nurbs_basis);
 figure; hold on; grid on; view([120 30]);
 nurbs_tool.plotNurbs();
 
-% control_point = nurbs_topology.domain_patch_data_.nurbs_data_.control_points_(:,1:3);
-% xlabel('x'); ylabel('y'); zlabel('z'); 
-% for i = 1:size(control_point,1)
-%     text(control_point(i,1), control_point(i,2), control_point(i,3), num2str(i), 'FontSize',14);
-% end
+control_point = nurbs_topology.domain_patch_data_.nurbs_data_.control_points_(:,1:3);
+xlabel('x'); ylabel('y'); zlabel('z'); 
+for i = 1:size(control_point,1)
+    text(control_point(i,1), control_point(i,2), control_point(i,3), num2str(i), 'FontSize',14);
+end
 
 hold off;
 
@@ -71,8 +71,13 @@ iga_domain.generateConstraint(bdr_patch, u, {3, @()0});
 
 %% Solve domain equation system
 import Solver.*
+import Utility.BasicUtility.SolverType
 solver = Solver();
-solver.generate(iga_domain, 'Nonlinear')
+
+tolerance = 1e-6;
+total_load_steps = 10;
+
+solver.generate(iga_domain, SolverType.NonlinearNewton, {tolerance, total_load_steps});
 solver.solve();
 
 %% Data Interpolation

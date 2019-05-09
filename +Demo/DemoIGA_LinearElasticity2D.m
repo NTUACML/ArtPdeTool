@@ -103,7 +103,11 @@ end
 
 hold off;
 %% Solve domain equation system
-iga_domain.solve('default');
+import Solver.*
+import Utility.BasicUtility.SolverType
+solver = Solver();
+solver.generate(iga_domain, SolverType.Standard);
+solver.solve();
 
 %% Data Interpolation
 t_interpo = Interpolation(var_u);

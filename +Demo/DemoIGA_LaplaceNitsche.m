@@ -78,7 +78,7 @@ iga_domain.integrate(exp3, dGamma);
 %% Solve domain equation system
 import Solver.*
 solver = Solver();
-solver.generate(iga_domain, 'Standard')
+solver.generate(iga_domain, SolverType.Standard);
 solver.solve();
 
 %% Data Interpolation
