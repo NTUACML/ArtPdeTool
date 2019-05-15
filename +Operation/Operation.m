@@ -167,8 +167,8 @@ classdef Operation < handle
                                 disp('Error <Operation>! - getExpression!');
                                 disp('> the Nitsche interface term should input two test, two variable functions and beta.');
                             end 
-                        case 'nonlinear_elasticity_lhs'    
-                            % Bilinear form for nonlinear elasticity
+                        case 'nonlinear_elasticity'    
+                            % Tangent matrix and resiual fores for nonlinear elasticity
                             if(~isempty(varargin) || ~(length(varargin{1}) < 3))
                                 test = varargin{1}{1};
                                 variable = varargin{1}{2};

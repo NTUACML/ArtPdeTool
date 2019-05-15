@@ -238,7 +238,7 @@ classdef Domain < Domain.DomainBase
                 constraint_var = constraint_obj.constraint_var_;
                 constraint_basis_id = constraint_obj.constraint_var_id_;
                 % constraint data -> 1. dof_id, 2. constraint value
-                num_basis = constraint_obj.patch_data_.nurbs_data_.basis_number_;
+                num_basis = length(constraint_basis_id); %constraint_obj.patch_data_.nurbs_data_.basis_number_;
                 % note that constraint_basis_id is the same as the boundary
                 % basis_number only when the constraint is applied to the
                 % whole boundary patch

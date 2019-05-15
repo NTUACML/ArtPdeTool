@@ -107,13 +107,13 @@ classdef Solver < handle
                     this.clearSystemMatrix();
                     
                     % Loop integral rule
-%                     this.expressionAssembler();
+                    this.expressionAssembler();
                     
                     % Loop constraint
-%                     this.constraintAssembler();
+                    this.constraintAssembler();
                     
                     % Solve result
-%                     this.sol_ = this.domain_.assembler_.lhs_ \ this.domain_.assembler_.rhs_;
+                    this.sol_ = this.domain_.assembler_.lhs_ \ this.domain_.assembler_.rhs_;
                     
                     % Update result
                     for var_data = values(this.domain_.dof_manager_.var_data_)
@@ -172,7 +172,7 @@ classdef Solver < handle
                 constraint_var = constraint_obj.constraint_var_;
                 constraint_basis_id = constraint_obj.constraint_var_id_;
                 
-                num_basis = constraint_obj.patch_data_.nurbs_data_.basis_number_;
+                num_basis = length(constraint_basis_id); %constraint_obj.patch_data_.nurbs_data_.basis_number_;
                 % note that constraint_basis_id is the same as the boundary
                 % basis_number only when the constraint is applied to the
                 % whole boundary patch
@@ -231,13 +231,14 @@ classdef Solver < handle
                 end
                 
                 import Utility.BasicUtility.SolverType
-                if this.solver_type_ == SolverType.Nonlinear
+                if this.solver_type_ == SolverType.NonlinearNewton
                     for i = 1:num_basis
                         constraint_data{i}.constraint_value = 0;
                     end
                 end
                 
                 % Assembly
+                import Utility.BasicUtility.AssemblyType
                 this.domain_.assembler_.Assembly(AssemblyType.Constraint,...
                     constraint_var, constraint_basis_id, constraint_data);
             end

@@ -1,7 +1,4 @@
-classdef ElasticityNonlinearExpression < Expression.IGA.Expression
-    %ElasticityBilinearExpression Summary of this class goes here
-    %   Detailed explanation goes here
-    
+classdef ElasticityNonlinearExpression < Expression.IGA.Expression 
     properties
         constitutive_law_
     end
@@ -14,7 +11,7 @@ classdef ElasticityNonlinearExpression < Expression.IGA.Expression
         
         function [type, var, basis_id, data] = eval(this, query_unit, differential)
             import Utility.BasicUtility.AssemblyType
-            type = AssemblyType.Matrix;
+            type = AssemblyType.System;
             var = {this.test_; this.var_};
             
             % TODO:In bilinear form consisting of multiplication of derivatives
@@ -30,65 +27,99 @@ classdef ElasticityNonlinearExpression < Expression.IGA.Expression
             test_basis = this.test_.basis_data_;
             var_basis = this.var_.basis_data_;
             
-            local_matrix = cell(num_q,1);
+            num_col = this.var_.num_dof_ * prod(var_basis.topology_data_.domain_patch_data_.nurbs_data_.order_+1);
+            num_row = this.test_.variable_data_.num_dof_ * prod(test_basis.topology_data_.domain_patch_data_.nurbs_data_.order_+1);
+            
+            data = {zeros(num_row, num_col), zeros(num_row, 1)};
             
             % loop integration points
             for i = 1 : num_q
                 query_unit.query_protocol_{2} = qx(i,:);
                 
                 % Test query
-                test_basis.query(query_unit, []);
-                test_non_zero_id = query_unit.non_zero_id_;
-                test_eval = query_unit.evaluate_basis_;
+                % The same as variable query
                 
                 % Variable query
-                var_basis.query(query_unit, []);
-                var_non_zero_id = query_unit.non_zero_id_;
-                var_eval = query_unit.evaluate_basis_;
-                
+                var_basis.query(query_unit);
+                non_zero_id = query_unit.non_zero_id_;
+
                 % Put non_zero id
-                basis_id = {test_non_zero_id, var_non_zero_id};
+                basis_id = {non_zero_id, non_zero_id};
                 
                 % get local mapping
                 differential.queryAt(qx(i,:));
-
+                
                 [dx_dxi, J] = differential.jacobian();
-                                              
-                % eval basis derivative with x
-                d_test_dx = dx_dxi \ test_eval{2};
-                d_var_dx = dx_dxi \ var_eval{2};
                 
-                % eval bilinear form
-                B_test = zeros(3, 2*length(test_non_zero_id));
-                B_var = zeros(3, 2*length(var_non_zero_id));
+                % eval basis derivative w.r.t. x
+                d_N_dx = dx_dxi \ query_unit.evaluate_basis_{2};
                 
-                odd = 1:2:2*length(test_non_zero_id);
-                even = 2:2:2*length(var_non_zero_id);
+                % eval deformation gradient F
+                [F, F_matrix] = this.deformationGradient(d_N_dx);
                 
-                B_test(1, odd) = d_test_dx(1,:);
+                this.constitutive_law_.evaluate(F);
+                Piola_stress = this.constitutive_law_.PiolaStress();
+                D_matrix = this.constitutive_law_.materialMatrix();
+                              
+                % generate B-matrix
+                B_G = zeros(9, 3*length(non_zero_id));
                 
-                B_test(2, even) = d_test_dx(2,:);
+                col_1 = 1:3:3*length(non_zero_id);
+                col_2 = 2:3:3*length(non_zero_id);
+                col_3 = 3:3:3*length(non_zero_id);
                 
-                B_test(3, odd) = d_test_dx(2,:);
-                B_test(3, even) = d_test_dx(1,:);
-                      
-                B_var(1, odd) = d_var_dx(1,:);
+                for row_id = 1:3
+                    B_G(row_id, col_1) = d_N_dx(row_id,:);
+                    B_G(3+row_id, col_2) = d_N_dx(row_id,:);
+                    B_G(6+row_id, col_3) = d_N_dx(row_id,:);
+                end
+                               
+                B_N = F_matrix * B_G;
                 
-                B_var(2, even) = d_var_dx(2,:);
+                % generate S-matrix
+                S = [Piola_stress(1) Piola_stress(4) Piola_stress(6);
+                     Piola_stress(4) Piola_stress(2) Piola_stress(5);
+                     Piola_stress(6) Piola_stress(5) Piola_stress(3)];
                 
-                B_var(3, odd) = d_var_dx(2,:);
-                B_var(3, even) = d_var_dx(1,:);
+                Sigma = zeros(9,9);
+                Sigma(1:3,1:3) = S;
+                Sigma(4:6,4:6) = S;
+                Sigma(7:9,7:9) = S;
                 
                 % add to local matrix
-                local_matrix{i} = (B_test' * this.constitutive_law_ * B_var).* qw(i) * J; 
+                data{1} = data{1} + (B_N'*D_matrix*B_N + B_G'*Sigma*B_G) * qw(i) * J;
+                
+                data{2} = data{2} - B_N'*Piola_stress * qw(i) * J; 
             end
             
-            data = local_matrix{1};
-            for i = 2 : num_q
-                data = data + local_matrix{i};
-            end
         end
-
+        
+    end
+    
+    methods (Access = private)
+        function [F, F_matrix] = deformationGradient(this, d_N_dx)
+            var = this.var_.getVarData();
+            
+            F = eye(3) + (d_N_dx*var)';
+            
+            col_1 = 1:3:9;
+            col_2 = 2:3:9;
+            col_3 = 3:3:9;
+            
+            F_matrix = zeros(6, 9);
+            F_matrix(1, col_1) = F(:,1)';
+            F_matrix(2, col_2) = F(:,2)';
+            F_matrix(3, col_3) = F(:,3)';
+            
+            F_matrix(4, col_1) = F(:,2)';
+            F_matrix(4, col_2) = F(:,1)';
+            
+            F_matrix(5, col_2) = F(:,3)';
+            F_matrix(5, col_3) = F(:,2)';
+            
+            F_matrix(6, col_1) = F(:,3)';
+            F_matrix(6, col_3) = F(:,1)';
+        end
     end
     
 end
