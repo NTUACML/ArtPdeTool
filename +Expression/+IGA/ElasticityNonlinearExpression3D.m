@@ -1,10 +1,10 @@
-classdef ElasticityNonlinearExpression < Expression.IGA.Expression 
+classdef ElasticityNonlinearExpression3D < Expression.IGA.Expression 
     properties
         constitutive_law_
     end
     
     methods
-        function this = ElasticityNonlinearExpression(constitutive_law)
+        function this = ElasticityNonlinearExpression3D(constitutive_law)
             this@Expression.IGA.Expression();
             this.constitutive_law_ = constitutive_law;
         end

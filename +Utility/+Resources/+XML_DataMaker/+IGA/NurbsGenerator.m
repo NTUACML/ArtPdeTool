@@ -15,15 +15,14 @@ switch nurbs_name
         nurbs = knotInsertion(nurbs, {t t});
         status = true;
     case 'Rectangle'        
-        D = 1; L = 1;
-        nurbs = Rectangle(D, L, [0.5 0.5]);
-        
-        nurbs = degreeElevation(nurbs, [1 1]);
-        n = 10;
+        D = 1; L = 4;
+        nurbs = Rectangle(D, L, [L/2 D/2]);       
+%         nurbs = degreeElevation(nurbs, [1 1]);
+        n = 4;
         t_1 = linspace(1/n, 1-1/n, n-1);
-        n = 10;
-        t_2 = linspace(1/n, 1-1/n, n-1);
-        nurbs = knotInsertion(nurbs, {t_1 t_2});
+%         n = 4;
+%         t_2 = linspace(1/n, 1-1/n, n-1);
+        nurbs = knotInsertion(nurbs, {t_1 []});
         status = true;  
     case 'Plane_quarter_hole'
         nurbs = Plane_quarter_hole();

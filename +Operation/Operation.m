@@ -167,20 +167,34 @@ classdef Operation < handle
                                 disp('Error <Operation>! - getExpression!');
                                 disp('> the Nitsche interface term should input two test, two variable functions and beta.');
                             end 
-                        case 'nonlinear_elasticity'    
+                        case '3D_nonlinear_elasticity'    
                             % Tangent matrix and resiual fores for nonlinear elasticity
                             if(~isempty(varargin) || ~(length(varargin{1}) < 3))
                                 test = varargin{1}{1};
                                 variable = varargin{1}{2};
                                 constitutive_law = varargin{1}{3};
                                 
-                                expression = ElasticityNonlinearExpression(constitutive_law);
+                                expression = ElasticityNonlinearExpression3D(constitutive_law);
                                 expression.setTest(test);
                                 expression.setVar(variable);
                             else
                                 disp('Error <Operation>! - getExpression!');
                                 disp('> the stiffness bilinear form should input test and variable.');
                             end
+                        case '2D_nonlinear_elasticity'    
+                            % Tangent matrix and resiual fores for nonlinear elasticity
+                            if(~isempty(varargin) || ~(length(varargin{1}) < 3))
+                                test = varargin{1}{1};
+                                variable = varargin{1}{2};
+                                constitutive_law = varargin{1}{3};
+                                
+                                expression = ElasticityNonlinearExpression2D(constitutive_law);
+                                expression.setTest(test);
+                                expression.setVar(variable);
+                            else
+                                disp('Error <Operation>! - getExpression!');
+                                disp('> the stiffness bilinear form should input test and variable.');
+                            end    
                         otherwise
                             expression = Expression();
                     end   
