@@ -56,6 +56,10 @@ switch nurbs_name
         status = true; 
     case 'Unit_Cube'
         nurbs = Solid_Cube(1, 1, 1, [0.5 0.5 0.5]);
+%         nurbs = degreeElevation(nurbs, [1 1 1]);
+        n = 2;
+        t = linspace(1/n, 1-1/n, n-1);      
+        nurbs = knotInsertion(nurbs, {t t t});
         status = true;        
     otherwise
         str = [nurbs_name, 'does not exist in the current library.'];

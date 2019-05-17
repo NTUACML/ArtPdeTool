@@ -55,7 +55,7 @@ classdef ElasticityNonlinearExpression < Expression.IGA.Expression
                 d_N_dx = dx_dxi \ query_unit.evaluate_basis_{2};
                 
                 % eval deformation gradient F
-                [F, F_matrix] = this.deformationGradient(d_N_dx);
+                [F, F_matrix] = this.deformationGradient(d_N_dx, non_zero_id);
                 
                 this.constitutive_law_.evaluate(F);
                 Piola_stress = this.constitutive_law_.PiolaStress();
@@ -97,10 +97,10 @@ classdef ElasticityNonlinearExpression < Expression.IGA.Expression
     end
     
     methods (Access = private)
-        function [F, F_matrix] = deformationGradient(this, d_N_dx)
+        function [F, F_matrix] = deformationGradient(this, d_N_dx, non_zero_id)
             var = this.var_.getVarData();
             
-            F = eye(3) + (d_N_dx*var)';
+            F = eye(3) + (d_N_dx*var(non_zero_id,:))';
             
             col_1 = 1:3:9;
             col_2 = 2:3:9;

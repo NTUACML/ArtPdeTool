@@ -22,14 +22,16 @@ nurbs_basis = iga_domain.generateBasis(nurbs_topology);
 %% Nurbs tools create & plot nurbs
 nurbs_tool = NurbsTools(nurbs_basis);
 
-figure; hold on; grid on; view([120 30]);
+figure; hold on; grid on; view([120 30]); axis equal;
 nurbs_tool.plotNurbs();
 xlabel('x'); ylabel('y'); zlabel('z'); 
 
-% control_point = nurbs_topology.domain_patch_data_.nurbs_data_.control_points_(:,1:3);
-% for i = 1:size(control_point,1)
-%     text(control_point(i,1), control_point(i,2), control_point(i,3), num2str(i), 'FontSize',14);
-% end
+
+nurbs_tool.plotControlMesh();
+control_point = nurbs_topology.domain_patch_data_.nurbs_data_.control_points_(:,1:3);
+for i = 1:size(control_point,1)
+    text(control_point(i,1), control_point(i,2), control_point(i,3), num2str(i), 'FontSize',14);
+end
 
 % hold off;
 
@@ -45,7 +47,8 @@ operation1.setOperator('nonlinear_elasticity');
 
 %% Expression acquired
 import MaterialBank.*
-material = HyperElasticityMooney({80, 20, 1E7});
+material = HyperElasticityMooney({80, 20, 1e7});
+% material = SaintVenantKirchhoff({0.3 1e7});
 
 exp1 = operation1.getExpression('IGA', {v, u, material});
 
@@ -78,10 +81,14 @@ import Utility.BasicUtility.SolverType
 solver = Solver();
 
 tolerance = 1e-6;
-total_load_steps = 1;
+total_load_steps = 50;
 
 solver.generate(iga_domain, SolverType.NonlinearNewton, {tolerance, total_load_steps});
 solver.solve();
+
+
+%% Show result
+disp(u);
 
 %% Data Interpolation
 % t_interpo = Interpolation(u);
@@ -115,11 +122,9 @@ nurbs_topology.domain_patch_data_.nurbs_data_.control_points_(:,1:3) = ...
     nurbs_topology.domain_patch_data_.nurbs_data_.control_points_(:,1:3) + u.getVarData();
 
 nurbs_tool.plotNurbs();
-axis equal;
 hold off;
 
-%% Show result
-disp(u);
+
 
 end
 

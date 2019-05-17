@@ -94,9 +94,13 @@ classdef Solver < handle
                 
                 % Load factor
                 factor = load_step*delta;
-                
+               
                 % Initilize variable
+%                 this.initializeVariable(factor);
                 this.applylPrescribedBC(factor);
+%                 var_u = this.domain_.dof_manager_.var_data_('displacement');
+%                 var_u = var_u{1};
+%                 disp(var_u);
 
                 iter_step = 0; 
                 res = 1e10;
@@ -111,7 +115,7 @@ classdef Solver < handle
                     
                     % Loop constraint
                     this.constraintAssembler();
-                    
+                                        
                     % Solve result
                     this.sol_ = this.domain_.assembler_.lhs_ \ this.domain_.assembler_.rhs_;
                     
@@ -172,13 +176,13 @@ classdef Solver < handle
                 constraint_var = constraint_obj.constraint_var_;
                 constraint_basis_id = constraint_obj.constraint_var_id_;
                 
-                num_basis = length(constraint_basis_id); %constraint_obj.patch_data_.nurbs_data_.basis_number_;
+                num_basis = constraint_obj.patch_data_.nurbs_data_.basis_number_;
                 % note that constraint_basis_id is the same as the boundary
                 % basis_number only when the constraint is applied to the
                 % whole boundary patch
                 
                 % constraint data -> 1. dof_id, 2. constraint value
-                constraint_data = cell(1, num_basis);
+                constraint_data = cell(1, prod(num_basis));
                 % constraint
                 if strcmp(constraint_obj.type_,'collocation')
                     import BasisFunction.IGA.QueryUnit
@@ -196,11 +200,11 @@ classdef Solver < handle
                             sample_pnt = sample_pnt';
                         case 2
                             p_max = max(constraint_obj.patch_data_.nurbs_data_.knot_vectors_{1});
-                            p_min = max(constraint_obj.patch_data_.nurbs_data_.knot_vectors_{1});
+                            p_min = min(constraint_obj.patch_data_.nurbs_data_.knot_vectors_{1});
                             t_1 = linspace(p_min, p_max, num_basis(1));
                             
                             p_max = max(constraint_obj.patch_data_.nurbs_data_.knot_vectors_{2});
-                            p_min = max(constraint_obj.patch_data_.nurbs_data_.knot_vectors_{2});
+                            p_min = min(constraint_obj.patch_data_.nurbs_data_.knot_vectors_{2});
                             t_2 = linspace(p_min, p_max, num_basis(2));
                             
                             [xx, yy] = meshgrid(t_1, t_2);
@@ -208,7 +212,7 @@ classdef Solver < handle
                     end
                     
                     
-                    for i = 1:num_basis
+                    for i = 1:prod(num_basis)
                         query_unit.query_protocol_{2} = sample_pnt(i,:);
                         constraint_obj.basis_function_.query(query_unit);
                         
@@ -223,7 +227,7 @@ classdef Solver < handle
                         constraint_data{i}.type = constraint_obj.type_;
                     end
                 else
-                    for i = 1:num_basis
+                    for i = 1:prod(num_basis)
                         constraint_data{i}.dof = constraint_obj.constraint_data_{1};
                         constraint_data{i}.constraint_value = constraint_obj.constraint_data_{2}();
                         constraint_data{i}.type = constraint_obj.type_;
@@ -232,7 +236,7 @@ classdef Solver < handle
                 
                 import Utility.BasicUtility.SolverType
                 if this.solver_type_ == SolverType.NonlinearNewton
-                    for i = 1:num_basis
+                    for i = 1:prod(num_basis)
                         constraint_data{i}.constraint_value = 0;
                     end
                 end
@@ -252,12 +256,42 @@ classdef Solver < handle
                 dof = constraint_obj.constraint_data_{1};
                 id = this.domain_.dof_manager_.getAssemblyId_by_DofId(constraint_obj.constraint_var_, constraint_obj.constraint_var_id_, dof);
                 constraint_obj.constraint_var_.data_(id) = factor * constraint_obj.constraint_data_{2}();
-                
-                status = true;
             end
-            
+            status = true;
         end
         
+        function status = initializeVariable(this, factor)
+            % Clear K & F
+            this.clearSystemMatrix();
+            
+            % Loop integral rule
+            this.expressionAssembler();
+            
+            % Loop constraint
+            this.constraintAssembler();
+            
+            % Loop constraint
+            for i_const = 1 : this.domain_.num_constraint_
+                constraint_obj = this.domain_.constraint_(i_const);
+                dof = constraint_obj.constraint_data_{1};
+                id = this.domain_.dof_manager_.getAssemblyId_by_DofId(constraint_obj.constraint_var_, constraint_obj.constraint_var_id_, dof);
+                this.domain_.assembler_.rhs_(id) = factor * constraint_obj.constraint_data_{2}();
+            end
+            
+            % Solve result
+            this.sol_ = this.domain_.assembler_.lhs_ \ this.domain_.assembler_.rhs_;
+            
+            % Update result
+            for var_data = values(this.domain_.dof_manager_.var_data_)
+                var = var_data{1}{1};
+                dof_start = var_data{1}{2};
+                dof_end = var_data{1}{3};
+                
+                var.data_ = this.sol_(dof_start + 1 : dof_end);
+            end
+            
+            status = true;
+        end
     end
 end
 
