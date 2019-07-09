@@ -1,13 +1,11 @@
 function DemoIGA_LinearElasticity2D
 clc; clear; close all;
 
-E = 1e5;
-nu = 0.3;
 % Plane stress
-temp = E/(1-nu*nu);
-constitutive_law = temp*[1  nu 0;
-                         nu 1  0;
-                         0  0  0.5*(1-nu)];
+% temp = E/(1-nu*nu);
+% constitutive_law = temp*[1  nu 0;
+%                          nu 1  0;
+%                          0  0  0.5*(1-nu)];
 % Plane strain                     
 % temp = E/(1+nu)/(1-2*nu);
 % constitutive_law = temp*[1-nu nu   0;
@@ -44,6 +42,12 @@ operation1 = Operation();
 operation1.setOperator('delta_epsilon_dot_sigma');
 
 %% Expression acquired
+import MaterialBank.*
+import Utility.BasicUtility.ElasticMaterialType
+E = 1e5;
+nu = 0.3;
+constitutive_law = SaintVenantKirchhoff({nu, E, ElasticMaterialType.PlaneStress});
+
 exp1 = operation1.getExpression('IGA', {test_u, var_u, constitutive_law});
 
 %% Integral variation equations
@@ -103,7 +107,11 @@ end
 
 hold off;
 %% Solve domain equation system
-iga_domain.solve('default');
+import Solver.*
+import Utility.BasicUtility.SolverType
+solver = Solver();
+solver.generate(iga_domain, SolverType.Standard);
+solver.solve();
 
 %% Data Interpolation
 t_interpo = Interpolation(var_u);

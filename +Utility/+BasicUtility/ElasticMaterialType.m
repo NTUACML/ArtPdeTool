@@ -1,9 +1,9 @@
-classdef BC_Type
+classdef ElasticMaterialType
     %BC_TYPE Summary of this class goes here
     %   Detailed explanation goes here
     
     enumeration
-        Dirichlet, Neumann, Essential, Traction 
+        Solid, PlaneStress, PlaneStrain 
     end
     
 end

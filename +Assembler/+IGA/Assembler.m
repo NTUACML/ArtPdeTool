@@ -20,6 +20,8 @@ classdef Assembler < Assembler.AssemblerBase
                 status = this.IGA_Constraint_Assembly(var, basis_id, data);
             elseif(type == AssemblyType.Coupled)
                 status = this.IGA_Coupled_Assembly(var, basis_id, data);
+            elseif(type == AssemblyType.System)
+                status = this.IGA_System_Assembly(var, basis_id, data);    
             else
                 disp('Error <IGA Assembler>! - Assembly!');
                 disp('> your assembly type error, please check!');
@@ -57,6 +59,26 @@ classdef Assembler < Assembler.AssemblerBase
             else
                 disp('Error <IGA Assembler>! - IGA_RHS_Assembly!');
                 disp('> RHS assembling error, please check!');
+                status = false;
+            end
+        end
+        
+        function status = IGA_System_Assembly(this, var, basis_id, data)
+            if(length(var) == 2 && length(basis_id) == 2)
+                test = var{1};
+                var = var{2};
+                
+                row_id = this.dof_manager_.getAssemblyId(test.variable_data_, basis_id{1});
+                col_id = this.dof_manager_.getAssemblyId(var, basis_id{2});
+                
+                this.lhs_(row_id, col_id) = this.lhs_(row_id, col_id) + data{1};
+                
+                this.rhs_(row_id) = this.rhs_(row_id) + data{2};
+                
+                status = true;
+            else
+                disp('Error <IGA Assembler>! - IGA_System_Assembly!');
+                disp('> System assembling error, please check!');
                 status = false;
             end
         end
