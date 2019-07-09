@@ -45,13 +45,13 @@ operation3.setOperator('test_dot_f');
 %% Expression acquired
 exp1 = operation1.getExpression('IGA', {test_t, var_t});
 
-beta = 1e6;
+beta = 10000;
 exp2 = operation2.getExpression('IGA', {test_t, var_t, beta});
 
-force_function = @(x, y) 0;
+force_function = @(x, y) -4;
 exp3 = operation3.getExpression('IGA', {test_t, force_function, 1});
 
-bc_function = @(x, y) x.^2 - y.^2;
+bc_function = @(x, y) x.^2 + y.^2;
 exp4 = operation3.getExpression('IGA', {test_t, bc_function, beta});
 
 %% Integral variation equations
@@ -79,10 +79,6 @@ for patch_key = keys(nurbs_topology.boundary_patch_data_)
 %     iga_domain.collocate('expression::delta * (u-1)', dGamma);
 end
 
-% bdr_patch = nurbs_topology.getBoundayPatch('eta_1');
-% dGamma = Differential(nurbs_basis, bdr_patch);
-% iga_domain.integrate(exp3, dGamma);
-
 %% Solve domain equation system
 iga_domain.solve('default');
 
@@ -91,15 +87,40 @@ import Interpolation.IGA.Interpolation;
 t_interpo = Interpolation(var_t);
 [x, data, element] = t_interpo.DomainDataSampling();
 
+ana_sol = x(:,1).^2 + x(:,2).^2;
+abs_error = abs(ana_sol-data.value{1});
+
 %% Show result (Post-Processes)
-fv.vertices = [x(:,1:2), data.value{1}];
+fv.vertices = x(:,1:2);
+
 fv.faces = element;
 fv.facevertexcdata = data.value{1};
 
 figure; hold on; grid on; axis equal;
 patch(fv,'CDataMapping','scaled','EdgeColor',[.7 .7 .7],'FaceColor','interp','FaceAlpha',1);
-title('ArtPDE Laplace problem... (IGA)')
+title('ArtPDE Laplace problem ana_sol. (IGA)')
 hold off;
+
+
+fv.facevertexcdata = ana_sol;
+
+figure; hold on; grid on; axis equal;
+patch(fv,'CDataMapping','scaled','EdgeColor',[.7 .7 .7],'FaceColor','interp','FaceAlpha',1);
+title('ArtPDE Laplace problem num_sol (IGA)')
+hold off;
+
+fv.facevertexcdata = abs_error;
+
+figure; hold on; grid on; axis equal;
+patch(fv,'CDataMapping','scaled','EdgeColor',[.7 .7 .7],'FaceColor','interp','FaceAlpha',1);
+title('ArtPDE Laplace problem abs_error (IGA)')
+hold off;
+
+
+
 %% Show result
 %disp(var_t);
+
+
+
 end
