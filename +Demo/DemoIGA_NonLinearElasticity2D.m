@@ -26,7 +26,6 @@ figure; hold on; grid on; axis equal;
 nurbs_tool.plotNurbs();
 xlabel('x'); ylabel('y'); zlabel('z'); 
 
-
 nurbs_tool.plotControlMesh();
 control_point = nurbs_topology.domain_patch_data_.nurbs_data_.control_points_(:,1:3);
 for i = 1:size(control_point,1)
@@ -82,7 +81,6 @@ total_load_steps = 10;
 
 solver.generate(iga_domain, SolverType.NonlinearNewton, {tolerance, total_load_steps});
 solver.solve();
-
 
 %% Show result
 disp(u);
