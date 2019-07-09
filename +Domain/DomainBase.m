@@ -12,6 +12,7 @@ classdef DomainBase < handle
         integration_rule_
         assembler_
         differential_
+        mapping_
     end
     
     methods

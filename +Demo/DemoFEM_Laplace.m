@@ -8,7 +8,7 @@ import Domain.*
 import Operation.*
 
 %% Geometry data input
-fem_unit_cube_geo = GeometryBuilder.create('FEM', 'UnitCube_2_2_2');
+fem_unit_cube_geo = GeometryBuilder.create('FEM', 'XML', './ArtPDE_FEM.art_geometry');
 iso_topo = fem_unit_cube_geo.topology_data_{1};
 
 %% Domain create

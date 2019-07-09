@@ -32,6 +32,8 @@ classdef ElasticityBilinearExpression < Expression.IGA.Expression
             
             local_matrix = cell(num_q,1);
             
+            this.constitutive_law_.evaluate(eye(2));
+            D_matrix = this.constitutive_law_.materialMatrix();
             % loop integration points
             for i = 1 : num_q
                 query_unit.query_protocol_{2} = qx(i,:);
@@ -80,7 +82,7 @@ classdef ElasticityBilinearExpression < Expression.IGA.Expression
                 B_var(3, even) = d_var_dx(1,:);
                 
                 % add to local matrix
-                local_matrix{i} = (B_test' * this.constitutive_law_ * B_var).* qw(i) * J; 
+                local_matrix{i} = (B_test' * D_matrix * B_var).* qw(i) * J; 
             end
             
             data = local_matrix{1};
