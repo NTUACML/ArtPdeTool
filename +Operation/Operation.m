@@ -194,6 +194,53 @@ classdef Operation < handle
                             else
                                 disp('Error <Operation>! - getExpression!');
                                 disp('> the stiffness bilinear form should input test and variable.');
+                            end
+                        case 'elasticity_nitsche_dirichlet_lhs_term'
+                            if(~isempty(varargin) || ~(length(varargin{1}) < 3))
+                                test = varargin{1}{1};
+                                variable = varargin{1}{2};
+                                constitutive_law = varargin{1}{3};
+                                penalty_parameter = varargin{1}{4};
+                                                              
+                                expression = ElasticityNitscheLhsExpression(constitutive_law);
+                                expression.setTest(test);
+                                expression.setVar(variable);
+                                
+                                if ~isempty(penalty_parameter)
+                                    expression.setPenaltyParameter(penalty_parameter);
+                                end
+                            else
+                                disp('Error <Operation>! - getExpression!');
+                                disp('> the Nitsche lhs term should input test, source function and beta.');
+                            end    
+                        case 'elasticity_nitsche_dirichlet_rhs_term'
+                            if(~isempty(varargin) || ~(length(varargin{1}) < 3))
+                                test = varargin{1}{1};
+                                source_function = varargin{1}{2};
+                                penalty_parameter = varargin{1}{3};
+                                
+                                expression = ElasticityNitscheRhsExpression();
+                                expression.setTest(test);                               
+                                expression.setSourceFunction(source_function);
+                                
+                                if ~isempty(penalty_parameter)
+                                    expression.setPenaltyParameter(penalty_parameter);
+                                end
+                            else
+                                disp('Error <Operation>! - getExpression!');
+                                disp('> the Nitsche rhs term should input test, source and beta.');
+                            end
+                        case 'elasticity_applied_traction'
+                            if(~isempty(varargin) || ~(length(varargin{1}) < 3))
+                                test = varargin{1}{1};
+                                traction_function = varargin{1}{2};
+                                
+                                expression = ElasticityTractionExpression();
+                                expression.setTest(test); 
+                                expression.setTractionFunction(traction_function);
+                            else
+                                disp('Error <Operation>! - getExpression!');
+                                disp('> the Nitsche lhs term should input test and traction.');
                             end    
                         otherwise
                             expression = Expression();
