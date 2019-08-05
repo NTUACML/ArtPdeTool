@@ -54,7 +54,7 @@ constitutive_law = SaintVenantKirchhoff({nu, E, ElasticMaterialType.PlaneStress}
 
 exp1 = operation1.getExpression('IGA', {test_u, var_u, constitutive_law});
 
-beta = 100*E;
+beta = 100;
 exp2 = operation2.getExpression('IGA', {test_u, var_u, constitutive_law, beta});
 
 exp3 = operation3.getExpression('IGA', {test_u, @traction});
@@ -94,6 +94,11 @@ u_y = @(position) u_ana_y(position(:,1), position(:,2), material, geometry);
 sigma_x = @(position) sigma_ana_x(position(:,1), position(:,2), material, geometry);
 sigma_y = @(position) sigma_ana_y(position(:,1), position(:,2), material, geometry);
 sigma_xy = @(position) sigma_ana_xy(position(:,1), position(:,2), material, geometry);
+
+
+bdr_patch = nurbs_topology.getBoundayPatch('xi_0');
+iga_domain.generateConstraint(bdr_patch, var_u, {1, u_x}, {'collocation', nurbs_basis});
+iga_domain.generateConstraint(bdr_patch, var_u, {2, u_y}, {'collocation', nurbs_basis});
 
 %% Solve domain equation system
 import Solver.*
@@ -142,11 +147,10 @@ hold off;
 % plot deformed mesh
 import Utility.Resources.quadplot
 figure; hold on; grid on; axis equal;
-scale_factor = 50;
+scale_factor = 10;
 quadplot(element, x(:,1)+scale_factor*data.value{1}, x(:,2)+scale_factor*data.value{2});
 title('IGA Cantilever Beam deformed mesh')
 hold off;
-
 
 temp = E/(1-nu*nu);
 % plot sigma_x

@@ -61,7 +61,7 @@ classdef ElasticityTractionExpression < Expression.IGA.Expression
                 
                 % add to local matrix
                 [t_x, t_y] = this.traction_function_(x(1), x(2));
-                local_matrix{i} = (N_test' * [t_x; t_y]).* qw(i) * J; 
+                local_matrix{i} = (N_test' * [t_x; t_y]) * qw(i) * J; 
             end
             
             data = local_matrix{1};

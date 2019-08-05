@@ -62,8 +62,8 @@ iga_domain.integrate(exp1, dOmega, {'Default', 3});
 
 %% Constraint (Acquire prescribed D.O.F.)
 %% Exact solution for Cantilever Beam
-geometry.D = 2.0;
-geometry.L = 20.0;
+geometry.D = 1.0;
+geometry.L = 10.0;
 geometry.p = -1.0;
 
 material.E = E;
@@ -153,7 +153,7 @@ hold off;
 % plot deformed mesh
 import Utility.Resources.quadplot
 figure; hold on; grid on; axis equal;
-scale_factor = 50;
+scale_factor = 10;
 quadplot(element, x(:,1)+scale_factor*data.value{1}, x(:,2)+scale_factor*data.value{2});
 title('IGA Cantilever Beam deformed mesh')
 hold off;
