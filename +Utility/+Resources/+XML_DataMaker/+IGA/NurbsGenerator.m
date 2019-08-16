@@ -9,29 +9,41 @@ import Utility.NurbsUtility.Nurbs
 switch nurbs_name
     case 'Unit_Square'
         nurbs = Rectangle(1, 1, [0.5 0.5]);
-        nurbs = degreeElevation(nurbs, [1 1]);
-        n = 10;
-        t = linspace(1/n, 1-1/n, n-1);
-        nurbs = knotInsertion(nurbs, {t t});
+%         nurbs = degreeElevation(nurbs, [2 2]);
+%         n = 10;
+%         t = linspace(1/n, 1-1/n, n-1);
+%         nurbs = knotInsertion(nurbs, {t t});
         status = true;
-    case 'Rectangle'        
-        D = 1; L = 10;
-        nurbs = Rectangle(D, L, [L/2 D/2]);       
+    case 'Rectangle'
+        % Uniaxial tensor beam
+%         D = 0.5; L = 1;
+%         nurbs = Rectangle(D, L, [L/2 D/2]);       
+%         nurbs = degreeElevation(nurbs, [1 1]);
+%         n = 5;
+%         t_1 = linspace(1/n, 1-1/n, n-1);
+%         n = 2;
+%         t_2 = linspace(1/n, 1-1/n, n-1);
+
+        % Canteliver beam
+        D = 0.2; L = 1;
+        nurbs = Rectangle(D, L, [L/2 0]);
         nurbs = degreeElevation(nurbs, [1 1]);
-        n = 10;
+        n = 5;
         t_1 = linspace(1/n, 1-1/n, n-1);
-        n = 4;
-        t_2 = linspace(1/n, 1-1/n, n-1);
-        nurbs = knotInsertion(nurbs, {t_1 t_2});
+%         n = 2;
+%         t_2 = linspace(1/n, 1-1/n, n-1); 
+        nurbs = knotInsertion(nurbs, {t_1 [0.5 0.5]});
         status = true;  
     case 'Plane_quarter_hole'
         nurbs = Plane_quarter_hole();
         nurbs = degreeElevation(nurbs, [1 1]);
         
-        nurbs = knotInsertion(nurbs, {[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9], 0.1:0.1:0.9});     
+        nurbs = knotInsertion(nurbs, {[0.1 0.2 0.3 0.4 0.6 0.7 0.8 0.9], 0.1:0.1:0.9});     
         status = true;
     case 'Plane_quarter_hole_2'
         nurbs = Plane_quarter_hole_2();
+%         nurbs = degreeElevation(nurbs, [1 1]);
+        nurbs = knotInsertion(nurbs, {[0.1 0.2 0.3 0.4 0.6 0.7 0.8 0.9], 0.1:0.1:0.9}); 
         status = true;    
     case 'Solid_quarter_hole'        
         nurbs = Solid_quater_hole(1);
