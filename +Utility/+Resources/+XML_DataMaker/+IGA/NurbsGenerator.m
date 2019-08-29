@@ -67,11 +67,16 @@ switch nurbs_name
         nurbs = Solid_Lens('right');
         status = true; 
     case 'Unit_Cube'
-        nurbs = Solid_Cube(1, 1, 1, [0.5 0.5 0.5]);
+%         nurbs = Solid_Cube(1, 1, 1, [0.5 0.5 0.5]);
 %         nurbs = degreeElevation(nurbs, [1 1 1]);
-        n = 2;
-        t = linspace(1/n, 1-1/n, n-1);      
-        nurbs = knotInsertion(nurbs, {t t t});
+%         n = 2;
+%         t = linspace(1/n, 1-1/n, n-1);      
+%         nurbs = knotInsertion(nurbs, {t t t});
+        nurbs = Solid_Cube(6, 0.1, 0.2, 0.5*[6, 0.1, 0.2]);
+%         nurbs = degreeElevation(nurbs, [1 1 1]);
+%         n = 10;
+%         t = linspace(1/n, 1-1/n, n-1);
+%         nurbs = knotInsertion(nurbs, {t [] []});
         status = true;        
     otherwise
         str = [nurbs_name, 'does not exist in the current library.'];
@@ -454,7 +459,7 @@ control_point_list = PointList(temp);
 nurbs = Nurbs(knot_vectors, order, control_point_list);
 end
 
-function nurbs = Solid_Cube(width, length, hight, center)
+function nurbs = Solid_Cube(length, width, hight, center)
 import Utility.BasicUtility.PointList
 import Utility.NurbsUtility.Nurbs
 
