@@ -84,8 +84,6 @@ iga_domain.generateConstraint(bdr_patch, u, {2, @()0});
 bdr_patch = nurbs_topology.getBoundayPatch('zeta_0');
 iga_domain.generateConstraint(bdr_patch, u, {3, @()0});
 
-% temp = iga_domain.constraint_(3);
-% temp.constraint_var_id_ = [1 3];
 %% Solve domain equation system
 import Solver.*
 import Utility.BasicUtility.SolverType
