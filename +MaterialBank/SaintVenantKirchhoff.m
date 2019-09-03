@@ -52,7 +52,7 @@ classdef SaintVenantKirchhoff < MaterialBank.MaterialBase
                 switch this.type_
                     case ElasticMaterialType.Solid                                  
                         G = this.E_/2/(1+this.nu_);
-                        lambda = G/(1-2*this.nu_);
+                        lambda = this.E_*this.nu_/(1-2*this.nu_)/(1+this.nu_);
                         
                         D_matrix = zeros(6,6);  
                         
